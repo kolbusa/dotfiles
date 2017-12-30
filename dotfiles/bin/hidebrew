@@ -1,0 +1,7 @@
+#!/bin/bash
+
+_brew_bin_path=$HOME/.homebrew/bin
+export PATH="$(echo $PATH | sed "s:$_brew_bin_path\:\?::g")"
+unset _brew_bin_path
+
+# "$@"

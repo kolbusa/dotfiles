@@ -1,0 +1,16 @@
+glibc
+gcc
+perl
+ruby
+python
+git
+cmake
+swig
+subversion --with-perl
+vim
+gdb
+valgrind
+corkscrew
+connect
+bash-completion
+homebrew/dupes/screen

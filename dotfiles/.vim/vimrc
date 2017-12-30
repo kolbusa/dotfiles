@@ -1,0 +1,206 @@
+call plug#begin()
+Plug 'tpope/vim-unimpaired'
+" Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-speeddating'
+Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
+Plug 'jeetsukumaran/vim-buffergator'
+Plug 'scrooloose/nerdtree', { 'on' : 'NERDTreeToggle' }
+" Plug 'blueyed/vim-diminactive'
+Plug 'chriskempson/base16-vim'
+Plug 'flazz/vim-colorschemes'
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl' ] }
+Plug 'gcmt/taboo.vim'
+Plug 'jceb/vim-orgmode'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+Plug 'johngrib/vim-game-code-break'
+
+"
+" YouCompleteMe is awesome at times but drive me nuts most of the time...
+"
+" function! BuildYCM(info)
+"   " info is a dictionary with 3 fields
+"   " - name:   name of the plugin
+"   " - status: 'installed', 'updated', or 'unchanged'
+"   " - force:  set on PlugInstall! or PlugUpdate!
+"   if a:info.status == 'installed' || a:info.force
+"     !./install.py
+"   endif
+" endfunction
+" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+
+call plug#end()
+
+" appearance
+au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
+au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
+set cursorline
+set colorcolumn=80
+" let g:diminactive_use_colorcolumn = 0
+" let g:diminactive_use_syntax = 1
+" colorscheme Tomorrow
+set background=light
+colorscheme lucius
+:LuciusWhiteHighContrast
+
+" configure airline
+" let g:airline_powerline_fonts = 1
+" let g:airline_mode_map = {
+"   \ '__' : '-',
+"   \ 'n'  : 'N',
+"   \ 'i'  : 'I',
+"   \ 'R'  : 'R',
+"   \ 'c'  : 'C',
+"   \ 'v'  : 'V',
+"   \ 'V'  : 'V',
+"   \ '' : 'V',
+"   \ 's'  : 'S',
+"   \ 'S'  : 'S',
+"   \ '' : 'S',
+"   \ }
+
+" configure nerdcommenter
+let NERDDefaultAlign='left'
+let NERDSpaceDelims=1
+
+
+" for Taboo to remember the tab names in the sessions
+set sessionoptions+=tabpages,globals
+
+" configure figutive to use familiar key bindings
+nmap <Leader>gb :Gblame<CR>
+nmap <Leader>gD :Gdiff<CR>
+
+" youcompleteme / completion in general
+set completeopt-=preview
+
+" behavior
+set hidden
+set wildmode=longest:full,list
+set tags=tags,./tags,../tags,../../tags,../../../tags,../../../../tags,../../../../../tags
+set autochdir
+
+set noautoread
+
+set tw=78
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set formatoptions=tcqo2nr
+set autoindent
+set backspace=eol,start,indent
+set cino=:0
+
+set incsearch
+set ignorecase
+set smartcase
+
+set number
+set nowrap
+set sidescroll=5
+set scrolloff=3
+set listchars+=precedes:<,extends:>
+set showmatch
+
+set mouse=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" status line
+set laststatus=2
+" set statusline=[%n]\ %f\ %=%{fugitive#statusline()}[%{&fileencoding}][%{&fileformat}]%m%r%y\ \|\ %L\ lines\ (%P)\ \|\ %l,%c
+
+hi! StatusLineNC ctermbg=244 ctermfg=007 cterm=none
+hi! StatusLine ctermbg=244 ctermfg=015 cterm=none
+hi! User1 ctermfg=015 ctermbg=244 cterm=none
+
+" from some webshit
+let g:currentmode={
+    \ 'n'  : 'N ',
+    \ 'no' : 'N·Operator Pending ',
+    \ 'v'  : 'V ',
+    \ 'V'  : 'V·Line ',
+    \ '' : 'V·Block ',
+    \ 's'  : 'Select ',
+    \ 'S'  : 'S·Line ',
+    \ '' : 'S·Block ',
+    \ 'i'  : 'I ',
+    \ 'R'  : 'R ',
+    \ 'Rv' : 'V·Replace ',
+    \ 'c'  : 'Command ',
+    \ 'cv' : 'Vim Ex ',
+    \ 'ce' : 'Ex ',
+    \ 'r'  : 'Prompt ',
+    \ 'rm' : 'More ',
+    \ 'r?' : 'Confirm ',
+    \ '!'  : 'Shell ',
+    \ 't'  : 'Terminal '
+    \}
+
+function! ChangeStatuslineColor()
+    if (mode() =~? 'i')
+        exe 'hi! StatusLine ctermbg=071 ctermfg=015 cterm=bold'
+    elseif (mode() ==? 'r')
+        exe 'hi! StatusLine ctermbg=174 ctermfg=015 cterm=bold'
+    elseif (mode() ==? 'v' || mode() ==? '')
+        exe 'hi! StatusLine ctermbg=074 ctermfg=015 cterm=bold'
+    else
+        exe 'hi! StatusLine ctermbg=244 ctermfg=015 cterm=none'
+    endif
+    return '▏'.toupper(strpart(get(g:currentmode, mode(), ''), 0, 1)).' '
+endfunction
+
+function! GitInfo()
+    let git = fugitive#head()
+    if git != ''
+        return '↑'.git.'│'
+    else
+        return ''
+    endif
+endfunction
+
+set statusline=
+set statusline+=%{ChangeStatuslineColor()}
+set statusline+=%1*
+set statusline+=▏
+set statusline+=\ %n
+set statusline+=▕%*%<\ %F\ %=%1*▏
+set statusline+=%{GitInfo()}
+set statusline+=%{&fileencoding}
+set statusline+=│
+set statusline+=%{&fileformat}
+set statusline+=│
+set statusline+=%M%R%Y
+set statusline+=│
+set statusline+=%l/%L(%P),%c
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" sensible-like keybinding to toggle hls
+nnoremap <C-l> :set invhls<CR>
+nnoremap gn :bn<CR>
+nnoremap gp :bp<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Check for modified files (https://github.com/neovim/neovim/issues/2127)
+augroup AutoSwap
+        autocmd!
+        autocmd SwapExists *  call AS_HandleSwapfile(expand('<afile>:p'), v:swapname)
+augroup END
+
+function! AS_HandleSwapfile (filename, swapname)
+        " if swapfile is older than file itself, just get rid of it
+        if getftime(v:swapname) < getftime(a:filename)
+                call delete(v:swapname)
+                let v:swapchoice = 'e'
+        endif
+endfunction
+autocmd CursorHold,BufWritePost,BufReadPost,BufLeave * if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
+
+augroup checktime
+    au!
+    if !has("gui_running")
+        "silent! necessary otherwise throws errors when using command
+        "line window.
+        autocmd BufEnter,CursorHold,CursorHoldI,CursorMoved,CursorMovedI,FocusGained,BufEnter,FocusLost,WinLeave * checktime
+    endif
+augroup END

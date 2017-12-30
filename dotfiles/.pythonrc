@@ -1,0 +1,25 @@
+# vim:ft=python
+
+def hexon():
+	import sys
+
+	def display_as_hex(item):
+		if sys.version_info[0] > 2:
+			inttypes = (int)
+		else:
+			inttypes = (int, long)
+		if isinstance(item, inttypes):
+			sys.stdout.write("%s\t" % hex(item))
+		hexon.oldhook(item)
+
+	if not hasattr(hexon, "installed") or not getattr(hexon, "installed"):
+		hexon.installed = True
+		hexon.oldhook = sys.displayhook
+		sys.displayhook = display_as_hex
+
+def hexoff():
+    if hasattr(hexon, "oldhook"):
+        import sys
+        hexon.installed = False
+        sys.displayhook = hexon.oldhook
+

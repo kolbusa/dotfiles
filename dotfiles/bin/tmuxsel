@@ -1,0 +1,81 @@
+#!/bin/bash
+
+STABLE_SOCKETS_DIR=$HOME/.ssh_auth_socks
+
+function get_session_env() {
+    tmux show-environment -t $1 $2 2>/dev/null | cut -d= -f2-
+}
+
+function mk_stable_ssh_auth_sock() {
+    local sas=$1 # SSH_AUTH_SOCK
+    local ssid=$2 # tmux ssession id (empty if a new session is being created)
+
+    if [[ -n "$sas" ]]; then
+
+        if [[ -n "$ssid" ]]; then
+            ssas=$(get_session_env $ssid $sas)
+            echo ssas=$ssas
+        else
+            ssas=$(mktemp -p $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
+        fi
+
+        [[ -n "$ssas" ]] && # link the socket from the env to the stable one
+            eval ln -sf \$$sas $ssas
+    fi
+
+    echo $ssas
+}
+
+function del_stable_ssh_auth_sock() {
+    local ssas=$1
+    [[ -n "$ssas" ]] && rm $ssas
+}
+
+if [[ "$OSTYPE" == cygwin ]]; then
+    # Set up paths here to avoid polluting global environment
+    export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
+fi
+
+if [[ -z "$(type -p tmux)" ]]; then
+        $SHELL -
+        exit
+fi
+
+ssh_kind=
+if [[ -n "$(type -p ssh)" ]]; then
+    ssh -V 2>&1 | grep -qs "OpenSSH" && ssh_kind=openssh
+    ssh -V 2>&1 | grep -qs "Reflection" && ssh_kind=reflection
+fi
+
+source ~/.profile
+
+if [[ "$ssh_kind" == "reflection" ]]; then
+    eval $(ssh-agent2)
+    ssh-add
+    ssh_auth_sock=SSH2_AUTH_SOCK
+else
+    ssh_auth_sock=SSH_AUTH_SOCK
+fi
+
+while true; do
+    select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/\s/_/g'); do
+        [[ -z "$s" ]] && s=bash
+        case $s in
+            bash) $SHELL - ;;
+            tmux)
+                stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock '')
+                eval $ssh_auth_sock=$stable_ssh_auth_sock tmux -2 -u
+                del_stable_ssh_auth_sock $stable_ssh_auth_sock
+            ;;
+            *)
+                ssid=$(echo $s | cut -f2 -d:)
+                stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock $ssid)
+                tmux attach-session -t $ssid -E
+                del_stable_ssh_auth_sock $stable_ssh_auth_sock
+            ;;
+        esac
+        break;
+    done
+done
+
+[[ -n "$SSH_AGENT_PID" ]] && kill $SSH_AGENT_PID
