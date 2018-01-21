@@ -2,6 +2,8 @@
 
 [[ "$SKIP_BREW" == 1 ]] && return
 
+BOOTSTRAP=$DOTFILES/bootstrap
+
 if [[ "$(uname -s)" == Linux ]]; then
     git_ok=0
     type -p git &> /dev/null && git_ok=1
@@ -10,17 +12,17 @@ if [[ "$(uname -s)" == Linux ]]; then
     if [[ $git_ok == 0 ]]; then
         # Bootstrap git
         (
-            mkdir -p $BOOTSTRAP_ROOT/git
-            cd $BOOTSTRAP_ROOT/git
+            mkdir -p $BOOTSTRAP/git
+            cd $BOOTSTRAP/git
             wget --no-check-certificate https://www.kernel.org/pub/software/scm/git/git-2.11.0.tar.gz
             tar xzf git-2.11.0.tar.gz
             cd git-2.11.0
-            patch < $DOTFILES_ROOT/patches/git-patch-no-perl
+            patch < $DOTFILES/patches/git-patch-no-perl
             autoreconf
-            ./configure --prefix=$BOOTSTRAP_ROOT/git/install --without-perl
+            ./configure --prefix=$BOOTSTRAP/git/install --without-perl
             make -j && make install
         )
-        export PATH=$BOOTSTRAP_ROOT/git/install/bin:$PATH
+        export PATH=$BOOTSTRAP/git/install/bin:$PATH
         git --version
     fi 2>&1 | tee $LOGS/0bootstrap.git
 
@@ -37,41 +39,91 @@ if [[ "$(uname -s)" == Linux ]]; then
     if [[ $ruby_ok == 0 ]]; then
         # Bootstrap ruby
         (
-            mkdir -p $BOOTSTRAP_ROOT/ruby
-            cd $BOOTSTRAP_ROOT/ruby
+            mkdir -p $BOOTSTRAP/ruby
+            cd $BOOTSTRAP/ruby
             wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.6.tar.gz
             tar xzf ruby-2.2.6.tar.gz
             cd ruby-2.2.6
-            ./configure --prefix=$BOOTSTRAP_ROOT/ruby/install
+            ./configure --prefix=$BOOTSTRAP/ruby/install
             make -j && make install
         )
-        export PATH=$BOOTSTRAP_ROOT/ruby/install/bin:$PATH
+        export PATH=$BOOTSTRAP/ruby/install/bin:$PATH
     fi 2>&1 | tee $LOGS/0bootstrap.ruby
-
 fi
 
 if [[ "$(uname -s)" == Darwin ]]; then
+    true
 fi
 
-unset APPS APPS_LOCAL
-export LANG=C
-unset LC_COLLATE
-export HOMEBREW_ARCH=core2
-mkdir -p $HOMEBREW_ROOT
-ln -sf $HOMEBREW_ROOT $HOME/.linuxbrew || true
-git clone --depth 1 https://github.com/Linuxbrew/brew.git $HOME/.linuxbrew 2>&1 | tee $LOGS/1brew.0clone
-mkdir -p $HOMEBREW_ROOT/Cache
-mkdir -p $HOME/.cache
-ln -sf $HOMEBREW_ROOT/Cache $HOME/.cache/Homebrew || true
-export PATH=$HOME/.linuxbrew/bin:$PATH
-unset LD_LIBRARY_PATH
-brew analytics off
-while IFS='' read -r package || [[ -n "$package" ]]; do
-    package_name=$(echo $package | awk '{print $1}' | sed 's/\//_/g')
-    set -e
-    brew install $package 2>&1 | tee $LOGS/1brew.1install.$package_name
-    echo "Installed $package: rc = $?" >> $LOGS/1brew.1install.$package_name
-done < brew.txt
+###############################################################################
+
+HOMEBREW_DIRNAME=.homebrew
+HOMEBREW=$HOME/$HOMEBREW_DIRNAME
+if [[ -n "$OVERLAY" ]]; then
+    HOMEBREW_OVERLAY=$OVERLAY/$HOMEBREW_DIRNAME
+    mkdir -p $HOMEBREW_OVERLAY
+    ln -sf $HOMEBREW_OVERLAY $HOMEBREW
+else
+    mkdir -p $HOMEBREW
+fi
+
+###############################################################################
+
+if [[ "$(uname -s)" == "Linux" ]]; then
+    unset APPS APPS_LOCAL
+    export LANG=C
+    unset LC_COLLATE
+    export HOMEBREW_ARCH=core2
+
+    git clone --depth 1 \
+        https://github.com/Linuxbrew/brew.git \
+        $HOMEBREW
+    mkdir -p $HOMEBREW/Cache
+    mkdir -p $HOME/.cache
+    rm -rf $HOME/.cache/Homebrew
+    ln -sf $HOMEBREW/Cache $HOME/.cache/Homebrew
+fi
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    # TODO
+    git clone --depth 1 \
+        https://github.com/Homebrew/brew.git \
+        $HOMEBREW
+fi
+
+(
+    unset LD_LIBRARY_PATH
+    export PATH=$HOMEBREW/bin:$PATH
+    brew analytics off
+
+    # TODO: figure this one out
+    brew install perl
+    export PERL5LIB=$HOME/perl5
+    echo yes | $HOMEBREW/bin/cpan install local::lib
+    echo yes | $HOMEBREW/bin/cpan install SVN::Core
+    echo yes | $HOMEBREW/bin/cpan install Term::ReadKey
+
+    brew install python
+    $HOMEBREW/bin/python2 -s $HOMEBREW/bin/pip2 install protobuf xlsxwriter
+
+    brew install neovim
+
+    brew install tmux
+
+    brew install subversion --with-perl
+    brew install git
+
+    brew install wget
+
+    brew install cmake
+    brew install gcc
+    brew install clang
+    brew install gdb
+
+    brew install coreutils
+    brew install ctags
+    brew install dash
+)
 
 # vim: et ts=4 sw=4
 

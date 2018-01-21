@@ -1,15 +1,27 @@
 #!/bin/bash
 
 (
-    export PATH=$HOME/.linuxbrew/bin:$PATH
-    if [[ -d $HOME/work/.vim ]]; then
-        rm -rf $HOME/work/.vim.old
-        mv $HOME/work/.vim $HOME/work/.vim.old
+    if [[ -n "$HOMEBREW" && -d "$HOMEBREW/" ]]; then
+        export PATH=$HOMEBREW/bin:$PATH
     fi
-    mv $HOME/.vim $HOME/work/
-    ln -sf $HOME/work/.vim $HOME/.vim
-    cat $HOME/.vim/vimrc | sed '/call plug#begin/,/call plug#end/!d' > /tmp/vimrc
-    vim --cmd 'so /tmp/vimrc|PlugInstall|qa'
+
+    if type -p "nvim" >& /dev/null; then
+        vim=nvim
+    else
+        vim=vim
+    fi
+
+    # backup the overlay .vim
+    if [[ -d $OVERLAY/.vim ]]; then
+        mv $OVERLAY/.vim $BACKUP/
+    fi
+
+    mv $HOME/.vim $OVERLAY/
+    ln -sf $OVERLAY/.vim $HOME/.vim
+    cat $HOME/.vim/vimrc \
+        | sed '/call plug#begin/,/call plug#end/!d' \
+        > /tmp/vimrc
+    $vim --cmd 'so /tmp/vimrc|PlugInstall|qa'
     rm /tmp/vimrc
     reset
 )
