@@ -16,8 +16,10 @@
         mv $OVERLAY/.vim $BACKUP/
     fi
 
-    mv $HOME/.vim $OVERLAY/
-    ln -sf $OVERLAY/.vim $HOME/.vim
+    if [[ -n "$OVERLAY" ]]; then
+        mv $HOME/.vim $OVERLAY/
+        ln -sf $OVERLAY/.vim $HOME/.vim
+    fi
     cat $HOME/.vim/vimrc \
         | sed '/call plug#begin/,/call plug#end/!d' \
         > /tmp/vimrc

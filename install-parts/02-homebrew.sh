@@ -108,10 +108,13 @@ fi
 
     brew install neovim
 
+    brew install bash-completion
+
     brew install tmux
 
     brew install subversion --with-perl
     brew install git
+    brew install bash-git-prompt
 
     brew install wget
 

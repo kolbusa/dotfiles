@@ -16,7 +16,7 @@ for d in $(cd $DOTFILES/dotfiles; find . -mindepth 1 -maxdepth 1 -type d); do
     fi
 done
 
-for f in $(cd $DOTFILES/dotfiles; find . -type f); do
+for f in $(cd $DOTFILES/dotfiles; find . -type f -o -type l); do
     d=$(dirname $f)
 
     if [[ -f $HOME/$f ]]; then
@@ -25,7 +25,11 @@ for f in $(cd $DOTFILES/dotfiles; find . -type f); do
     fi
 
     mkdir -p $HOME/$d
-    ln -sf $DOTFILES/dotfiles/$f $HOME/$f
+    if [[ -f $DOTFILES/dotfiles/$f ]]; then
+        ln -sf $DOTFILES/dotfiles/$f $HOME/$f
+    else
+        cp -a $DOTFILES/dotfiles/$f $HOME/$f
+    fi
 done
 
 # vim: et ts=4 sw=4

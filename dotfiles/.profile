@@ -3,7 +3,7 @@
 export LANG=en_US.UTF8
 export LC_COLLATE=C
 
-if [ -d $HOME/.homebrew ]; then
+if [ -d $HOME/.homebrew/ ]; then
     export PATH=$HOME/bin:$PATH
     export PATH=$HOME/.homebrew/bin:$PATH
     export MANPATH=$HOME/.homebrew/share/man:$MANPATH

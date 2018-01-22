@@ -4,7 +4,7 @@
 export PS1="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 
-__completion=~/.linuxbrew/etc/bash_completion
+__completion=~/.homebrew/etc/bash_completion
 [[ -f $__completion ]] && source $__completion
 
 if [[ `uname -s` == "Darwin" ]]; then
