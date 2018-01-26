@@ -15,6 +15,7 @@ Plug 'jceb/vim-orgmode'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 Plug 'johngrib/vim-game-code-break'
+Plug 'majutsushi/tagbar'
 
 "
 " YouCompleteMe is awesome at times but drive me nuts most of the time...
@@ -108,13 +109,11 @@ set mouse=
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
 set laststatus=2
-" set statusline=[%n]\ %f\ %=%{fugitive#statusline()}[%{&fileencoding}][%{&fileformat}]%m%r%y\ \|\ %L\ lines\ (%P)\ \|\ %l,%c
 
 hi! StatusLineNC ctermbg=244 ctermfg=007 cterm=none
 hi! StatusLine ctermbg=244 ctermfg=015 cterm=none
 hi! User1 ctermfg=015 ctermbg=244 cterm=none
 
-" from some webshit
 let g:currentmode={
     \ 'n'  : 'N ',
     \ 'no' : 'N·Operator Pending ',
@@ -159,20 +158,50 @@ function! GitInfo()
     endif
 endfunction
 
-set statusline=
-set statusline+=%{ChangeStatuslineColor()}
-set statusline+=%1*
-set statusline+=▏
-set statusline+=\ %n
-set statusline+=▕%*%<\ %F\ %=%1*▏
-set statusline+=%{GitInfo()}
-set statusline+=%{&fileencoding}
-set statusline+=│
-set statusline+=%{&fileformat}
-set statusline+=│
-set statusline+=%M%R%Y
-set statusline+=│
-set statusline+=%l/%L(%P),%c
+function! FuncInfo()
+    try
+        let ct = tagbar#currenttag('%s', '')
+        if ct != ''
+            return ct.'│'
+        else
+            return ''
+        endif
+    catch
+        return ''
+    endtry
+endfunction
+
+function! RegularStatusLine()
+    set statusline=
+    set statusline+=%{ChangeStatuslineColor()}
+    set statusline+=%1*
+    set statusline+=▏
+    set statusline+=\ %n
+    set statusline+=▕%*%<\ %F\ %=%1*▏
+    set statusline+=%{FuncInfo()}
+    set statusline+=%{GitInfo()}
+    set statusline+=%{&fileencoding}
+    set statusline+=│
+    set statusline+=%{&fileformat}
+    set statusline+=│
+    set statusline+=%M%R%Y
+    set statusline+=│
+    set statusline+=%l/%L(%P),%c
+endfunction
+
+function! FileNameStatusLine()
+    set statusline=%F
+endfunction
+
+call RegularStatusLine()
+nnoremap <Leader>SF :call FileNameStatusLine()<CR>
+nnoremap <Leader>SN :call RegularStatusLine()<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TagBar
+nnoremap <silent> <F9> :TagbarToggle<CR>
+autocmd FileType tagbar setlocal nocursorline nocursorcolumn
+let g:tagbar_show_linenumbers = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " sensible-like keybinding to toggle hls
@@ -204,3 +233,22 @@ augroup checktime
         autocmd BufEnter,CursorHold,CursorHoldI,CursorMoved,CursorMovedI,FocusGained,BufEnter,FocusLost,WinLeave * checktime
     endif
 augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Terminal
+if has("nvim")
+  " Make escape work in the Neovim terminal.
+  tnoremap <Esc> <C-\><C-n>
+
+  " Make navigation into and out of Neovim terminal splits nicer.
+  tnoremap <C-h> <C-\><C-N><C-w>h
+  tnoremap <C-j> <C-\><C-N><C-w>j
+  tnoremap <C-k> <C-\><C-N><C-w>k
+  tnoremap <C-l> <C-\><C-N><C-w>l
+
+  " I like relative numbering when in normal mode.
+  autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
+
+  " Prefer Neovim terminal insert mode to normal mode.
+  autocmd BufEnter term://* startinsert
+endif
