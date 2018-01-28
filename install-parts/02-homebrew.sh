@@ -57,7 +57,12 @@ fi
 
 ###############################################################################
 
-HOMEBREW_DIRNAME=.homebrew
+if [[ "$(uname -s)" == "Linux" ]]; then
+    HOMEBREW_DIRNAME=.linuxbrew
+else
+    HOMEBREW_DIRNAME=.homebrew
+fi
+
 HOMEBREW=$HOME/$HOMEBREW_DIRNAME
 if [[ -n "$OVERLAY" ]]; then
     HOMEBREW_OVERLAY=$OVERLAY/$HOMEBREW_DIRNAME

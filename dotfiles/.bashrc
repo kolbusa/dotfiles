@@ -4,7 +4,13 @@
 export PS1="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 
-__completion=~/.homebrew/etc/bash_completion
+if [[ "$(uname -s)" == "Linux" ]]; then
+    HOMEBREW_DIRNAME=.linuxbrew
+else
+    HOMEBREW_DIRNAME=.homebrew
+fi
+HOMEBREW=$HOME/$HOMEBREW_DIRNAME
+__completion=$HOMEBREW/etc/bash_completion
 [[ -f $__completion ]] && source $__completion
 
 if [[ `uname -s` == "Darwin" ]]; then
@@ -57,5 +63,7 @@ shopt -s checkhash no_empty_cmd_completion hostcomplete
 HISTFILE=$HOME/.my_bash_history
 HISTFILESIZE=100000
 HISTSIZE=100000
+
+[[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
 BASHRC_SOURCED=1
