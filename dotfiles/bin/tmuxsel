@@ -1,7 +1,5 @@
 #!/bin/bash
 
-STABLE_SOCKETS_DIR=$HOME/.ssh_auth_socks
-
 function get_session_env() {
     tmux show-environment -t $1 $2 2>/dev/null | cut -d= -f2-
 }
@@ -16,7 +14,7 @@ function mk_stable_ssh_auth_sock() {
             ssas=$(get_session_env $ssid $sas)
             echo ssas=$ssas
         else
-            ssas=$(mktemp -p $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
+            ssas=$(mktemp -t $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
         fi
 
         [[ -n "$ssas" ]] && # link the socket from the env to the stable one
@@ -36,9 +34,14 @@ if [[ "$OSTYPE" == cygwin ]]; then
     export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 fi
 
+if [[ "$1" == "-" ]]; then
+    source $HOME/.profile
+    source $HOME/.bashrc
+fi
+
 if [[ -z "$(type -p tmux)" ]]; then
-        $SHELL -
-        exit
+    $SHELL "$@"
+    exit
 fi
 
 ssh_kind=
@@ -58,7 +61,7 @@ else
 fi
 
 while true; do
-    select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/\s/_/g'); do
+    select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/[[:space:]]/_/g'); do
         [[ -z "$s" ]] && s=bash
         case $s in
             bash) $SHELL - ;;
