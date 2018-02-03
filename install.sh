@@ -16,8 +16,10 @@ function realpath() {
 
 HOME="$(realpath "$HOME")"
 mkdir -p "$HOME"
-[[ -n "$OVERLAY" ]] && OVERLAY="$(realpath "$OVERLAY")"
-mkdir -p "$OVERLAY"
+if [[ -n "$OVERLAY" ]]; then
+    OVERLAY="$(realpath "$OVERLAY")"
+    mkdir -p "$OVERLAY"
+fi
 
 DOTFILES="$(dirname $(realpath $0))"
 LOGS="$DOTFILES/logs"
@@ -29,5 +31,5 @@ rm -rf "$BACKUP"
 mkdir -p "$BACKUP"
 
 for f in 02-homebrew.sh 03-dotfiles.sh 04-vim.sh; do
-    source install-parts/$f 2>&1 | tee $LOGS/$(basename ${f/.sh/.log})
+    source $DOTFILES/install-parts/$f 2>&1 | tee $LOGS/$(basename ${f/.sh/.log})
 done
