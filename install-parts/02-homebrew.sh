@@ -66,9 +66,11 @@ fi
 HOMEBREW=$HOME/$HOMEBREW_DIRNAME
 if [[ -n "$OVERLAY" ]]; then
     HOMEBREW_OVERLAY=$OVERLAY/$HOMEBREW_DIRNAME
+    rm -rf $HOMEBREW_OVERLAY $HOMEBREW
     mkdir -p $HOMEBREW_OVERLAY
     ln -sf $HOMEBREW_OVERLAY $HOMEBREW
 else
+    rm -rf $HOMEBREW
     mkdir -p $HOMEBREW
 fi
 
@@ -104,6 +106,7 @@ fi
     # TODO: figure this one out
     brew install perl
     export PERL5LIB=$HOME/perl5
+    export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
     echo yes | $HOMEBREW/bin/cpan install local::lib
     echo yes | $HOMEBREW/bin/cpan install SVN::Core
     echo yes | $HOMEBREW/bin/cpan install Term::ReadKey
