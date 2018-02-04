@@ -17,6 +17,10 @@ if [ -d $HOMEBREW/ ]; then
     export INFOPATH=$HOMEBREW/share/info:$INFOPATH
 fi
 
+if [ -f $HOME/.profile.local ]; then
+    source $HOME/.profile.local
+fi
+
 if [ -f $HOME/.bashrc -a -n "$BASH" ]; then
     source $HOME/.bashrc
 fi
