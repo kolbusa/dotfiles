@@ -1,6 +1,8 @@
 #!/bin/bash
 
-_brew_bin_path=$HOME/.homebrew/bin
+for _brew_bin_path in $HOME/.homebrew/bin $HOME/.linuxbrew/bin; do
+    [[ -d "$_brew_bin_path" ]] && break
+done
 export PATH="$(echo $PATH | sed "s:$_brew_bin_path\:\?::g")"
 unset _brew_bin_path
 
