@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# TODO: support extra dotfiles dirs
-
 for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     [[ -d "$dfd" ]] || continue
     dfd=$(realpath $dfd)
@@ -19,6 +17,7 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     done
 done
 
+# TODO: support bash version w/o associative arrays
 declare -A dotfiles_seen
 for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     [[ -d "$dfd" ]] || continue
@@ -30,16 +29,23 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
         [[ -n "${dotfiles_seen[$f]}" ]] && continue
         dotfiles_seen[$f]=1
 
-        if [[ -f $HOME/$f ]]; then
+        # TODO: clean up
+        suffix=''
+        [[ "$(basename $f)" == ".bashrc" && "$BASHRC_USER_SUFFIX" == "1" ]] \
+            && suffix=.$USER
+        [[ "$(basename $f)" == ".profile" && "$PROFILE_USER_SUFFIX" == "1" ]] \
+            && suffix=.$USER
+
+        if [[ -f $HOME/$f$suffix ]]; then
             mkdir -p $BACKUP/$d
-            mv $HOME/$f $BACKUP/$d/
+            mv $HOME/$f$suffix $BACKUP/$d/
         fi
 
         mkdir -p $HOME/$d
         if [[ -f $dfd/$f ]]; then
-            ln -sf $dfd/$f $HOME/$f
+            ln -sf $dfd/$f $HOME/$f$suffix
         else
-            cp -a $dfd/$f $HOME/$f
+            cp -a $dfd/$f $HOME/$f$suffix
         fi
     done
 done
