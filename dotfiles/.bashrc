@@ -30,6 +30,8 @@ export PYTHONSTARTUP=$HOME/.pythonrc
 
 export GIT_PROMPT_FETCH_REMOTE_STATUS=0
 
+export LESS="$LESS -R"
+
 alias sc='tmux new-window'
 alias tm='tmux new-window'
 alias vim='nvim'
