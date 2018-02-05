@@ -1,8 +1,11 @@
 #!/bin/bash
 
+set -e
+
 [[ "$SKIP_BREW" == 1 ]] && return
 
 BOOTSTRAP=$DOTFILES/bootstrap
+rm -rf $BOOTSTRAP
 
 if [[ "$(uname -s)" == Linux ]]; then
     git_ok=0
@@ -23,6 +26,7 @@ if [[ "$(uname -s)" == Linux ]]; then
             make -j && make install
         )
         export PATH=$BOOTSTRAP/git/install/bin:$PATH
+        export GIT_COMMAND=$BOOTSTRAP/git/install/bin/git
         git --version
     fi 2>&1 | tee $LOGS/0bootstrap.git
 
@@ -41,13 +45,19 @@ if [[ "$(uname -s)" == Linux ]]; then
         (
             mkdir -p $BOOTSTRAP/ruby
             cd $BOOTSTRAP/ruby
-            wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.6.tar.gz
-            tar xzf ruby-2.2.6.tar.gz
-            cd ruby-2.2.6
+            # wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.6.tar.gz
+            # tar xzf ruby-2.2.6.tar.gz
+            # cd ruby-2.2.6
+            wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0.tar.gz
+            tar xzf ruby-2.5.0.tar.gz
+            cd ruby-2.5.0
+            wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0.tar.gz
             ./configure --prefix=$BOOTSTRAP/ruby/install
             make -j && make install
         )
         export PATH=$BOOTSTRAP/ruby/install/bin:$PATH
+        export HOMEBREW_DEVELOPER=1
+        export HOMEBREW_RUBY_PATH=$BOOTSTRAP/ruby/install/bin/ruby
     fi 2>&1 | tee $LOGS/0bootstrap.ruby
 fi
 
@@ -81,7 +91,7 @@ if [[ "$(uname -s)" == "Linux" ]]; then
     export LANG=C
     unset LC_COLLATE
     export HOMEBREW_ARCH=core2
-
+    export HOMEBREW_NO_ENV_FILTERING=1
     git clone --depth 1 \
         https://github.com/Linuxbrew/brew.git \
         $HOMEBREW
