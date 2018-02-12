@@ -4,6 +4,9 @@ set -e
 
 [[ "$SKIP_BREW" == 1 ]] && return
 
+export HOMEBREW_TEMP=$DOTFILES/tmp
+mkdir -p $HOMEBREW_TEMP
+
 BOOTSTRAP=$DOTFILES/bootstrap
 rm -rf $BOOTSTRAP
 
@@ -28,12 +31,12 @@ if [[ "$(uname -s)" == Linux ]]; then
         export PATH=$BOOTSTRAP/git/install/bin:$PATH
         export GIT_COMMAND=$BOOTSTRAP/git/install/bin/git
         git --version
-    fi 2>&1 | tee $LOGS/0bootstrap.git
+    fi
 
     ruby_ok=0
     if type -p ruby &> /dev/null && \
         ruby -e \
-            'exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("1.8.6"))' &> /dev/null
+            'exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.3.0"))' &> /dev/null
     then
         ruby_ok=1
     fi
@@ -45,9 +48,6 @@ if [[ "$(uname -s)" == Linux ]]; then
         (
             mkdir -p $BOOTSTRAP/ruby
             cd $BOOTSTRAP/ruby
-            # wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.6.tar.gz
-            # tar xzf ruby-2.2.6.tar.gz
-            # cd ruby-2.2.6
             wget --no-check-certificate https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.0.tar.gz
             tar xzf ruby-2.5.0.tar.gz
             cd ruby-2.5.0
@@ -56,9 +56,8 @@ if [[ "$(uname -s)" == Linux ]]; then
             make -j && make install
         )
         export PATH=$BOOTSTRAP/ruby/install/bin:$PATH
-        export HOMEBREW_DEVELOPER=1
         export HOMEBREW_RUBY_PATH=$BOOTSTRAP/ruby/install/bin/ruby
-    fi 2>&1 | tee $LOGS/0bootstrap.ruby
+    fi
 fi
 
 if [[ "$(uname -s)" == Darwin ]]; then
@@ -92,6 +91,7 @@ if [[ "$(uname -s)" == "Linux" ]]; then
     unset LC_COLLATE
     export HOMEBREW_ARCH=core2
     export HOMEBREW_NO_ENV_FILTERING=1
+    export HOMEBREW_DEVELOPER=1
     git clone --depth 1 \
         https://github.com/Linuxbrew/brew.git \
         $HOMEBREW
@@ -111,19 +111,60 @@ fi
 (
     unset LD_LIBRARY_PATH
     export PATH=$HOMEBREW/bin:$PATH
+    export LD_LIBRARY_PATH
+    set
+    export HOMEBREW_NO_AUTO_UPDATE=1
     brew analytics off
+    if [[ -n "$OLD_SYSTEM" ]]; then
+        # XXX: this is very hacky
+        brew install binutils
+        # XXX: patch gcc formula to use Homebrew ld (system ld may be broken)
+        sed -i -e '/MAKEINFO=/a"LD=#{HOMEBREW_PREFIX}/bin/ld",' \
+            $HOMEBREW/Library/Taps/homebrew/homebrew-core/Formula/gcc@4.9.rb
+        HOMEBREW_BUILD_FROM_SOURCE=1 brew install gcc@4.9
+        gcc_keg_path="$(brew info gcc@4.9 | grep Cellar | cut -f1 -d' ')"
+        gcc_keg_ver=$(basename $gcc_keg_path)
+        if [[ ! -f $gcc_keg_path/lib/gcc/x86_64-unknown-linux-gnu/$gcc_keg_ver/specs.orig ]]; then
+            (
+                cd $gcc_keg_path/lib/gcc/x86_64-unknown-linux-gnu/
+                d=$(ls -d 4.9*)
+                ln -sf $d $gcc_keg_ver
+            )
+        fi
+        brew install glibc
+        brew remove gcc@4.9
+        brew install gcc
 
+        # XXX: work around old curl
+        sed -i -e 's/https:/http:/' \
+            $HOMEBREW/Library/Taps/homebrew/homebrew-core/Formula/perl.rb
+        brew install perl
+        brew install curl
+        sed -i -e '/system "\.\/configure",/a"--with-included-libxml",' \
+            $HOMEBREW/Library/Taps/homebrew/homebrew-core/Formula/gettext.rb
+        HOMEBREW_BUILD_FROM_SOURCE=1 brew install gettext
+        brew install pcre --without-check
+    else
+        brew install gcc
+        brew install perl
+        brew install curl
+    fi
+
+    brew install wget
     # TODO: figure this one out
-    brew install perl
     export PERL5LIB=$HOME/perl5
     export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
     echo yes | $HOMEBREW/bin/cpan install local::lib
-    echo yes | $HOMEBREW/bin/cpan install SVN::Core
     echo yes | $HOMEBREW/bin/cpan install Term::ReadKey
 
     brew install python
-    $HOMEBREW/bin/python2 -s $HOMEBREW/bin/pip2 install protobuf xlsxwriter
+    $HOMEBREW/bin/python2 -s $HOMEBREW/bin/pip2 install protobuf xlsxwriter pycodestyle
 
+    brew install mawk
+    grep -qs "mawk" \
+        $HOMEBREW/Library/Taps/homebrew/homebrew-core/Formula/apr-util.rb ||
+        sed -i -e '/depends_on "apr"/adepends_on "mawk"' \
+            $HOMEBREW/Library/Taps/homebrew/homebrew-core/Formula/apr-util.rb
     brew install neovim
 
     brew install bash-completion
@@ -131,14 +172,12 @@ fi
     brew install tmux
 
     brew install subversion --with-perl
+    echo yes | $HOMEBREW/bin/cpan install SVN::Core
     brew install git
     brew install bash-git-prompt
 
-    brew install wget
-
     brew install cmake
-    brew install gcc
-    brew install clang
+    brew install llvm
     brew install gdb
 
     brew install coreutils

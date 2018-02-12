@@ -21,9 +21,18 @@ else
     alias ls='ls --color=auto -F'
 fi
 
-export VISUAL=vim
-export EDITOR=vim
+unset -f which
+
+if [[ -n "$(which nvim 2> /dev/null)" ]]; then
+    export VISUAL=nvim
+    export EDITOR=nvim
+    alias vim='nvim'
+else
+    export VISUAL=vim
+    export EDITOR=vim
+fi
 export PAGER=less
+export LESS="$LESS -R"
 
 # export GREP_OPTIONS=--color
 export PYTHONSTARTUP=$HOME/.pythonrc
@@ -34,7 +43,6 @@ export LESS="$LESS -R"
 
 alias sc='tmux new-window'
 alias tm='tmux new-window'
-alias vim='nvim'
 alias vimdiff='nvim -d'
 alias h='history'
 alias view='vim -R'

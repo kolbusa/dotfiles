@@ -12,6 +12,7 @@ HOMEBREW=$HOME/$HOMEBREW_DIRNAME
 
 export PATH=$HOME/bin:$PATH
 if [ -d $HOMEBREW/ ]; then
+    HAVE_HOMEBREW=1
     export PATH=$HOMEBREW/bin:$PATH
     export MANPATH=$HOMEBREW/share/man:$MANPATH
     export INFOPATH=$HOMEBREW/share/info:$INFOPATH

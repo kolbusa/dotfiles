@@ -10,9 +10,9 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
         *) mode=replace ;;
         esac
 
-        if [[ $mode == replace && -d $HOME/$d ]]; then
-            [[ -d $BACKUP/$d ]] && rm -rf $BACKUP/$d
-            mv $HOME/$d $BACKUP/
+        if [[ "$mode" == replace ]]; then
+            rm -rf $BACKUP/$d
+            mv -f $HOME/$d $BACKUP/
         fi
     done
 done
