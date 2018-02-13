@@ -1,19 +1,15 @@
 call plug#begin()
 Plug 'tpope/vim-unimpaired'
-" Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
 Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdtree', { 'on' : 'NERDTreeToggle' }
-" Plug 'blueyed/vim-diminactive'
 Plug 'chriskempson/base16-vim'
 Plug 'flazz/vim-colorschemes'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl' ] }
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex'] }
 Plug 'gcmt/taboo.vim'
 Plug 'jceb/vim-orgmode'
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
 Plug 'johngrib/vim-game-code-break'
 Plug 'majutsushi/tagbar'
 
@@ -34,32 +30,15 @@ Plug 'majutsushi/tagbar'
 call plug#end()
 
 " appearance
+set t_Co=256
+set termguicolors
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
-" let g:diminactive_use_colorcolumn = 0
-" let g:diminactive_use_syntax = 1
-" colorscheme Tomorrow
 set background=light
 colorscheme lucius
 :LuciusWhiteHighContrast
-
-" configure airline
-" let g:airline_powerline_fonts = 1
-" let g:airline_mode_map = {
-"   \ '__' : '-',
-"   \ 'n'  : 'N',
-"   \ 'i'  : 'I',
-"   \ 'R'  : 'R',
-"   \ 'c'  : 'C',
-"   \ 'v'  : 'V',
-"   \ 'V'  : 'V',
-"   \ '' : 'V',
-"   \ 's'  : 'S',
-"   \ 'S'  : 'S',
-"   \ '' : 'S',
-"   \ }
 
 " configure nerdcommenter
 let NERDDefaultAlign='left'
@@ -110,44 +89,6 @@ set mouse=
 " status line
 set laststatus=2
 
-hi! StatusLineNC ctermbg=244 ctermfg=007 cterm=none
-hi! StatusLine ctermbg=244 ctermfg=015 cterm=none
-hi! User1 ctermfg=015 ctermbg=244 cterm=none
-
-let g:currentmode={
-    \ 'n'  : 'N ',
-    \ 'no' : 'N·Operator Pending ',
-    \ 'v'  : 'V ',
-    \ 'V'  : 'V·Line ',
-    \ '' : 'V·Block ',
-    \ 's'  : 'Select ',
-    \ 'S'  : 'S·Line ',
-    \ '' : 'S·Block ',
-    \ 'i'  : 'I ',
-    \ 'R'  : 'R ',
-    \ 'Rv' : 'V·Replace ',
-    \ 'c'  : 'Command ',
-    \ 'cv' : 'Vim Ex ',
-    \ 'ce' : 'Ex ',
-    \ 'r'  : 'Prompt ',
-    \ 'rm' : 'More ',
-    \ 'r?' : 'Confirm ',
-    \ '!'  : 'Shell ',
-    \ 't'  : 'Terminal '
-    \}
-
-function! ChangeStatuslineColor()
-    if (mode() =~? 'i')
-        exe 'hi! StatusLine ctermbg=071 ctermfg=015 cterm=bold'
-    elseif (mode() ==? 'r')
-        exe 'hi! StatusLine ctermbg=174 ctermfg=015 cterm=bold'
-    elseif (mode() ==? 'v' || mode() ==? '')
-        exe 'hi! StatusLine ctermbg=074 ctermfg=015 cterm=bold'
-    else
-        exe 'hi! StatusLine ctermbg=244 ctermfg=015 cterm=none'
-    endif
-    return '▏'.toupper(strpart(get(g:currentmode, mode(), ''), 0, 1)).' '
-endfunction
 
 function! GitInfo()
     let git = fugitive#head()
@@ -173,11 +114,9 @@ endfunction
 
 function! RegularStatusLine()
     set statusline=
-    set statusline+=%{ChangeStatuslineColor()}
-    set statusline+=%1*
     set statusline+=▏
     set statusline+=\ %n
-    set statusline+=▕%*%<\ %F\ %=%1*▏
+    set statusline+=▕%*%<\ %F\ %=▏
     set statusline+=%{FuncInfo()}
     set statusline+=%{GitInfo()}
     set statusline+=%{&fileencoding}
