@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/bin/bash -x
+
+trap cleanup INT
+
+function cleanup() {
+    [[ -n "$SSH_AGENT_PID" ]] && kill $SSH_AGENT_PID >/dev/null 2>&1 || true
+    del_stable_ssh_auth_sock $stable_ssh_auth_sock
+    exit
+}
 
 function get_session_env() {
     tmux show-environment -t $1 $2 2>/dev/null | cut -d= -f2-
@@ -26,7 +34,7 @@ function mk_stable_ssh_auth_sock() {
 
 function del_stable_ssh_auth_sock() {
     local ssas=$1
-    [[ -n "$ssas" ]] && rm $ssas
+    [[ -n "$ssas" ]] && rm -rf $ssas
 }
 
 if [[ "$OSTYPE" == cygwin ]]; then
@@ -81,4 +89,4 @@ while true; do
     done
 done
 
-[[ -n "$SSH_AGENT_PID" ]] && kill $SSH_AGENT_PID
+cleanup
