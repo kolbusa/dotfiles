@@ -41,8 +41,10 @@ colorscheme lucius
 :LuciusWhiteHighContrast
 
 " configure nerdcommenter
-let NERDDefaultAlign='left'
-let NERDSpaceDelims=1
+let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
+let g:NERDCommentEmptyLines = 1
+let g:NERDDefaultAlign='left'
+let g:NERDSpaceDelims=1
 
 
 " for Taboo to remember the tab names in the sessions
