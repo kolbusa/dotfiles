@@ -95,10 +95,13 @@ if [[ "$(uname -s)" == "Linux" ]]; then
     git clone --depth 1 \
         https://github.com/Linuxbrew/brew.git \
         $HOMEBREW
-    mkdir -p $HOMEBREW/Cache
-    mkdir -p $HOME/.cache
-    rm -rf $HOME/.cache/Homebrew
-    ln -sf $HOMEBREW/Cache $HOME/.cache/Homebrew
+
+    #### Taken care of in 01-overlay.sh
+    # mkdir -p $HOMEBREW/Cache
+    # mkdir -p $HOME/.cache
+    # rm -rf $HOME/.cache/Homebrew
+    # ln -sf $HOMEBREW/Cache $HOME/.cache/Homebrew
+
 fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
