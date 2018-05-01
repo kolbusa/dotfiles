@@ -7,7 +7,7 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdtree', { 'on' : 'NERDTreeToggle' }
 Plug 'chriskempson/base16-vim'
 Plug 'flazz/vim-colorschemes'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex'] }
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm'] }
 Plug 'gcmt/taboo.vim'
 Plug 'jceb/vim-orgmode'
 Plug 'johngrib/vim-game-code-break'
