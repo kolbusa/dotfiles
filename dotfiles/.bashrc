@@ -18,7 +18,7 @@ if [[ `uname -s` == "Darwin" ]]; then
     export LSCOLORS=ExfxcxdxCxegedabagacad
 else
     eval `dircolors -b`
-    alias ls='ls --color=auto -F'
+    alias ls='ls --color=auto -F --group-directories-first'
 fi
 
 unset -f which
@@ -26,7 +26,7 @@ unset -f which
 if [[ -n "$(which nvim 2> /dev/null)" ]]; then
     export VISUAL=nvim
     export EDITOR=nvim
-    alias vim='nvim'
+    alias vim=nvim
 else
     export VISUAL=vim
     export EDITOR=vim
