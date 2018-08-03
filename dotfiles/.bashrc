@@ -32,14 +32,12 @@ else
     export EDITOR=vim
 fi
 export PAGER=less
-export LESS="$LESS -R"
+export LESS="-RF"
 
 # export GREP_OPTIONS=--color
 export PYTHONSTARTUP=$HOME/.pythonrc
 
 export GIT_PROMPT_FETCH_REMOTE_STATUS=0
-
-export LESS="$LESS -R"
 
 alias sc='tmux new-window'
 alias tm='tmux new-window'

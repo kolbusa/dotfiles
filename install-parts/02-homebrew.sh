@@ -161,7 +161,9 @@ fi
     echo yes | $HOMEBREW/bin/cpan install Term::ReadKey
 
     brew install python
-    $HOMEBREW/bin/python2 -s $HOMEBREW/bin/pip2 install protobuf xlsxwriter pycodestyle
+    $HOMEBREW/bin/python2 -s $HOMEBREW/bin/pip2 install protobuf xlsxwriter pycodestyle neovim
+    brew install python3
+    $HOMEBREW/bin/python3 -s $HOMEBREW/bin/pip3 install neovim
 
     brew install mawk
     grep -qs "mawk" \
