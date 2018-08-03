@@ -1,3 +1,5 @@
+if !has("compatible")
+
 call plug#begin()
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
@@ -12,26 +14,45 @@ Plug 'gcmt/taboo.vim'
 Plug 'jceb/vim-orgmode'
 Plug 'johngrib/vim-game-code-break'
 Plug 'majutsushi/tagbar'
-
-"
-" YouCompleteMe is awesome at times but drive me nuts most of the time...
-"
-" function! BuildYCM(info)
-"   " info is a dictionary with 3 fields
-"   " - name:   name of the plugin
-"   " - status: 'installed', 'updated', or 'unchanged'
-"   " - force:  set on PlugInstall! or PlugUpdate!
-"   if a:info.status == 'installed' || a:info.force
-"     !./install.py
-"   endif
-" endfunction
-" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+Plug 'natebosch/vim-lsc'
+Plug 'petRUShka/vim-opencl'
+Plug 'https://github.intel.com/rsdubtso/vim-benchdnn.git'
 
 call plug#end()
 
+" deoplete
+let g:deoplete#enable_at_startup = 1
+
+" vim-lsc
+let g:lsc_server_commands = {
+            \ 'c' : {
+            \   'name': 'c',
+            \   'command': '/usr/local/clang-6.0.1/bin/clangd',
+            \   'enabled': v:true,
+            \   'suppress_stderr': v:true,
+            \ },
+            \ 'cpp' : {
+            \   'name': 'cpp',
+            \   'command': '/usr/local/clang-6.0.1/bin/clangd',
+            \   'enabled': v:true,
+            \   'suppress_stderr': v:true,
+            \ },
+            \ 'python': {
+            \   'name': 'python',
+            \   'command': 'pyls',
+            \   'enabled': v:true,
+            \   'suppress_stderr': v:true,
+            \ }
+            \ }
+let g:lsc_enable_autocomplete = v:true
+
+nmap <Leader>ad :LSClientAllDiagnostics<CR>:copen<CR>
+nmap <Leader>aD :cclose<CR>
+
 " appearance
 set t_Co=256
-set termguicolors
+" set termguicolors
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
@@ -43,8 +64,9 @@ colorscheme lucius
 " configure nerdcommenter
 let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
 let g:NERDCommentEmptyLines = 1
-let g:NERDDefaultAlign='left'
-let g:NERDSpaceDelims=1
+let g:NERDDefaultAlign = 'left'
+let g:NERDSpaceDelims = 1
+let g:NERDTrimTrailingWhitespace = 1
 
 
 " for Taboo to remember the tab names in the sessions
@@ -74,6 +96,8 @@ set autoindent
 set backspace=eol,start,indent
 set cino=:0
 
+set foldopen=mark,percent,quickfix,search,tag,undo
+
 set incsearch
 set ignorecase
 set smartcase
@@ -91,6 +115,7 @@ set mouse=
 " status line
 set laststatus=2
 
+let unicode_status_line=0
 
 function! GitInfo()
     let git = fugitive#head()
@@ -116,9 +141,24 @@ endfunction
 
 function! RegularStatusLine()
     set statusline=
-    set statusline+=▏
+    " Advanced unicode version
+    " set statusline+=▏
+    " set statusline+=\ %n
+    " set statusline+=▕%*%<\ %F\ %=▏
+    " set statusline+=%{FuncInfo()}
+    " set statusline+=%{GitInfo()}
+    " set statusline+=%{&fileencoding}
+    " set statusline+=│
+    " set statusline+=%{&fileformat}
+    " set statusline+=│
+    " set statusline+=%M%R%Y
+    " set statusline+=│
+    " set statusline+=%l/%L(%P),%c
+    " Unicode version
     set statusline+=\ %n
-    set statusline+=▕%*%<\ %F\ %=▏
+    set statusline+=│
+    set statusline+=%*%<\ %F\ %=
+    set statusline+=│
     set statusline+=%{FuncInfo()}
     set statusline+=%{GitInfo()}
     set statusline+=%{&fileencoding}
@@ -188,8 +228,11 @@ if has("nvim")
   tnoremap <C-l> <C-\><C-N><C-w>l
 
   " I like relative numbering when in normal mode.
-  autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
+  autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 nonumber norelativenumber
+  " autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
 
   " Prefer Neovim terminal insert mode to normal mode.
   autocmd BufEnter term://* startinsert
+endif
+
 endif
