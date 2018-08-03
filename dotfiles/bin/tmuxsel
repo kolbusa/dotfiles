@@ -22,7 +22,8 @@ function mk_stable_ssh_auth_sock() {
             ssas=$(get_session_env $ssid $sas)
             echo ssas=$ssas
         else
-            ssas=$(mktemp -t $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
+            STABLE_SOCKETS_DIR=$HOME/.ssh_auth_socks
+            ssas=$(mktemp -p $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
         fi
 
         [[ -n "$ssas" ]] && # link the socket from the env to the stable one
