@@ -109,7 +109,7 @@ set scrolloff=3
 set listchars+=precedes:<,extends:>
 set showmatch
 
-set mouse=
+set mouse=nv
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
