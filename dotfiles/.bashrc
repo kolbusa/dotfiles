@@ -1,53 +1,57 @@
 [[ -z "$PS1" ]] && return
 [[ -n "$BASHRC_SOURCED" ]] && return
 
-# TODO: shell level
+###### Environment setup -- try to do this once to make subshells start faster
+if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
+    export BASHRC_ENV_SET_UP=1
 
+    if [[ "$OSTYPE" =~ linux ]]; then
+        HOMEBREW_DIRNAME=.linuxbrew
+        eval `dircolors -b`
+        alias ls='ls --color=auto -F --group-directories-first'
+    else
+        HOMEBREW_DIRNAME=.homebrew
+        alias ls='ls -G'
+        export LSCOLORS=ExfxcxdxCxegedabagacad
+    fi
+    HOMEBREW=$HOME/$HOMEBREW_DIRNAME
+
+    if [[ -z "$BASH_COMPLETION_DIR" ]]; then
+        __completion=$HOMEBREW/etc/bash_completion
+        [[ -f $__completion ]] && source $__completion
+    fi
+
+    if [[ -n "$(which nvim 2> /dev/null)" ]]; then
+        export VISUAL=nvim
+        export EDITOR=nvim
+    else
+        export VISUAL=vim
+        export EDITOR=vim
+    fi
+
+    export PAGER=less
+    export LESS="-RF"
+
+    export PYTHONSTARTUP=$HOME/.pythonrc
+fi
+
+###### PS1 setup
+# TODO: shell level in PS1
 PS1_PRE="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
 PS1_POST="]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 if [[ -f $HOME/.git-prompt.sh ]]; then
+    source $HOME/.git-prompt.sh
     export GIT_PS1_SHOWCOLORHINTS=1
     export PROMPT_COMMAND="$PROMPT_COMMAND; __git_ps1 \"$PS1_PRE\" \"$PS1_POST\""
 else
     export PS1="$PS1_PRE$PS1_POST"
 fi
 
-if [[ "$(uname -s)" == "Linux" ]]; then
-    HOMEBREW_DIRNAME=.linuxbrew
-else
-    HOMEBREW_DIRNAME=.homebrew
-fi
-HOMEBREW=$HOME/$HOMEBREW_DIRNAME
-__completion=$HOMEBREW/etc/bash_completion
-[[ -f $__completion ]] && source $__completion
-
-if [[ `uname -s` == "Darwin" ]]; then
-    alias ls='ls -G'
-    export LSCOLORS=ExfxcxdxCxegedabagacad
-else
-    eval `dircolors -b`
-    alias ls='ls --color=auto -F --group-directories-first'
-fi
-
+###### Aliases
 unset -f which
 
-if [[ -n "$(which nvim 2> /dev/null)" ]]; then
-    export VISUAL=nvim
-    export EDITOR=nvim
-    alias vim=nvim
-else
-    export VISUAL=vim
-    export EDITOR=vim
-fi
-export PAGER=less
-export LESS="-RF"
-
-# export GREP_OPTIONS=--color
-export PYTHONSTARTUP=$HOME/.pythonrc
-
-export GIT_PROMPT_FETCH_REMOTE_STATUS=0
-
+[[ "$VISUAL" == "nvim" ]] && alias vim=nvim
 alias sc='tmux new-window'
 alias tm='tmux new-window'
 alias vimdiff='nvim -d'
@@ -67,7 +71,7 @@ alias it='git'
 alias gi='git'
 alias greo='grep'
 
-# Conversion utils
+###### Conversion utils
 sanitize_hex() { echo $* | sed 's/0x//' | tr '[:lower:]' '[:upper:]'; }
 d2h () { echo "obase=16; $*" | bc; }
 h2d () { echo "ibase=16; $(sanitize_hex $*)" | bc; }
@@ -78,6 +82,7 @@ b2h () { echo "obase=16;ibase=2; $*" | bc; }
 h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' $*; }
 float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
 
+###### Configure the shell
 shopt -s extglob progcomp histappend checkwinsize cdspell
 shopt -s checkhash no_empty_cmd_completion hostcomplete
 [[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
@@ -88,4 +93,4 @@ HISTSIZE=100000
 
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
-BASHRC_SOURCED=1
+BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...

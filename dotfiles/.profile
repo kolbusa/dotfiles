@@ -26,4 +26,4 @@ if [ -f $HOME/.bashrc -a -n "$BASH" ]; then
     source $HOME/.bashrc
 fi
 
-PROFILE_SOURCED=1
+PROFILE_SOURCED=1 # may be needed by a subsequent shell
