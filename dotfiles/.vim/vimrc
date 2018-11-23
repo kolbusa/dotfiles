@@ -15,9 +15,7 @@ if has("nvim")
     Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
     Plug 'natebosch/vim-lsc'
 endif
-" Plug 'petRUShka/vim-opencl'
-Plug 'https://github.intel.com/rsdubtso/vim-benchdnn.git'
-
+silent! source plugins.local
 call plug#end()
 
 " deoplete
