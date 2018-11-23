@@ -1,8 +1,17 @@
 [[ -z "$PS1" ]] && return
 [[ -n "$BASHRC_SOURCED" ]] && return
 
-export PS1="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W]\033[0m\r\n\\$ "
+# TODO: shell level
+
+PS1_PRE="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
+PS1_POST="]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
+if [[ -f $HOME/.git-prompt.sh ]]; then
+    export GIT_PS1_SHOWCOLORHINTS=1
+    export PROMPT_COMMAND="$PROMPT_COMMAND; __git_ps1 \"$PS1_PRE\" \"$PS1_POST\""
+else
+    export PS1="$PS1_PRE$PS1_POST"
+fi
 
 if [[ "$(uname -s)" == "Linux" ]]; then
     HOMEBREW_DIRNAME=.linuxbrew

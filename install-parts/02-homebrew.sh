@@ -179,7 +179,6 @@ fi
     brew install subversion --with-perl
     echo yes | $HOMEBREW/bin/cpan install SVN::Core
     brew install git
-    brew install bash-git-prompt
 
     brew install cmake
     brew install llvm
