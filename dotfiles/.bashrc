@@ -33,11 +33,14 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
     export LESS="-RF"
 
     export PYTHONSTARTUP=$HOME/.pythonrc
+
+    export BASE_SHLVL=$SHLVL
 fi
 
 ###### PS1 setup
 # TODO: shell level in PS1
-PS1_PRE="\033[0m[\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
+REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
+PS1_PRE="\033[0m[($REL_SHLVL) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
 PS1_POST="]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 if [[ -f $HOME/.git-prompt.sh ]]; then
