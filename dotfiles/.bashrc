@@ -63,6 +63,9 @@ alias vmi='vim'
 alias ivm='vmi'
 alias dc='cd'
 alias mkdr='mkdir'
+alias it='git'
+alias gi='git'
+alias greo='grep'
 
 # Conversion utils
 sanitize_hex() { echo $* | sed 's/0x//' | tr '[:lower:]' '[:upper:]'; }
@@ -72,6 +75,8 @@ d2b () { echo "obase=2; $*" | bc; }
 b2d () { echo "ibase=2; $*" | bc; }
 h2b () { echo "ibase=16;obase=2; $(sanitize_hex $*)" | bc; }
 b2h () { echo "obase=16;ibase=2; $*" | bc; }
+h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' $*; }
+float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
 
 shopt -s extglob progcomp histappend checkwinsize cdspell
 shopt -s checkhash no_empty_cmd_completion hostcomplete
