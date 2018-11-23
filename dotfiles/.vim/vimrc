@@ -1,22 +1,21 @@
 if !has("compatible")
 
 call plug#begin()
+
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
-Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdtree', { 'on' : 'NERDTreeToggle' }
-Plug 'chriskempson/base16-vim'
-Plug 'flazz/vim-colorschemes'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm'] }
 Plug 'gcmt/taboo.vim'
 Plug 'jceb/vim-orgmode'
-Plug 'johngrib/vim-game-code-break'
-Plug 'majutsushi/tagbar'
-Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
-Plug 'natebosch/vim-lsc'
-Plug 'petRUShka/vim-opencl'
+Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
+if has("nvim")
+    Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
+    Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+    Plug 'natebosch/vim-lsc'
+endif
+" Plug 'petRUShka/vim-opencl'
 Plug 'https://github.intel.com/rsdubtso/vim-benchdnn.git'
 
 call plug#end()
@@ -25,41 +24,50 @@ call plug#end()
 let g:deoplete#enable_at_startup = 1
 
 " vim-lsc
-let g:lsc_server_commands = {
-            \ 'c' : {
-            \   'name': 'c',
-            \   'command': '/usr/local/clang-6.0.1/bin/clangd',
-            \   'enabled': v:true,
-            \   'suppress_stderr': v:true,
-            \ },
-            \ 'cpp' : {
-            \   'name': 'cpp',
-            \   'command': '/usr/local/clang-6.0.1/bin/clangd',
-            \   'enabled': v:true,
-            \   'suppress_stderr': v:true,
-            \ },
-            \ 'python': {
-            \   'name': 'python',
-            \   'command': 'pyls',
-            \   'enabled': v:true,
-            \   'suppress_stderr': v:true,
-            \ }
-            \ }
-let g:lsc_enable_autocomplete = v:true
+if has("nvim")
+    let g:lsc_server_commands = {
+                \ 'c' : {
+                \   'name': 'c',
+                \   'command': '/nfs/site/disks/hal9000/rsdubtso/work/tools/clang/7.0.0/bin/clangd',
+                \   'enabled': v:true,
+                \   'suppress_stderr': v:true,
+                \ },
+                \ 'cpp' : {
+                \   'name': 'cpp',
+                \   'command': '/nfs/site/disks/hal9000/rsdubtso/work/tools/clang/7.0.0/bin/clangd',
+                \   'enabled': v:true,
+                \   'suppress_stderr': v:true,
+                \ },
+                \ 'python': {
+                \   'name': 'python',
+                \   'command': 'pyls',
+                \   'enabled': v:true,
+                \   'suppress_stderr': v:true,
+                \ }
+                \ }
+    let g:lsc_enable_autocomplete = v:true
+endif
 
 nmap <Leader>ad :LSClientAllDiagnostics<CR>:copen<CR>
 nmap <Leader>aD :cclose<CR>
 
+" python-mode
+let g:pymode_syntax = 0
+
 " appearance
 set t_Co=256
-" set termguicolors
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
 set background=light
-colorscheme lucius
-:LuciusWhiteHighContrast
+if has("nvim")
+    set termguicolors
+    colorscheme lucius-with-bold
+    :LuciusWhiteHighContrast
+else
+    colorscheme delek
+endif
 
 " configure nerdcommenter
 let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
@@ -187,11 +195,13 @@ let g:tagbar_show_linenumbers = 0
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " sensible-like keybinding to toggle hls
 nnoremap <C-l> :set invhls<CR>
+nnoremap gW :bw<CR>
 nnoremap gn :bn<CR>
 nnoremap gp :bp<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Check for modified files (https://github.com/neovim/neovim/issues/2127)
+if has("nvim")
 augroup AutoSwap
         autocmd!
         autocmd SwapExists *  call AS_HandleSwapfile(expand('<afile>:p'), v:swapname)
@@ -214,6 +224,7 @@ augroup checktime
         autocmd BufEnter,CursorHold,CursorHoldI,CursorMoved,CursorMovedI,FocusGained,BufEnter,FocusLost,WinLeave * checktime
     endif
 augroup END
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Terminal
