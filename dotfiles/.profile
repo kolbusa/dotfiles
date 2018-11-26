@@ -1,6 +1,11 @@
 [ "$PROFILE_SOURCED" = "1" ] && return
 
-export LANG=en_US.UTF8
+if [ "$OSTYPE" == "Linux" ]; then
+    export LANG=en_US.UTF8
+else
+    # Darwin
+    export LANG=en_US.UTF-8
+fi
 export LC_COLLATE=C
 
 if [[ "$(uname -s)" == "Linux" ]]; then

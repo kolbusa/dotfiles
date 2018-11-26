@@ -10,6 +10,7 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
         eval `dircolors -b`
         alias ls='ls --color=auto -F --group-directories-first'
     else
+        # Darwin
         HOMEBREW_DIRNAME=.homebrew
         alias ls='ls -G'
         export LSCOLORS=ExfxcxdxCxegedabagacad
