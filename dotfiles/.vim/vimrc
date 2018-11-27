@@ -18,11 +18,15 @@ endif
 silent! source plugins.local
 call plug#end()
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
-
-" vim-lsc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" neovim-specific plugins
 if has("nvim")
+    " deoplete
+    let g:deoplete#enable_at_startup = 1
+
+    " vim-lsc
+    let g:lsc_auto_map = v:true
+    let g:lsc_enable_autocomplete = v:true
     let g:lsc_server_commands = {
                 \ 'c' : {
                 \   'name': 'c',
@@ -43,15 +47,15 @@ if has("nvim")
                 \   'suppress_stderr': v:true,
                 \ }
                 \ }
-    let g:lsc_enable_autocomplete = v:true
+    " nmap <Leader>ad :LSClientAllDiagnostics<CR>:copen<CR>
+    " nmap <Leader>aD :cclose<CR>
+
+    " python-mode
+    let g:pymode_syntax = 0
 endif
 
-nmap <Leader>ad :LSClientAllDiagnostics<CR>:copen<CR>
-nmap <Leader>aD :cclose<CR>
 
-" python-mode
-let g:pymode_syntax = 0
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " appearance
 set t_Co=256
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
@@ -67,6 +71,7 @@ else
     colorscheme delek
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure nerdcommenter
 let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
 let g:NERDCommentEmptyLines = 1
@@ -74,18 +79,21 @@ let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure Taboo
+set sessionoptions+=tabpages,globals " save tab names in session files
 
-" for Taboo to remember the tab names in the sessions
-set sessionoptions+=tabpages,globals
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure figutive to use familiar key bindings
 nmap <Leader>gb :Gblame<CR>
 nmap <Leader>gD :Gdiff<CR>
 
-" youcompleteme / completion in general
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure autocompletion
 set completeopt-=preview
 
-" behavior
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure vim behavior
 set hidden
 set wildmode=longest:full,list
 set tags=tags,./tags,../tags,../../tags,../../../tags,../../../../tags,../../../../../tags
@@ -225,7 +233,7 @@ augroup END
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Terminal
+" neovim terminal mode
 if has("nvim")
   " Make escape work in the Neovim terminal.
   tnoremap <Esc> <C-\><C-n>
