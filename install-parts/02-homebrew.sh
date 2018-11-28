@@ -79,8 +79,9 @@ if [[ -n "$OVERLAY" ]]; then
     mkdir -p $HOMEBREW_OVERLAY
     ln -sf $HOMEBREW_OVERLAY $HOMEBREW
 else
-    rm -rf $HOMEBREW
-    mkdir -p $HOMEBREW
+    # rm -rf $HOMEBREW
+    # mkdir -p $HOMEBREW
+    true
 fi
 
 ###############################################################################
@@ -104,13 +105,13 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 
 fi
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-    # TODO
-    git clone --depth 1 \
-        https://github.com/Homebrew/brew.git \
-        $HOMEBREW
-fi
-
+# if [[ "$(uname -s)" == "Darwin" ]]; then
+#     # TODO
+#     git clone --depth 1 \
+#         https://github.com/Homebrew/brew.git \
+#         $HOMEBREW
+# fi
+#
 (
     unset LD_LIBRARY_PATH
     export PATH=$HOMEBREW/bin:$PATH

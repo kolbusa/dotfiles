@@ -17,8 +17,7 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     done
 done
 
-# TODO: support bash version w/o associative arrays
-declare -A dotfiles_seen
+dotfiles_seen=""
 for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     [[ -d "$dfd" ]] || continue
     dfd=$(realpath $dfd)
@@ -26,8 +25,9 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
         d=$(dirname $f)
 
         # EXTRA_DOTFILES take precedence
-        [[ -n "${dotfiles_seen[$f]}" ]] && continue
-        dotfiles_seen[$f]=1
+        # XXX: this is a workaround for lack of associative arrays in macOS's bash 3.x
+        grep -fqs "@$f@" <<< "$dotfiles_seen" && continue
+        dotfiles_seen="$dotfiles_seen@$f@"
 
         # TODO: clean up
         suffix=''
