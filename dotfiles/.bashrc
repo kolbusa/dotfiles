@@ -8,11 +8,9 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
     if [[ "$OSTYPE" =~ linux ]]; then
         HOMEBREW_DIRNAME=.linuxbrew
         eval `dircolors -b`
-        alias ls='ls --color=auto -F --group-directories-first'
     else
         # Darwin
         HOMEBREW_DIRNAME=.homebrew
-        alias ls='ls -G'
         export LSCOLORS=ExfxcxdxCxegedabagacad
     fi
     HOMEBREW=$HOME/$HOMEBREW_DIRNAME
@@ -41,7 +39,7 @@ fi
 ###### PS1 setup
 # TODO: shell level in PS1
 REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
-PS1_PRE="\033[0m[($REL_SHLVL) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
+PS1_PRE="\033[0m[($REL_SHLVL) (bg: \j) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
 PS1_POST="]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 if [[ -f $HOME/.git-prompt.sh ]]; then
@@ -54,6 +52,13 @@ fi
 
 ###### Aliases
 unset -f which
+
+if [[ "$OSTYPE" =~ linux ]]; then
+    alias ls='ls --color=auto -F --group-directories-first'
+else
+    # Darwin
+    alias ls='ls -G'
+fi
 
 [[ "$VISUAL" == "nvim" ]] && alias vim=nvim
 alias sc='tmux new-window'

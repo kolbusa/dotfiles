@@ -1,7 +1,6 @@
 if !has("compatible")
 
 call plug#begin()
-
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
@@ -14,13 +13,17 @@ if has("nvim")
     Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
     Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
     Plug 'natebosch/vim-lsc'
+    Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown'] }
 endif
-silent! source plugins.local
+silent! source ~/.vim/plugins.local
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " neovim-specific plugins
 if has("nvim")
+    " python path
+    let g:python_host_prog = '~/.linuxbrew/bin/python2'
+
     " deoplete
     let g:deoplete#enable_at_startup = 1
 
@@ -30,13 +33,13 @@ if has("nvim")
     let g:lsc_server_commands = {
                 \ 'c' : {
                 \   'name': 'c',
-                \   'command': '/nfs/site/disks/hal9000/rsdubtso/work/tools/clang/7.0.0/bin/clangd',
+                \   'command': 'clangd',
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ },
                 \ 'cpp' : {
                 \   'name': 'cpp',
-                \   'command': '/nfs/site/disks/hal9000/rsdubtso/work/tools/clang/7.0.0/bin/clangd',
+                \   'command': 'clangd',
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ },
@@ -57,18 +60,18 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " appearance
-set t_Co=256
+" set t_Co=256
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
 set background=light
 if has("nvim")
-    set termguicolors
+    " set termguicolors
     colorscheme lucius-with-bold
     :LuciusWhiteHighContrast
 else
-    colorscheme delek
+    colorscheme default
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -123,7 +126,10 @@ set scrolloff=3
 set listchars+=precedes:<,extends:>
 set showmatch
 
-set mouse=nv
+set foldmethod=syntax
+set foldcolumn=4
+
+set mouse=nvi
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
@@ -202,7 +208,7 @@ let g:tagbar_show_linenumbers = 0
 " sensible-like keybinding to toggle hls
 nnoremap <C-l> :set invhls<CR>
 nnoremap gW :bw<CR>
-nnoremap gn :bn<CR>
+nnoremap gb :bn<CR>
 nnoremap gp :bp<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -251,5 +257,7 @@ if has("nvim")
   " Prefer Neovim terminal insert mode to normal mode.
   autocmd BufEnter term://* startinsert
 endif
+
+silent! source ~/.vim/vimrc.local
 
 endif

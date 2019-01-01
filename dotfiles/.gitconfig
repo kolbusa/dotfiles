@@ -27,3 +27,5 @@
 	rebase = true
 [diff]
 	algorithm = histogram
+[help]
+	autocorrect = 10
