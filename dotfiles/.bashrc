@@ -38,7 +38,7 @@ fi
 ###### PS1 setup
 # TODO: shell level in PS1
 REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
-PS1_PRE="\033[0m[($REL_SHLVL) (bg: \j) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
+PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
 PS1_POST="]\033[0m\r\n\\$ "
 export PROMPT_COMMAND="history -a"
 if [[ -f $HOME/.git-prompt.sh ]]; then
