@@ -18,6 +18,8 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
     fi
 
     if [[ -n "$(which nvim 2> /dev/null)" ]]; then
+        # XXX this always finds ~/bin/nvim in my case -- hence the fix in
+        # ~/bin/nvim to run vim
         export VISUAL=nvim
         export EDITOR=nvim
     else

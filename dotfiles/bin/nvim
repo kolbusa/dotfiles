@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ "$OSTYPE" =~ linux ]]; then
+    if [[ -n "${VIRTUAL_ENV}" ]]; then
+        export PATH="$(echo $PATH| sed "s:${VIRTUAL_ENV}/bin\:\?::g")"
+        unset VIRTUAL_ENV
+        hash -r 2>/dev/null
+    fi
+
+    export MANPATH=/nfs/pdx/home/rsdubtso/.linuxbrew/share/man:$MANPATH
+    export PATH=/nfs/pdx/home/rsdubtso/.linuxbrew/bin:$PATH
+
+    exec ~/.linuxbrew/bin/nvim "$@"
+else
+    exec vim "$@"
+fi
