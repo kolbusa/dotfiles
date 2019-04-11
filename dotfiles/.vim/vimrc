@@ -5,9 +5,11 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm'] }
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
 Plug 'gcmt/taboo.vim'
 Plug 'jceb/vim-orgmode'
+Plug 'tpope/vim-markdown'
+Plug 'christoomey/vim-conflicted'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 if has("nvim")
     Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
@@ -28,7 +30,7 @@ if has("nvim")
     let g:deoplete#enable_at_startup = 1
 
     " vim-lsc
-    let g:lsc_auto_map = v:true
+    let g:lsc_auto_map = {'defaults': v:true, 'ShowHover': ''}
     let g:lsc_enable_autocomplete = v:true
     let g:lsc_server_commands = {
                 \ 'c' : {
@@ -77,7 +79,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure nerdcommenter
 let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
-let g:NERDCommentEmptyLines = 1
+let g:NERDCommentEmptyLines = 0
 let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
@@ -94,6 +96,10 @@ nmap <Leader>gD :Gdiff<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure autocompletion
 set completeopt-=preview
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" markdown
+let g:vim_markdown_math=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure vim behavior
@@ -261,3 +267,4 @@ endif
 silent! source ~/.vim/vimrc.local
 
 endif
+
