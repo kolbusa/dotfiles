@@ -6,14 +6,11 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
     export BASHRC_ENV_SET_UP=1
 
     if [[ "$OSTYPE" =~ linux ]]; then
-        HOMEBREW_DIRNAME=.linuxbrew
-        eval `dircolors -b`
+        HOMEBREW=$(readlink -f $HOME/.linuxbrew)
     else
         # Darwin
-        HOMEBREW_DIRNAME=.homebrew
-        export LSCOLORS=ExfxcxdxCxegedabagacad
+        HOMEBREW=$HOME/.homebrew
     fi
-    HOMEBREW=$HOME/$HOMEBREW_DIRNAME
 
     if [[ -z "$BASH_COMPLETION_DIR" ]]; then
         __completion=$HOMEBREW/etc/bash_completion
@@ -53,11 +50,14 @@ fi
 ###### Aliases
 unset -f which
 
-if [[ "$OSTYPE" =~ linux ]]; then
+if ls --color=auto &>/dev/null; then
+    # Linux or GNU ls
     alias ls='ls --color=auto -F --group-directories-first'
+    eval `dircolors -b` # assumes that dircolors is always available
 else
     # Darwin
     alias ls='ls -G'
+    export LSCOLORS=ExfxcxdxCxegedabagacad
 fi
 
 [[ "$VISUAL" == "nvim" ]] && alias vim=nvim

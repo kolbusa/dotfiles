@@ -1,9 +1,11 @@
 #!/bin/bash
 
-for _brew_bin_path in $HOME/.homebrew/bin $HOME/.linuxbrew/bin; do
-    [[ -d "$_brew_bin_path" ]] && break
-done
-export PATH="$(echo $PATH | sed "s:$_brew_bin_path\:\?::g")"
-unset _brew_bin_path
-
-# "$@"
+if [[ -z "$HOMEBREW" ]]; then
+    echo "*** ERROR: HOMEBREW is not set. Aborting."
+else
+    candidate_paths="$HOMEBREW/bin $HOMEBREW/sbin"
+    for _brew_bin_path in $candidate_paths; do
+        export PATH="$(echo $PATH | sed "s:$_brew_bin_path\:\?::g")"
+    done
+    unset _brew_bin_path
+fi

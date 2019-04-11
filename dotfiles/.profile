@@ -9,18 +9,24 @@ fi
 export LC_COLLATE=C
 
 if [[ "$(uname -s)" == "Linux" ]]; then
-    HOMEBREW_DIRNAME=.linuxbrew
+    HOMEBREW=$(readlink -f $HOME/.linuxbrew)
 else
-    HOMEBREW_DIRNAME=.homebrew
+    HOMEBREW=$HOME/.homebrew
 fi
-HOMEBREW=$HOME/$HOMEBREW_DIRNAME
 
 export PATH=$HOME/bin:$PATH
 if [ -d $HOMEBREW/ ]; then
     HAVE_HOMEBREW=1
     export PATH=$HOMEBREW/bin:$PATH
+    export PATH=$HOMEBREW/sbin:$PATH
     export MANPATH=$HOMEBREW/share/man:$MANPATH
     export INFOPATH=$HOMEBREW/share/info:$INFOPATH
+    for u in coreutils findutils gnu-sed; do
+        gnubin=$HOMEBREW/opt/$u/libexec/gnubin
+        if [ -d $gnubin ]; then
+            export PATH=$gnubin:$PATH
+        fi
+    done
 fi
 
 if [ -f $HOME/.profile.local ]; then
