@@ -33,6 +33,7 @@ function mk_stable_ssh_auth_sock() {
     if [[ -n "$sas" ]]; then
         if [[ "$ssid" == "__new__" ]]; then
             STABLE_SOCKETS_DIR=$HOME/.ssh_auth_socks
+            mkdir -p $STABLE_SOCKETS_DIR
             ssas=$(mktemp -p $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
             log "SSAS: created a new ssas=$ssas"
         else
