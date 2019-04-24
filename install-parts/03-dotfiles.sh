@@ -26,7 +26,7 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
 
         # EXTRA_DOTFILES take precedence
         # XXX: this is a workaround for lack of associative arrays in macOS's bash 3.x
-        grep -fqs "@$f@" <<< "$dotfiles_seen" && continue
+        grep -Fqs "@$f@" <<< "$dotfiles_seen" && continue
         dotfiles_seen="$dotfiles_seen@$f@"
 
         # TODO: clean up
