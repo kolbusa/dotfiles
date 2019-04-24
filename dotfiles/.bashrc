@@ -5,14 +5,7 @@
 if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
     export BASHRC_ENV_SET_UP=1
 
-    if [[ "$OSTYPE" =~ linux ]]; then
-        HOMEBREW=$(readlink -f $HOME/.linuxbrew)
-    else
-        # Darwin
-        HOMEBREW=$HOME/.homebrew
-    fi
-
-    if [[ -z "$BASH_COMPLETION_DIR" ]]; then
+    if [[ "$HAVE_HOMEBREW" == 1 && -z "$BASH_COMPLETION_DIR" ]]; then
         __completion=$HOMEBREW/etc/bash_completion
         [[ -f $__completion ]] && source $__completion
     fi

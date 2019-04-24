@@ -16,7 +16,8 @@ fi
 
 export PATH=$HOME/bin:$PATH
 if [ -d $HOMEBREW/ ]; then
-    HAVE_HOMEBREW=1
+    export HOMEBREW
+    export HAVE_HOMEBREW=1
     export PATH=$HOMEBREW/bin:$PATH
     export PATH=$HOMEBREW/sbin:$PATH
     export MANPATH=$HOMEBREW/share/man:$MANPATH
@@ -27,6 +28,9 @@ if [ -d $HOMEBREW/ ]; then
             export PATH=$gnubin:$PATH
         fi
     done
+else
+    export HAVE_HOMEBREW=0
+    unset HOMEBREW
 fi
 
 if [ -f $HOME/.profile.local ]; then
