@@ -245,6 +245,10 @@ augroup END
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" XXX: find a better place for this
+autocmd Filetype c,cpp set comments^=:///
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " neovim terminal mode
 if has("nvim")
   " Make escape work in the Neovim terminal.
