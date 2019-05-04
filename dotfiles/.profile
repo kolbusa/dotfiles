@@ -22,7 +22,7 @@ if [ -d $HOMEBREW/ ]; then
     export PATH=$HOMEBREW/sbin:$PATH
     export MANPATH=$HOMEBREW/share/man:$MANPATH
     export INFOPATH=$HOMEBREW/share/info:$INFOPATH
-    for u in coreutils findutils gnu-sed; do
+    for u in coreutils findutils gnu-sed gnu-tar; do
         gnubin=$HOMEBREW/opt/$u/libexec/gnubin
         if [ -d $gnubin ]; then
             export PATH=$gnubin:$PATH
