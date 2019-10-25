@@ -1,28 +1,28 @@
 if !has("compatible")
 
 call plug#begin()
-Plug 'tpope/vim-unimpaired'
+" Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-speeddating'
+" Plug 'tpope/vim-speeddating'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
-Plug 'gcmt/taboo.vim'
-Plug 'jceb/vim-orgmode'
-Plug 'tpope/vim-markdown'
-Plug 'christoomey/vim-conflicted'
-Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
-if has("nvim")
-    Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
-    Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+" Plug 'gcmt/taboo.vim'
+" Plug 'jceb/vim-orgmode'
+" Plug 'tpope/vim-markdown'
+" Plug 'christoomey/vim-conflicted'
+" Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
+Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
+if has("nvim") || v:version > 800
+    " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
+    " Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
     Plug 'natebosch/vim-lsc'
-    Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown'] }
+    " Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown'] }
 endif
 silent! source ~/.vim/plugins.local
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" neovim-specific plugins
-if has("nvim")
+if has("nvim") || v:version > 800
     " python path
     let g:python_host_prog = '~/.linuxbrew/bin/python2'
 
@@ -30,18 +30,22 @@ if has("nvim")
     let g:deoplete#enable_at_startup = 1
 
     " vim-lsc
+    let g:clangd_path = $CLANGD_PATH
+    if g:clangd_path == ''
+        let g:clangd_path = 'clangd'
+    endif
     let g:lsc_auto_map = {'defaults': v:true, 'ShowHover': ''}
     let g:lsc_enable_autocomplete = v:true
     let g:lsc_server_commands = {
                 \ 'c' : {
                 \   'name': 'c',
-                \   'command': 'clangd',
+                \   'command': g:clangd_path,
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ },
                 \ 'cpp' : {
                 \   'name': 'cpp',
-                \   'command': 'clangd',
+                \   'command': g:clangd_path,
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ },
@@ -52,8 +56,6 @@ if has("nvim")
                 \   'suppress_stderr': v:true,
                 \ }
                 \ }
-    " nmap <Leader>ad :LSClientAllDiagnostics<CR>:copen<CR>
-    " nmap <Leader>aD :cclose<CR>
 
     " python-mode
     let g:pymode_syntax = 0
@@ -67,12 +69,12 @@ au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
-set background=light
-if has("nvim")
-    " set termguicolors
+if has("nvim") || v:version > 800
     colorscheme lucius-with-bold
+    set background=light
     :LuciusWhiteHighContrast
 else
+    set background=dark
     colorscheme default
 endif
 
@@ -83,6 +85,13 @@ let g:NERDCommentEmptyLines = 0
 let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure Clang-format
+let g:clang_format#auto_formatexpr=0
+let g:clang_format#auto_format_on_insert_leave=0
+let g:clang_format#auto_format=0
+let g:clang_format#command='clang-format-8'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure Taboo
@@ -117,7 +126,7 @@ set expandtab
 set formatoptions=tcqo2nr
 set autoindent
 set backspace=eol,start,indent
-set cino=:0
+set cino=:0:l1
 
 set foldopen=mark,percent,quickfix,search,tag,undo
 
@@ -136,6 +145,7 @@ set foldmethod=syntax
 set foldcolumn=4
 
 set mouse=nvi
+set clipboard=unnamed
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
@@ -144,12 +154,16 @@ set laststatus=2
 let unicode_status_line=0
 
 function! GitInfo()
-    let git = fugitive#head()
-    if git != ''
-        return '↑'.git.'│'
-    else
+    try
+        let git = fugitive#head()
+        if git != ''
+            return '↑'.git.'│'
+        else
+            return ''
+        endif
+    catch
         return ''
-    endif
+    endtry
 endfunction
 
 function! FuncInfo()

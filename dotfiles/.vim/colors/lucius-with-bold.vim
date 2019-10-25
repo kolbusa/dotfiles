@@ -326,7 +326,7 @@ for s:item in s:normal_items + s:bold_items + s:underline_items + s:undercurl_it
                 \ . " ctermfg=NONE ctermbg=NONE cterm=none term=none"
 endfor
 
-let g:colors_name="lucius"
+let g:colors_name="lucius-with-bold"
 
 
 " ----------------------------------------------------------------------------
