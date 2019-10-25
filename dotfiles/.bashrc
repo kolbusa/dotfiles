@@ -95,6 +95,14 @@ HISTFILE=$HOME/.my_bash_history
 HISTFILESIZE=100000
 HISTSIZE=100000
 
+###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
+for ver in '' -9 -8 -7; do
+    clangd__=$(type -P clangd$ver)
+    clang_format__=$(type -P clang-format$ver)
+    [[ -z "$CLANGD_PATH" && -n "$clangd__" ]] && export CLANGD_PATH="$clangd__"
+    [[ -z "$CLANG_FORMAT" && -n "$clang_format__" ]] && export CLANG_FORMAT="$clang_format__"
+done
+
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
