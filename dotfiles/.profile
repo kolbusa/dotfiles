@@ -8,14 +8,17 @@ else
 fi
 export LC_COLLATE=C
 
+export PATH=$HOME/bin:$PATH
+
 if [[ "$(uname -s)" == "Linux" ]]; then
     HOMEBREW=$(readlink -f $HOME/.linuxbrew)
+    avx2_supported=$(cat /proc/cpuinfo | grep -qse "avx2" && echo 1 || echo 0)
 else
     HOMEBREW=$HOME/.homebrew
+    avx2_supported=1
 fi
 
-export PATH=$HOME/bin:$PATH
-if [ -d $HOMEBREW/ ]; then
+if [ "$avx2_supported" = "1" -a -d $HOMEBREW/ ]; then
     export HOMEBREW
     export HAVE_HOMEBREW=1
     export PATH=$HOMEBREW/bin:$PATH

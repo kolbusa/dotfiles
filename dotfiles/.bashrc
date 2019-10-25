@@ -29,7 +29,12 @@ if [[ -z "$BASHRC_ENV_SET_UP" ]]; then
 fi
 
 ###### PS1 setup
-# TODO: shell level in PS1
+function __hidebrew_ps1() {
+    [[ -n "$HIDEBREW_OLD_PATH" ]] && PS1="\033[0;35m(hidebrew)\033[0m $PS1"
+}
+function __modules_ps1() {
+    [[ -n "$LOADEDMODULES" ]] && PS1="\033[0;91m<$LOADEDMODULES>\033[0m $PS1"
+}
 REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
 PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) \033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
 PS1_POST="]\033[0m\r\n\\$ "
@@ -37,7 +42,7 @@ export PROMPT_COMMAND="history -a"
 if [[ -f $HOME/.git-prompt.sh ]]; then
     source $HOME/.git-prompt.sh
     export GIT_PS1_SHOWCOLORHINTS=1
-    export PROMPT_COMMAND="$PROMPT_COMMAND; __git_ps1 \"$PS1_PRE\" \"$PS1_POST\""
+    export PROMPT_COMMAND="$PROMPT_COMMAND; __git_ps1 \"$PS1_PRE\" \"$PS1_POST\"; __hidebrew_ps1; __modules_ps1"
 else
     export PS1="$PS1_PRE$PS1_POST"
 fi
@@ -63,6 +68,7 @@ alias h='history'
 alias view='vim -R'
 alias psmy='ps -U rsdubtso -u rsdubtso -o pid,%cpu,%mem,state,vsize,cmd'
 alias hidebrew='source ~/bin/hidebrew'
+alias unhidebrew='source ~/bin/unhidebrew'
 
 # Typos
 alias mkdor='mkdir'
