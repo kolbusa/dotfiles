@@ -11,6 +11,7 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 
 " Plug 'tpope/vim-markdown'
 " Plug 'christoomey/vim-conflicted'
 " Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
+Plug 'brgmnn/vim-opencl'
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
 if has("nvim") || v:version > 800
     " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
@@ -69,7 +70,9 @@ au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
+set background=light
 if has("nvim") || v:version > 800
+    " set termguicolors
     colorscheme lucius-with-bold
     set background=light
     :LuciusWhiteHighContrast
