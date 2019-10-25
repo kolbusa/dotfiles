@@ -1,31 +1,32 @@
 [color]
-	show=auto
-	diff=auto
-	status=auto
+    show=auto
+    diff=auto
+    status=auto
 [user]
-	email = dubtsov@gmail.com
-	name = Roman Dubtsov
+    email = dubtsov@gmail.com
+    name = Roman Dubtsov
 [alias]
-	am = am -k
-	tree = log --graph --all --oneline --decorate --abbrev-commit
-	tree1 = log --all --decorate --color --graph --pretty=format:'%Cred%h%Creset -%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-	wtree = log --graph --all --decorate --color=auto --format=\"%C(yellow)%h%C(green bold)%d%C(reset) %cn %cd %s\"
-	slog = log --stat
+    am = am -k
+    tree = log --graph --all --oneline --decorate --abbrev-commit
+    tree1 = log --all --decorate --color --graph --pretty=format:'%Cred%h%Creset -%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    wtree = log --graph --all --decorate --color=auto --format=\"%C(yellow)%h%C(green bold)%d%C(reset) %cn %cd %s\"
+    slog = log --stat
+    branchname = rev-parse --abbrev-ref HEAD
 [log]
-	decorate = 1
+    decorate = 1
 [core]
-	whitespace = cr-at-eol
-	excludesfile = ~/.gitignore-global
-	fileMode = false
+    whitespace = cr-at-eol
+    excludesfile = ~/.gitignore-global
+    fileMode = false
 [am]
-	keepcr = 1
+    keepcr = 1
 [format]
-	subjectprefix =
+    subjectprefix =
 [url "https://"]
-	insteadOf = git://
+    insteadOf = git://
 [pull]
-	rebase = true
+    rebase = true
 [diff]
-	algorithm = histogram
+    algorithm = histogram
 [help]
-	autocorrect = 10
+    autocorrect = 10
