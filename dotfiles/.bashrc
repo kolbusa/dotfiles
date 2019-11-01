@@ -64,7 +64,7 @@ HISTSIZE=100000
 
 ###### Detect if neovim is available
 if [[ -z "$EDITOR" ]]; then
-    if [[ -n "$(which nvim 2> /dev/null)" ]]; then
+    if [[ -n "$(type -p nvim)" ]]; then
         export VISUAL=nvim
         export EDITOR=nvim
     else
