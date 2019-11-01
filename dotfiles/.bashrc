@@ -1,14 +1,14 @@
 ###### Early exits
 
+# environment has already been set up
+[[ -n "$BASHRC_SOURCED" ]] && return
+
 # This is kind of broken... we sometimes need to load most of the environment
 # (mostly local modules) in order to start-up the tmux sel... so we skip the
 # check for PS1 here but don't modify PS1/PROMPT_COMMAND...
 #
 # non-interactive shell
-# [[ -z "$PS1" ]] && return
-
-# environment has already been set up
-[[ -n "$BASHRC_SOURCED" ]] && return
+[[ -z "$PS1" && -z "$PLEASE_SOURCE_BASHRC" ]] && return
 
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
