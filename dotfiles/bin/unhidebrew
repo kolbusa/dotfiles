@@ -1,6 +1,0 @@
-#!/bin/bash
-
-if [[ -n "$HIDEBREW_OLD_PATH" ]]; then
-    export PATH="$HIDEBREW_OLD_PATH"
-    HIDEBREW_OLD_PATH=""
-fi
