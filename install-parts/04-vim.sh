@@ -1,6 +1,7 @@
 #!/bin/bash
 
 (
+    # XXX: this is problematic if the system has an old vim...
     if [[ -n "$HOMEBREW" && -d "$HOMEBREW/" ]]; then
         export PATH=$HOMEBREW/bin:$PATH
     fi

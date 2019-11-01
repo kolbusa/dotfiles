@@ -12,10 +12,12 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 
 " Plug 'christoomey/vim-conflicted'
 " Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
+" TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
 if has("nvim") || v:version > 800
     " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
     " Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+    " TODO: only enable if clangd is found...
     Plug 'natebosch/vim-lsc'
     " Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown'] }
 endif

@@ -71,9 +71,12 @@ if [[ "$1" == "-" ]]; then
 fi
 
 if [[ -z "$(type -p tmux)" ]]; then
-    $SHELL "$@"
+    bash "$@"
     exit
 fi
+
+# dirty hack to update the shell location
+sed -i -E "s,^(set -g default-shell).*$,\1 $(type -p bash)," $HOME/.tmux.conf
 
 ssh_kind=
 if [[ -n "$(type -p ssh)" ]]; then
@@ -97,7 +100,7 @@ while true; do
     select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/[[:space:]]/_/g'); do
         [[ -z "$s" ]] && s=bash
         case $s in
-            bash) $SHELL - ;;
+            bash) bash - ;;
             tmux)
                 log "Creating new tmux session"
                 ssid="__new__"  # this is mostly for debug purposes
