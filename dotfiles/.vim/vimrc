@@ -72,14 +72,19 @@ au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
-set background=light
-if has("nvim") || v:version > 800
-    " set termguicolors
-    colorscheme lucius-with-bold
-    set background=light
-    :LuciusWhiteHighContrast
-else
+if $DARK_MODE == 1
     set background=dark
+else
+    set background=light
+endif
+if has("nvim") || v:version > 800
+    colorscheme lucius-with-bold
+    if $DARK_MODE == 1
+        LuciusBlackLowContrast
+    else
+        :LuciusWhiteHighContrast
+    endif
+else
     colorscheme default
 endif
 

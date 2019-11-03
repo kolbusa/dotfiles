@@ -66,9 +66,17 @@ if [[ "$OSTYPE" == cygwin ]]; then
 fi
 
 if [[ "$1" == "-" ]]; then
+    shift
     PLEASE_SOURCE_BASHRC=1
     source $HOME/.profile
     source $HOME/.bashrc
+fi
+
+export DARK_MODE=0
+if [[ "$1" == "--dark" ]]; then
+    echo "Running in DARK MODE"
+    export DARK_MODE=1
+    shift
 fi
 
 if [[ -z "$(type -p tmux)" ]]; then

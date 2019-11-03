@@ -95,6 +95,8 @@ alias vimdiff='nvim -d'
 alias h='history'
 alias view='vim -R'
 alias psmy='ps -U rsdubtso -u rsdubtso -o pid,%cpu,%mem,state,vsize,cmd'
+alias dark='export DARK_MODE=1'
+alias light='export DARK_MODE=0'
 
 # Typos
 alias mkdor='mkdir'
