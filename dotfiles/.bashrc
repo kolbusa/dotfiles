@@ -14,9 +14,12 @@
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
 ###### PS1 setup
+# XXX: additional check for __venv_ps1 is there to prevent duplicate entries
+# in the PROMPT_COMMAND. Update the check if a change in the PROMPT_COMMAND
+# logic affects it.
 if [[ -n "$PS1" ]]; then
     # Save history continuously
-    export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
 
     # Base PS1 setup
     PS1_PRE="\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
@@ -30,16 +33,16 @@ if [[ -n "$PS1" ]]; then
     # Load git bash prompt if available
     if [[ -f $HOME/.git-prompt.sh ]]; then
         source $HOME/.git-prompt.sh
-        export GIT_PS1_SHOWCOLORHINTS=1
+        GIT_PS1_SHOWCOLORHINTS=1
         # It is important to prepend to work better with the modules ps1
-        export PROMPT_COMMAND="__git_ps1 \"$PS1_PRE\" \"$PS1_POST\"; \
+        PROMPT_COMMAND="__git_ps1 \"$PS1_PRE\" \"$PS1_POST\"; \
             $PROMPT_COMMAND"
     else
         function __plain_ps1() {
             PS1="$1$2"
         }
         # It is important to prepend to work better with the modules ps1
-        export PROMPT_COMMAND="__plain_ps1 \"$PS1_PRE\" \"$PS1_POST\"; \
+        PROMPT_COMMAND="__plain_ps1 \"$PS1_PRE\" \"$PS1_POST\"; \
             $PROMPT_COMMAND"
     fi
 
@@ -49,7 +52,15 @@ if [[ -n "$PS1" ]]; then
     }
     # It is important to append since we are overwriting PS1 after the git bash
     # prompt
-    export PROMPT_COMMAND="$PROMPT_COMMAND; __venv_ps1"
+    PROMPT_COMMAND="$PROMPT_COMMAND; __venv_ps1"
+
+    # Add SCL information if available
+    function __scl_ps1() {
+        PS1="${X_SCLS:+\033[0;94m(${X_SCLS%% })\033[0m\n}$PS1"
+    }
+    # It is important to append since we are overwriting PS1 after the git bash
+    # prompt
+    PROMPT_COMMAND="$PROMPT_COMMAND; __scl_ps1"
 fi
 
 ###### Configure the shell optons
