@@ -68,6 +68,7 @@ fi
 if [[ "$1" == "-" ]]; then
     shift
     PLEASE_SOURCE_BASHRC=1
+    BASHRC_MINIMAL_MODE=1
     source $HOME/.profile
     source $HOME/.bashrc
 fi
