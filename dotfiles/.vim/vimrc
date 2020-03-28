@@ -10,8 +10,9 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 
 " Plug 'jceb/vim-orgmode'
 " Plug 'tpope/vim-markdown'
 " Plug 'christoomey/vim-conflicted'
-" Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
+Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
+Plug 'ervandew/supertab'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
 if has("nvim") || v:version > 800
@@ -37,6 +38,10 @@ if has("nvim") || v:version > 800
     if g:clangd_path == ''
         let g:clangd_path = 'clangd'
     endif
+    let g:pyls_path = $PYLS_PATH
+    if g:pyls_path == ''
+        let g:pyls_path = 'pyls'
+    endif
     let g:lsc_auto_map = {'defaults': v:true, 'ShowHover': ''}
     let g:lsc_enable_autocomplete = v:true
     let g:lsc_server_commands = {
@@ -54,11 +59,13 @@ if has("nvim") || v:version > 800
                 \ },
                 \ 'python': {
                 \   'name': 'python',
-                \   'command': 'pyls',
+                \   'command': g:pyls_path,
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ }
                 \ }
+    nmap <Leader>gK :LSClientShowHover<CR>
+    nmap gK :LSClientShowHover<CR>
 
     " python-mode
     let g:pymode_syntax = 0
@@ -72,17 +79,17 @@ au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
 set colorcolumn=80
-if $DARK_MODE == 1
-    set background=dark
-else
+if $DARK_MODE == "0"
     set background=light
+else
+    set background=dark
 endif
 if has("nvim") || v:version > 800
     colorscheme lucius-with-bold
-    if $DARK_MODE == 1
-        LuciusBlackLowContrast
+    if $DARK_MODE == "0"
+        LuciusWhiteHighContrast
     else
-        :LuciusWhiteHighContrast
+        LuciusBlackLowContrast
     endif
 else
     colorscheme default

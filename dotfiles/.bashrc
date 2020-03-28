@@ -32,6 +32,8 @@ if [[ -n "$PS1" ]]; then
 
     # Load git bash prompt if available
     if [[ -f $HOME/.git-prompt.sh ]]; then
+        # Must be sourced first?
+        [[ -f $HOME/.git-completion.bash ]] && source $HOME/.git-completion.bash
         source $HOME/.git-prompt.sh
         GIT_PS1_SHOWCOLORHINTS=1
         # It is important to prepend to work better with the modules ps1
@@ -153,5 +155,12 @@ for ver in '' -9 -8 -7; do
     [[ -z "$CLANG_FORMAT" && -n "$clang_format__" ]] \
         && export CLANG_FORMAT="$clang_format__"
 done
+
+PYLS_PATH=$HOME/.local/python-Linux/bin
+if [[ -x "$PYLS_PATH" ]]; then
+    export PYLS_PATH
+else
+    unset PYLS_PATH
+fi
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
