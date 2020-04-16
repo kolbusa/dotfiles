@@ -5,6 +5,25 @@
 trap cleanup INT
 trap cleanup HUP
 
+function realpath() {
+    local f=$1
+    local os="$(uname -s)"
+    if [[ "$os" == "Linux" || "$os" == "FreeBSD" ]]; then
+        readlink -f $f
+    else
+        if [[ -L "$f" ]]; then
+            f=$(readlink $f)
+        fi
+        if [[ -d "$f" ]]; then
+            cd $f
+            pwd -P
+        else
+            cd $(dirname $f)
+            echo $(pwd -P)/$(basename $f)
+        fi
+    fi
+}
+
 function log() {
     echo "$(hostname)	$(date +%Y/%m/%d\ %H:%M:%S)	$$	$1" >> ~/.tmuxsel.log
     true
@@ -34,7 +53,7 @@ function mk_stable_ssh_auth_sock() {
         if [[ "$ssid" == "__new__" ]]; then
             STABLE_SOCKETS_DIR=$HOME/.ssh_auth_socks
             mkdir -p $STABLE_SOCKETS_DIR
-            ssas=$(mktemp -p $STABLE_SOCKETS_DIR $HOSTNAME.XXXXXX)
+            ssas=$(TMPDIR=$STABLE_SOCKETS_DIR mktemp -t $HOSTNAME.XXXXX)
             log "SSAS: created a new ssas=$ssas"
         else
             ssas=$(get_session_env $ssid $sas)
@@ -86,7 +105,7 @@ if [[ -z "$(type -p tmux)" ]]; then
 fi
 
 # dirty hack to update the shell location
-sed -i -E "s,^(set -g default-shell).*$,\1 $(type -p bash)," $HOME/.tmux.conf
+sed -E -i '' "s,^(set -g default-shell) .*$,\1 $(type -p bash)," $(realpath $HOME/.tmux.conf)
 
 ssh_kind=
 if [[ -n "$(type -p ssh)" ]]; then

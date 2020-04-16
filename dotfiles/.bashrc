@@ -89,7 +89,7 @@ fi
 ###### Check if less version is sufficiently new
 if [[ -z "$PAGER" ]]; then
     export PAGER=less
-    if [[ $(less -V | sed '1!d;s/^less \([0-9]\+\).*/\1/') -ge 530 ]]; then
+    if [[ $(less -V | sed -E '1!d;s/^less ([0-9]+).*$/\1/') -ge 530 ]]; then
         export LESS="-RF"
     else
         export LESS="-R"
@@ -124,16 +124,23 @@ alias greo='grep'
 
 # Support non-GNU ls too
 if [[ -z "$LSCOLORS" ]]; then
-    if ls --color=auto &>/dev/null; then
-        # Linux or GNU ls
-        alias ls='ls --color=auto -F --group-directories-first'
-        eval `dircolors -b` # assumes that dircolors is always available
+    if [[ -n "$(type -p dircolors)" ]]; then
+        eval $(dircolors -b)
     else
-        # BSD (tested on Darwin only)
-        alias ls='ls -G'
         export LSCOLORS=ExfxcxdxCxegedabagacad
     fi
 fi
+lsopts="-F"
+if ls --group-directories-first &>/dev/null; then
+    lsopts="$lsopts --group-directories-first"
+fi
+if ls --color=auto &>/dev/null; then
+    lsopts="$lsopts --color=auto"
+fi
+if ls -G &>/dev/null; then
+    lsopts="$lsopts -G"
+fi
+alias ls="ls $lsopts"
 
 ###### Conversion utils
 sanitize_hex() { echo $* | sed 's/0x//' | tr '[:lower:]' '[:upper:]'; }
