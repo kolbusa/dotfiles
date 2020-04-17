@@ -22,7 +22,11 @@ if [[ -n "$PS1" ]]; then
     PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
 
     # Base PS1 setup
-    PS1_PRE="\033[0;32m\u\033[0m@\033[0;31m\h${STY:+($STY)}\033[0m \t \W"
+    hostnamecolor=$(hostname \
+        | od \
+        | tr ' ' '\n' \
+        | awk '{total = total + $1} END{print 30 + (total % 6)}')
+    PS1_PRE="\033[0;32m\u\033[0m@\033[0;${hostnamecolor}m\h${STY:+($STY)}\033[0m \t \W"
     PS1_POST="]\033[0m\r\n\\$ "
 
     # Add job and shell level information
