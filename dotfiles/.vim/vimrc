@@ -143,7 +143,7 @@ set expandtab
 set formatoptions=tcqo2nr
 set autoindent
 set backspace=eol,start,indent
-set cino=:0:l1
+set cino=:0:l1,j1
 
 set foldopen=mark,percent,quickfix,search,tag,undo
 
