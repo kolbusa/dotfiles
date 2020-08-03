@@ -2,7 +2,8 @@
 
 set -e
 
-[[ "$SKIP_BREW" == 1 ]] && return
+[[ "$(uname -s)" == Darwin && -z "$ENABLE_BREW" ]] && ENABLE_BREW=1
+[[ "$ENABLE_BREW" != 1 ]] && return
 
 export HOMEBREW_TEMP=$DOTFILES/tmp
 mkdir -p $HOMEBREW_TEMP
@@ -175,6 +176,11 @@ fi
     brew install bash-completion
 
     brew install tmux
+    brew install coreutils
+    brew install findutils
+    brew install gnu-sed
+    brew install gnu-tar
+    brew install wget
 
     brew install subversion --with-perl
     echo yes | $HOMEBREW/bin/cpan install SVN::Core
