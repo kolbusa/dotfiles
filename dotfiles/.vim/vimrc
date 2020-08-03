@@ -16,11 +16,11 @@ Plug 'ervandew/supertab'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
 if has("nvim") || v:version > 800
-    " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
+    Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
     Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
     " TODO: only enable if clangd is found...
     Plug 'natebosch/vim-lsc'
-    Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown'] }
+    Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 endif
 silent! source ~/.vim/plugins.local
 call plug#end()
