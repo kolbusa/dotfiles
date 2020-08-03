@@ -8,7 +8,15 @@
 # check for PS1 here but don't modify PS1/PROMPT_COMMAND...
 #
 # non-interactive shell
-[[ -z "$PS1" && -z "$PLEASE_SOURCE_BASHRC" ]] && return
+[[ -z "$PS1$PROMPT" && -z "$PLEASE_SOURCE_BASHRC" ]] && return
+
+find_program() {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        whence $1
+    else
+        type -P $1
+    fi
+}
 
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
@@ -17,22 +25,32 @@
 # XXX: additional check for __venv_ps1 is there to prevent duplicate entries
 # in the PROMPT_COMMAND. Update the check if a change in the PROMPT_COMMAND
 # logic affects it.
-if [[ -n "$PS1" ]]; then
+# TODO: zsh version
+if [[ -n "$PS1$PROMPT" ]]; then
     # Save history continuously
-    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
+    if [[ -n "$ZSH_VERSION" ]]; then
+        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} fc -A"
+    else
+        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
+    fi
 
     # Base PS1 setup
     hostnamecolor=$(hostname \
         | od \
         | tr ' ' '\n' \
-        | awk '{total = total + $1} END{print 30 + (total % 6)}')
-    PS1_PRE="\033[0;32m\u\033[0m@\033[0;${hostnamecolor}m\h${STY:+($STY)}\033[0m \t \W"
-    PS1_POST="]\033[0m\r\n\\$ "
+        | awk '{total = total + $1} END{print 31 + (total % 6)}')
 
-    # Add job and shell level information
-    export BASE_SHLVL=$SHLVL
+    [[ -z $BASE_SHLVL ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
-    PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) $PS1_PRE"
+    if [[ -n "$ZSH_VERSION" ]]; then
+        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %n@%m${STY:+$($STY)} %* %1~"
+        PS1_POST="]"$'\n'"\\$ "
+    else
+        PS1_PRE="\033[0;32m\u\033[0m@\033[0;${hostnamecolor}m\h${STY:+($STY)}\033[0m \t \W"
+        PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) $PS1_PRE"
+        PS1_POST="]\033[0m\r\n\\$ "
+        # Add job and shell level information
+    fi
 
     # Load git bash prompt if available
     if [[ -f $HOME/.git-prompt.sh ]]; then
@@ -69,10 +87,24 @@ if [[ -n "$PS1" ]]; then
     PROMPT_COMMAND="$PROMPT_COMMAND; __scl_ps1"
 fi
 
+if [[ -n "$ZSH_VERSION" ]]; then
+    bindkey -e
+
+    setopt interactive_comments
+
+    unset PROMPT
+
+    function precmd() {
+        eval "$PROMPT_COMMAND"
+    }
+fi
+
 ###### Configure the shell optons
-shopt -s extglob progcomp histappend checkwinsize cdspell
-shopt -s checkhash no_empty_cmd_completion hostcomplete
-[[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
+if [[ -n "$BASH_VERSION" ]]; then
+    shopt -s extglob progcomp histappend checkwinsize cdspell
+    shopt -s checkhash no_empty_cmd_completion hostcomplete
+    [[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
+fi
 
 ###### Configure history
 HISTFILE=$HOME/.my_bash_history
@@ -81,7 +113,7 @@ HISTSIZE=100000
 
 ###### Detect if neovim is available
 if [[ -z "$EDITOR" ]]; then
-    if [[ -n "$(type -p nvim)" ]]; then
+    if [[ -n "$(find_program nvim)" ]]; then
         export VISUAL=nvim
         export EDITOR=nvim
     else
@@ -105,7 +137,7 @@ fi
 
 ###### Aliases
 [[ "$VISUAL" == "nvim" ]] && alias vim=nvim
-unset -f which
+#unset -f which
 alias sc='tmux new-window'
 alias tm='tmux new-window'
 alias vimdiff='nvim -d'
@@ -128,7 +160,7 @@ alias greo='grep'
 
 # Support non-GNU ls too
 if [[ -z "$LSCOLORS" ]]; then
-    if [[ -n "$(type -p dircolors)" ]]; then
+    if [[ -n "$(find_program dircolors)" ]]; then
         eval $(dircolors -b)
     else
         export LSCOLORS=ExfxcxdxCxegedabagacad
@@ -158,20 +190,31 @@ h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' 
 float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
 
 ###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
-for ver in '' -9 -8 -7; do
-    clangd__=$(type -P clangd$ver)
-    clang_format__=$(type -P clang-format$ver)
+for ver in '' -10 -9 -8 -7; do
+    clangd__=$(find_program clangd$ver)
+    clang_format__=$(find_program clang-format$ver)
     [[ -z "$CLANGD_PATH" && -n "$clangd__" ]] \
         && export CLANGD_PATH="$clangd__"
     [[ -z "$CLANG_FORMAT" && -n "$clang_format__" ]] \
         && export CLANG_FORMAT="$clang_format__"
 done
 
-PYLS_PATH=$HOME/.local/python-Linux/bin
-if [[ -x "$PYLS_PATH" ]]; then
-    export PYLS_PATH
-else
-    unset PYLS_PATH
+if [[ -z "$PYLS_PATH" ]]; then
+    PYLS_PATH=$HOME/.local/python-Linux/bin/pyls
+    if [[ -x "$PYLS_PATH" ]]; then
+        export PYLS_PATH
+    else
+        unset PYLS_PATH
+    fi
+fi
+
+if [[ -z "$PYLS_PATH" ]]; then
+    PYLS_PATH=$HOME/.local/bin/pyls
+    if [[ -x "$PYLS_PATH" ]]; then
+        export PYLS_PATH
+    else
+        unset PYLS_PATH
+    fi
 fi
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...

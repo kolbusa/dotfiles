@@ -4,7 +4,7 @@
 
 [ "$PROFILE_SOURCED" = "1" ] && return
 
-if [ "$OSTYPE" == "Linux" ]; then
+if [ "$OSTYPE" = "Linux" ]; then
     export LANG=en_US.UTF8
 else
     export LANG=en_US.UTF-8
@@ -19,7 +19,7 @@ if [ -f $HOME/.profile.local ]; then
     source $HOME/.profile.local
 fi
 
-if [ -f $HOME/.bashrc -a -n "$BASH" ]; then
+if [ -f $HOME/.bashrc -a -n "$BASH_VERSION$ZSH_VERSION" ]; then
     source $HOME/.bashrc
 fi
 

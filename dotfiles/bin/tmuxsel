@@ -115,7 +115,8 @@ if [[ -z "$(type -p tmux)" ]]; then
 fi
 
 # dirty hack to update the shell location
-sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $(type -p bash)," $(realpath $HOME/.tmux.conf)
+def_shell=$(type -p $(basename $SHELL))
+sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $def_shell," $(realpath $HOME/.tmux.conf)
 
 ssh_kind=
 if [[ -n "$(type -p ssh)" ]]; then
