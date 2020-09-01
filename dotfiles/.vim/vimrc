@@ -1,20 +1,15 @@
 if !has("compatible")
 
 call plug#begin()
-" Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
-" Plug 'tpope/vim-speeddating'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'c', 'cpp', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
-" Plug 'gcmt/taboo.vim'
-" Plug 'jceb/vim-orgmode'
-" Plug 'tpope/vim-markdown'
-" Plug 'christoomey/vim-conflicted'
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
 Plug 'ervandew/supertab'
+Plug 'rakr/vim-one'
 " TODO: only enable of clang-format is found
-Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp'] }
+Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
 if has("nvim") || v:version > 800
     Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
     Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
@@ -57,6 +52,12 @@ if has("nvim") || v:version > 800
                 \   'enabled': v:true,
                 \   'suppress_stderr': v:true,
                 \ },
+                \ 'cuda' : {
+                \   'name': 'cuda',
+                \   'command': g:clangd_path,
+                \   'enabled': v:true,
+                \   'suppress_stderr': v:true,
+                \ },
                 \ 'python': {
                 \   'name': 'python',
                 \   'command': g:pyls_path,
@@ -85,12 +86,14 @@ else
     set background=dark
 endif
 if has("nvim") || v:version > 800
-    colorscheme lucius-with-bold
-    if $DARK_MODE == "0"
-        LuciusWhiteHighContrast
-    else
-        LuciusBlackLowContrast
-    endif
+    set termguicolors
+    colorscheme one
+    " colorscheme lucius-with-bold
+    " if $DARK_MODE == "0"
+    "     LuciusWhiteHighContrast
+    " else
+    "     LuciusBlackLowContrast
+    " endif
 else
     colorscheme default
 endif
