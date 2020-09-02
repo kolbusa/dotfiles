@@ -7,7 +7,7 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
 Plug 'ervandew/supertab'
-Plug 'rakr/vim-one'
+" Plug 'rakr/vim-one'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
 if has("nvim") || v:version > 800
@@ -86,14 +86,14 @@ else
     set background=dark
 endif
 if has("nvim") || v:version > 800
-    set termguicolors
-    colorscheme one
-    " colorscheme lucius-with-bold
-    " if $DARK_MODE == "0"
-    "     LuciusWhiteHighContrast
-    " else
-    "     LuciusBlackLowContrast
-    " endif
+    " set termguicolors
+    " colorscheme one
+    colorscheme lucius-with-bold
+    if $DARK_MODE == "0"
+        LuciusWhiteHighContrast
+    else
+        LuciusBlackLowContrast
+    endif
 else
     colorscheme default
 endif

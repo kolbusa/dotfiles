@@ -3,7 +3,7 @@
     diff=auto
     status=auto
 [user]
-    email = dubtsov@gmail.com
+    email = rdubtsov@nvidia.com
     name = Roman Dubtsov
 [alias]
     am = am -k
@@ -35,3 +35,4 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[color "branch"]
