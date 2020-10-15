@@ -2,7 +2,9 @@
 
 set -e
 
-[[ "$(uname -s)" == Darwin && -z "$ENABLE_BREW" ]] && ENABLE_BREW=1
+# Disabling until I find a way to automate install to /usr/local without
+# pulling the install script from web
+# [[ "$(uname -s)" == Darwin && -z "$ENABLE_BREW" ]] && ENABLE_BREW=1
 [[ "$ENABLE_BREW" != 1 ]] && return
 
 export HOMEBREW_TEMP=$DOTFILES/tmp

@@ -38,15 +38,15 @@ if [[ -n "$PS1$PROMPT" ]]; then
     hostnamecolor=$(hostname \
         | od \
         | tr ' ' '\n' \
-        | awk '{total = total + $1} END{print 31 + (total % 6)}')
+        | awk '{total = total + $1} END{print 1 + (total % 6)}')
 
     [[ -z $BASE_SHLVL ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
     if [[ -n "$ZSH_VERSION" ]]; then
-        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %n@%m${STY:+$($STY)} %* %1~"
+        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%F@%F{${hostnamecolor}}%m%F${STY:+$($STY)} %* %1~"
         PS1_POST="]"$'\n'"\\$ "
     else
-        PS1_PRE="\033[0;32m\u\033[0m@\033[0;${hostnamecolor}m\h${STY:+($STY)}\033[0m \t \W"
+        PS1_PRE="\033[0;32m\u\033[0m@\033[0;$((30 + ${hostnamecolor}))m\h${STY:+($STY)}\033[0m \t \W"
         PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) $PS1_PRE"
         PS1_POST="]\033[0m\r\n\\$ "
         # Add job and shell level information
@@ -55,7 +55,13 @@ if [[ -n "$PS1$PROMPT" ]]; then
     # Load git bash prompt if available
     if [[ -f $HOME/.git-prompt.sh ]]; then
         # Must be sourced first?
-        [[ -f $HOME/.git-completion.bash ]] && source $HOME/.git-completion.bash
+        if [[ -n "$ZSH_VERSION" ]]; then
+            git_completion=$HOME/.git-completion.zsh
+        else
+            git_completion=$HOME/.git-completion.bash
+        fi
+        [[ -f $git_completion ]] && source $git_completion
+
         source $HOME/.git-prompt.sh
         GIT_PS1_SHOWCOLORHINTS=1
         # It is important to prepend to work better with the modules ps1

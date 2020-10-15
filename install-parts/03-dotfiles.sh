@@ -50,4 +50,11 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
     done
 done
 
+# Find this a better place?
+ssh_config=$HOME/.ssh/config
+ssh_config_local=$HOME/.ssh/config.local
+[[ -f $ssh_config ]] \
+    && grep -qse "$(basename $ssh_config_local)" $ssh_config \
+    && touch $ssh_config_local
+
 # vim: et ts=4 sw=4
