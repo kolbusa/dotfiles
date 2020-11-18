@@ -28,6 +28,7 @@
     rebase = true
 [diff]
     algorithm = histogram
+    wsErrorHighlight = all
 [help]
     autocorrect = 10
 [filter "lfs"]
@@ -36,3 +37,9 @@
 	process = git-lfs filter-process
 	required = true
 [color "branch"]
+[color "diff"]
+	whitespace = red reverse
+[pager]
+	status = true
+[diff "lfs"]
+	textconv = cat

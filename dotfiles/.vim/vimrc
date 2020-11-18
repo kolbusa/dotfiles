@@ -7,11 +7,12 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
 Plug 'ervandew/supertab'
-" Plug 'rakr/vim-one'
+Plug 'rsdubtso/molokai'
+Plug 'bfrg/vim-cuda-syntax'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
 if has("nvim") || v:version > 800
-    Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
+    " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
     Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
     " TODO: only enable if clangd is found...
     Plug 'natebosch/vim-lsc'
@@ -21,7 +22,7 @@ silent! source ~/.vim/plugins.local
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has("nvim") || v:version > 800
+if has("nvim") || v:version >= 800
     " python path
     " let g:python_host_prog = '~/.linuxbrew/bin/python2'
 
@@ -85,18 +86,34 @@ if $DARK_MODE == "0"
 else
     set background=dark
 endif
-if has("nvim") || v:version > 800
-    " set termguicolors
+if has("nvim") || v:version >= 800
     " colorscheme one
-    colorscheme lucius-with-bold
     if $DARK_MODE == "0"
+        set termguicolors
+        colorscheme lucius-with-bold
         LuciusWhiteHighContrast
     else
-        LuciusBlackLowContrast
+        set termguicolors
+        " colorscheme lucius-with-bold
+        " LuciusBlackLowContrast
+        colorscheme molokai
     endif
+    " let g:solarized_termcolors=256
+    " let g:solarized_bold = 1
+    " let g:solarized_underline = 1
+    " let g:solarized_italic = 1
+    " colorscheme solarized
 else
     colorscheme default
 endif
+
+augroup CursorLine
+    au!
+    au VimEnter * setlocal cursorline
+    au WinEnter * setlocal cursorline
+    au BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure nerdcommenter
@@ -105,6 +122,10 @@ let g:NERDCommentEmptyLines = 0
 let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure buffergator
+let g:buffergator_suppress_mru_switching_keymaps = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure Clang-format
@@ -136,6 +157,9 @@ set hidden
 set wildmode=longest:full,list
 set tags=tags,./tags,../tags,../../tags,../../../tags,../../../../tags,../../../../../tags
 set autochdir
+if has("nvim") || v:version > 800
+set nofixeol
+endif
 
 set noautoread
 
@@ -166,6 +190,11 @@ set foldmethod=syntax
 
 set mouse=nvi
 set clipboard=unnamed
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ensure correct highlighting for Fortran free-form source code
+let fortran_free_source=1
+let fortran_do_enddo=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line

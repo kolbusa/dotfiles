@@ -102,12 +102,18 @@ if [[ "$1" == "-" ]]; then
     source $HOME/.bashrc
 fi
 
-export DARK_MODE=0
+export DARK_MODE=1
 if [[ "$1" == "--dark" ]]; then
     echo "Running in DARK MODE"
     export DARK_MODE=1
     shift
 fi
+if [[ "$1" == "--lite" ]]; then
+    echo "Running in LITE MODE"
+    export DARK_MODE=0
+    shift
+fi
+
 
 if [[ -z "$(type -p tmux)" ]]; then
     bash "$@"
