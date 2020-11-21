@@ -43,7 +43,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
     [[ -z $BASE_SHLVL ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
     if [[ -n "$ZSH_VERSION" ]]; then
-        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%F@%F{${hostnamecolor}}%m%F${STY:+$($STY)} %* %1~"
+        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%f@%F{${hostnamecolor}}%m%f${STY:+$($STY)} %* %1~"
         PS1_POST="]"$'\n'"\\$ "
     else
         PS1_PRE="\033[0;32m\u\033[0m@\033[0;$((30 + ${hostnamecolor}))m\h${STY:+($STY)}\033[0m \t \W"
@@ -78,7 +78,11 @@ if [[ -n "$PS1$PROMPT" ]]; then
 
     # Add virtualenv if available
     function __venv_ps1() {
-        PS1="${VIRTUAL_ENV:+\033[0;35m(${VIRTUAL_ENV##*/})\033[0m\n}$PS1"
+        if [[ -z "$ZSH_VERSION" ]]; then
+            PS1="${VIRTUAL_ENV:+\033[0;35m(${VIRTUAL_ENV##*/})\033[0m\n}$PS1"
+        else
+            PS1=${VIRTUAL_ENV:+%F{cyan}(${VIRTUAL_ENV##*/})%f$'\n'}$PS1
+        fi
     }
     # It is important to append since we are overwriting PS1 after the git bash
     # prompt
@@ -86,7 +90,11 @@ if [[ -n "$PS1$PROMPT" ]]; then
 
     # Add SCL information if available
     function __scl_ps1() {
-        PS1="${X_SCLS:+\033[0;94m(${X_SCLS%% })\033[0m\n}$PS1"
+        if [[ -z "$ZSH_VERSION" ]]; then
+            PS1="${X_SCLS:+\033[0;94m(${X_SCLS%% })\033[0m\n}$PS1"
+        else
+            PS1=${X_SCLS:+%F{red}(${X_SCLS%% })%f$'\n'}$PS1
+        fi
     }
     # It is important to append since we are overwriting PS1 after the git bash
     # prompt
@@ -95,6 +103,8 @@ fi
 
 if [[ -n "$ZSH_VERSION" ]]; then
     bindkey -e
+    autoload -U select-word-style
+    select-word-style bash
 
     setopt interactive_comments
 
@@ -103,6 +113,9 @@ if [[ -n "$ZSH_VERSION" ]]; then
     function precmd() {
         eval "$PROMPT_COMMAND"
     }
+
+    iterm2_shell_integration=$HOME/.iterm2_shell_integration.zsh
+    [[ -e $iterm2_shell_integration ]] && source $iterm2_shell_integration
 fi
 
 ###### Configure the shell optons
