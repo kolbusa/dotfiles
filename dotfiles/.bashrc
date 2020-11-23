@@ -81,7 +81,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
         if [[ -z "$ZSH_VERSION" ]]; then
             PS1="${VIRTUAL_ENV:+\033[0;35m(${VIRTUAL_ENV##*/})\033[0m\n}$PS1"
         else
-            PS1=${VIRTUAL_ENV:+%F{cyan}(${VIRTUAL_ENV##*/})%f$'\n'}$PS1
+            PS1=${VIRTUAL_ENV:+%F{cyan}"(${VIRTUAL_ENV##*/})"%f$'\n'}$PS1
         fi
     }
     # It is important to append since we are overwriting PS1 after the git bash
@@ -93,7 +93,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
         if [[ -z "$ZSH_VERSION" ]]; then
             PS1="${X_SCLS:+\033[0;94m(${X_SCLS%% })\033[0m\n}$PS1"
         else
-            PS1=${X_SCLS:+%F{red}(${X_SCLS%% })%f$'\n'}$PS1
+            PS1=${X_SCLS:+%F{red}"(${X_SCLS%% })"%f$'\n'}$PS1
         fi
     }
     # It is important to append since we are overwriting PS1 after the git bash
