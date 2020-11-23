@@ -80,7 +80,7 @@ endif
 au BufWinEnter * highlight WhitespaceError ctermbg=red guibg=red
 au BufWinEnter * let w:m3=matchadd('WhitespaceError', '\s\+$', -1)
 set cursorline
-set colorcolumn=80
+set colorcolumn=120
 if $DARK_MODE == "0"
     set background=light
 else
@@ -163,7 +163,7 @@ endif
 
 set noautoread
 
-set tw=78
+set tw=120
 set tabstop=4
 set shiftwidth=4
 set expandtab
