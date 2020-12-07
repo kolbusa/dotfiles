@@ -12,6 +12,7 @@
     wtree = log --graph --all --decorate --color=auto --format=\"%C(yellow)%h%C(green bold)%d%C(reset) %cn %cd %s\"
     slog = log --stat
     branchname = rev-parse --abbrev-ref HEAD
+    hash = log --format=%h -1
 [log]
     decorate = 1
 [core]
