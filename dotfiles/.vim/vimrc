@@ -7,7 +7,7 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
 Plug 'ervandew/supertab'
-Plug 'rsdubtso/molokai'
+Plug 'joshdick/onedark.vim'
 Plug 'bfrg/vim-cuda-syntax'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
@@ -90,19 +90,12 @@ if has("nvim") || v:version >= 800
     " colorscheme one
     if $DARK_MODE == "0"
         set termguicolors
-        colorscheme lucius-with-bold
-        LuciusWhiteHighContrast
+        colorscheme default
     else
         set termguicolors
-        " colorscheme lucius-with-bold
-        " LuciusBlackLowContrast
-        colorscheme molokai
+        colorscheme onedark
+        highlight lscReference guibg=#576275
     endif
-    " let g:solarized_termcolors=256
-    " let g:solarized_bold = 1
-    " let g:solarized_underline = 1
-    " let g:solarized_italic = 1
-    " colorscheme solarized
 else
     colorscheme default
 endif
