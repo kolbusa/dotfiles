@@ -55,12 +55,13 @@ if [[ -n "$PS1$PROMPT" ]]; then
     # Load git bash prompt if available
     if [[ -f $HOME/.git-prompt.sh ]]; then
         # Must be sourced first?
-        if [[ -n "$ZSH_VERSION" ]]; then
-            git_completion=$HOME/.git-completion.zsh
-        else
-            git_completion=$HOME/.git-completion.bash
+        bash_git_completion=$HOME/.git-completion.bash
+        if [[ -n "$BASH_VERSION" ]]; then
+            [[ -f $bash_git_completion ]] && source $bash_git_completion
         fi
-        [[ -f $git_completion ]] && source $git_completion
+        if [[ -n "$ZSH_VERSION" ]]; then
+            fpath=($HOME/.zsh $fpath)
+        fi
 
         source $HOME/.git-prompt.sh
         GIT_PS1_SHOWCOLORHINTS=1
@@ -112,6 +113,9 @@ if [[ -n "$ZSH_VERSION" ]]; then
     autoload -U select-word-style
     select-word-style bash
     setopt +o nomatch
+
+    autoload -U compinit && compinit -i
+    zmodload -i zsh/complist
 
     setopt interactive_comments
 
