@@ -101,10 +101,17 @@ if [[ -n "$PS1$PROMPT" ]]; then
     PROMPT_COMMAND="$PROMPT_COMMAND; __scl_ps1"
 fi
 
+###### Configure the shell optons
+if [[ -n "$BASH_VERSION" ]]; then
+    shopt -s extglob progcomp histappend checkwinsize cdspell
+    shopt -s checkhash no_empty_cmd_completion hostcomplete
+    [[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
+fi
 if [[ -n "$ZSH_VERSION" ]]; then
     bindkey -e
     autoload -U select-word-style
     select-word-style bash
+    setopt +o nomatch
 
     setopt interactive_comments
 
@@ -118,12 +125,6 @@ if [[ -n "$ZSH_VERSION" ]]; then
     [[ -e $iterm2_shell_integration ]] && source $iterm2_shell_integration
 fi
 
-###### Configure the shell optons
-if [[ -n "$BASH_VERSION" ]]; then
-    shopt -s extglob progcomp histappend checkwinsize cdspell
-    shopt -s checkhash no_empty_cmd_completion hostcomplete
-    [[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
-fi
 
 ###### Configure history
 HISTFILE=$HOME/.my_bash_history
