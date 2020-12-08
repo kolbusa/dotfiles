@@ -7,7 +7,7 @@ Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'brgmnn/vim-opencl'
 Plug 'ervandew/supertab'
-Plug 'joshdick/onedark.vim'
+Plug 'rsdubtso/onedark.vim'
 Plug 'bfrg/vim-cuda-syntax'
 " TODO: only enable of clang-format is found
 Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
