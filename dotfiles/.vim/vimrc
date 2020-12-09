@@ -87,6 +87,7 @@ if has("nvim") || v:version >= 800
         colorscheme default
     else
         set termguicolors
+        let g:onedark_color_overrides = { "black" : {"gui": "#21252b", "cterm": "0", "cterm16" : "0" } }
         colorscheme onedark
         highlight lscReference guibg=#576275
     endif
