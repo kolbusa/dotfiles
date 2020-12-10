@@ -2,12 +2,18 @@
 
 set -e
 
+# No support for refreshing
+[[ "$REFRESH"  == "1" ]] && return
+
+# Overlay is disabled
 [[ -z "$OVERLAY" ]] && return
 
-if [[ -d "$HOME/.cache" ]]; then
-    mv $HOME/.cache $OVERLAY/
-else
-    mkdir $OVERLAY/.cache
-fi
-
-ln -sf $OVERLAY/.cache $HOME/
+# Move pre-existing directories
+for d in .cache .local .ccache .debug; do
+    if [[ -d "$HOME/$d" ]]; then
+        mv "$HOME/$d" "$OVERLAY/"
+    else
+        mkdir "$OVERLAY/$d"
+    fi
+    ln -sf "$OVERLAY/$d" $HOME/
+done

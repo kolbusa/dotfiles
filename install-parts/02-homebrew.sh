@@ -2,6 +2,9 @@
 
 set -e
 
+# No support for refreshing
+[[ "$REFRESH"  == "1" ]] && return
+
 # Disabling until I find a way to automate install to /usr/local without
 # pulling the install script from web
 # [[ "$(uname -s)" == Darwin && -z "$ENABLE_BREW" ]] && ENABLE_BREW=1

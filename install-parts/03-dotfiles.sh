@@ -9,6 +9,7 @@ for dfd in $EXTRA_DOTFILES $DOTFILES/dotfiles; do
         .) mode=merge ;;
         *) mode=replace ;;
         esac
+        [[ "$REFRESH" == "1" ]] && mode=refresh
 
         if [[ "$mode" == replace ]]; then
             rm -rf $BACKUP/$d
