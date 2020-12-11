@@ -77,7 +77,6 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " appearance
 " set t_Co=256
-au BufWinEnter * let w:m3=matchadd('Error', '\s\+$', -1)
 set cursorline
 set colorcolumn=120
 if has("nvim") || v:version >= 800
@@ -85,21 +84,30 @@ if has("nvim") || v:version >= 800
     if $DARK_MODE == "0"
         set termguicolors
         colorscheme default
+        set background=light
     else
         set termguicolors
         let g:onedark_color_overrides = { "black" : {"gui": "#21252b", "cterm": "0", "cterm16" : "0" } }
         colorscheme onedark
         highlight lscReference guibg=#576275
+        highlight lscDiagnosticError guibg=#712e28
+        highlight link WhitespaceError lscDiagnosticError
     endif
 else
     colorscheme default
+    if $DARK_MODE == '0'
+        set background=light
+    else
+        set background=dark
+    endif
 endif
 
-if $DARK_MODE == '0'
-    set background=light
+if hlexists('WhitespaceError')
+    let WSEHlGroup = 'WhitespaceError'
 else
-    set background=dark
+    let WSEHlGroup = 'Error'
 endif
+au BufWinEnter * let w:m3=matchadd(WSEHlGroup, '\s\+$', -1)
 
 augroup CursorLine
     au!
