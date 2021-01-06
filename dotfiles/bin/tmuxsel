@@ -144,7 +144,6 @@ log "ssh_auth_sock=$ssh_auth_sock"
 
 while true; do
     select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/[[:space:]]/_/g'); do
-        [[ -z "$s" ]] && s=bash
         case $s in
             bash) bash - ;;
             tmux)
@@ -169,8 +168,7 @@ while true; do
                 log "Session closed"
             ;;
         esac
-        break;
-    done
+    done || break
 done
 
 cleanup
