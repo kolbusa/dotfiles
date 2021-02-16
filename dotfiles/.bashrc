@@ -29,7 +29,7 @@ find_program() {
 if [[ -n "$PS1$PROMPT" ]]; then
     # Save history continuously
     if [[ -n "$ZSH_VERSION" ]]; then
-        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} fc -A"
+        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} fc -AI"
     else
         PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
     fi
