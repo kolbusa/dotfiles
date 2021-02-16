@@ -241,4 +241,6 @@ if [[ -z "$PYLS_PATH" ]]; then
     fi
 fi
 
+export PATH=$HOME/bin:$PATH
+
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
