@@ -192,7 +192,7 @@ set foldmethod=syntax
 " set foldcolumn=4
 
 set mouse=nvi
-set clipboard=unnamed
+set clipboard=
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ensure correct highlighting for Fortran free-form source code
