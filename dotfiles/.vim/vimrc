@@ -1,6 +1,7 @@
 if !has("compatible")
 
 call plug#begin()
+Plug 'blindFS/vim-taskwarrior'
 Plug 'tpope/vim-fugitive'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
@@ -308,6 +309,11 @@ augroup checktime
     endif
 augroup END
 endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Taskwarior
+let g:task_rc_override = 'rc.defaultwidth=999'
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " XXX: find a better place for this
