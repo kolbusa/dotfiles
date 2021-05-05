@@ -28,9 +28,7 @@ find_program() {
 # TODO: zsh version
 if [[ -n "$PS1$PROMPT" ]]; then
     # Save history continuously
-    if [[ -n "$ZSH_VERSION" ]]; then
-        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} fc -AI"
-    else
+    if [[ -n "$BASH_VERSION" ]]; then
         PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
     fi
 
@@ -134,6 +132,14 @@ fi
 HISTFILE=$HOME/.my_bash_history
 HISTFILESIZE=100000
 HISTSIZE=100000
+if [[ -n "$ZSH_VERSION" ]]; then
+    SAVEHIST=$HISTSIZE
+    setopt SHAREHISTORY
+    setopt INC_APPEND_HISTORY
+    setopt HIST_IGNORE_DUPS
+    setopt EXTENDED_HISTORY
+fi
+
 
 ###### Detect if neovim is available
 if [[ -z "$EDITOR" ]]; then
@@ -167,7 +173,11 @@ alias tm='tmux new-window'
 alias vimdiff='nvim -d'
 alias h='history'
 alias view='vim -R'
-alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,cmd"
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,cmd"
+else
+    alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,command"
+fi
 alias dark='export DARK_MODE=1'
 alias light='export DARK_MODE=0'
 
