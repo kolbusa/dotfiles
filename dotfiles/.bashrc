@@ -212,6 +212,16 @@ if ls -G &>/dev/null; then
 fi
 alias ls="ls $lsopts"
 
+###### This seems to be generally useful
+if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    function tabcolor {
+      echo -n -e "\033]6;1;bg;red;brightness;$1\a"
+      echo -n -e "\033]6;1;bg;green;brightness;$2\a"
+      echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
+    }
+    tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+fi
+
 ###### Conversion utils
 sanitize_hex() { echo $* | sed 's/0x//' | tr '[:lower:]' '[:upper:]'; }
 d2h () { echo "obase=16; $*" | bc; }
