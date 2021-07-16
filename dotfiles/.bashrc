@@ -234,7 +234,7 @@ h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' 
 float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
 
 ###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
-for ver in '' -10 -9 -8 -7; do
+for ver in -12 -11 '' -10 -9 -8 -7; do
     clangd__=$(find_program clangd$ver)
     clang_format__=$(find_program clang-format$ver)
     [[ -z "$CLANGD_PATH" && -n "$clangd__" ]] \
@@ -243,21 +243,12 @@ for ver in '' -10 -9 -8 -7; do
         && export CLANG_FORMAT="$clang_format__"
 done
 
-if [[ -z "$PYLS_PATH" ]]; then
-    PYLS_PATH=$HOME/.local/python-Linux/bin/pyls
-    if [[ -x "$PYLS_PATH" ]]; then
-        export PYLS_PATH
+if [[ -z "$PYLSP_PATH" ]]; then
+    PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
+    if [[ -x "$PYLSP_PATH" ]]; then
+        export PYLSP_PATH
     else
-        unset PYLS_PATH
-    fi
-fi
-
-if [[ -z "$PYLS_PATH" ]]; then
-    PYLS_PATH=$HOME/.local/bin/pyls
-    if [[ -x "$PYLS_PATH" ]]; then
-        export PYLS_PATH
-    else
-        unset PYLS_PATH
+        unset PYLSP_PATH
     fi
 fi
 
