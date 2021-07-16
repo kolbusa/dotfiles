@@ -25,7 +25,7 @@
         | sed '/call plug#begin/,/call plug#end/!d' \
         > /tmp/vimrc
     if [[ "$REFRESH" == "1" ]]; then
-        $vim --cmd 'so /tmp/vimrc|PlugClean|PlugUpdate|qa'
+        $vim --cmd 'so /tmp/vimrc|PlugUpgrade|PlugClean|PlugUpdate|qa'
     else
         $vim --cmd 'so /tmp/vimrc|PlugInstall|qa'
     fi
