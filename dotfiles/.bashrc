@@ -232,6 +232,8 @@ h2b () { echo "ibase=16;obase=2; $(sanitize_hex $*)" | bc; }
 b2h () { echo "obase=16;ibase=2; $*" | bc; }
 h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' $*; }
 float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
+h2double () { perl -e '$f = unpack "d", pack "Q", hex shift; printf "%f\n", $f;' $*; }
+double2h () { perl -e '$f = unpack "Q", pack "d", shift; printf "0x%x\n", $f;' $*; }
 
 ###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
 for ver in -12 -11 '' -10 -9 -8 -7; do
