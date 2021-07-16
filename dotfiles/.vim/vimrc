@@ -1,167 +1,10 @@
 if !has("compatible")
-
-call plug#begin()
-Plug 'tpope/vim-fugitive'
-Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
-Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
-Plug 'brgmnn/vim-opencl'
-Plug 'ervandew/supertab'
-Plug 'rsdubtso/onedark.vim'
-Plug 'bfrg/vim-cuda-syntax'
-" TODO: only enable of clang-format is found
-Plug 'rhysd/vim-clang-format', { 'for' : ['c', 'cpp', 'cuda'] }
-if has("nvim") || v:version > 800
-    " Plug 'klen/python-mode', { 'for' : 'python', 'branch' : 'develop' }
-    Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
-    " TODO: only enable if clangd is found...
-    Plug 'natebosch/vim-lsc'
-    Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
-endif
-silent! source ~/.vim/plugins.local
-call plug#end()
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has("nvim") || v:version >= 800
-    " python path
-    " let g:python_host_prog = '~/.linuxbrew/bin/python2'
-
-    " deoplete
-    let g:deoplete#enable_at_startup = 1
-
-    " vim-lsc
-    let g:clangd_path = $CLANGD_PATH
-    if g:clangd_path == ''
-        let g:clangd_path = 'clangd'
-    endif
-    let g:pyls_path = $PYLS_PATH
-    if g:pyls_path == ''
-        let g:pyls_path = 'pyls'
-    endif
-    let g:lsc_auto_map = {'defaults': v:true, 'ShowHover': ''}
-    let g:lsc_enable_autocomplete = v:true
-    let g:lsc_server_commands = {
-                \ 'c' : {
-                \   'name': 'c',
-                \   'command': g:clangd_path,
-                \   'enabled': v:true,
-                \   'suppress_stderr': v:true,
-                \ },
-                \ 'cpp' : {
-                \   'name': 'cpp',
-                \   'command': g:clangd_path,
-                \   'enabled': v:true,
-                \   'suppress_stderr': v:true,
-                \ },
-                \ 'cuda' : {
-                \   'name': 'cuda',
-                \   'command': g:clangd_path,
-                \   'enabled': v:true,
-                \   'suppress_stderr': v:true,
-                \ },
-                \ 'python': {
-                \   'name': 'python',
-                \   'command': g:pyls_path,
-                \   'enabled': v:true,
-                \   'suppress_stderr': v:true,
-                \ }
-                \ }
-    nmap <Leader>gK :LSClientShowHover<CR>
-    nmap gK :LSClientShowHover<CR>
-
-    " python-mode
-    let g:pymode_syntax = 0
-endif
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" appearance
-" set t_Co=256
-set cursorline
-set colorcolumn=120
-if has("nvim") || v:version >= 800
-    " colorscheme one
-    if $DARK_MODE == "0"
-        set termguicolors
-        colorscheme default
-        set background=light
-    else
-        set termguicolors
-        let g:onedark_color_overrides = { "black" : {"gui": "#21252b", "cterm": "0", "cterm16" : "0" } }
-        colorscheme onedark
-        highlight lscReference guibg=#576275
-        highlight lscDiagnosticError guibg=#712e28
-        highlight link WhitespaceError lscDiagnosticError
-    endif
-else
-    colorscheme default
-    if $DARK_MODE == '0'
-        set background=light
-    else
-        set background=dark
-    endif
-endif
-
-if hlexists('WhitespaceError')
-    let WSEHlGroup = 'WhitespaceError'
-else
-    let WSEHlGroup = 'Error'
-endif
-au BufWinEnter * let w:m3=matchadd(WSEHlGroup, '\s\+$', -1)
-
-augroup CursorLine
-    au!
-    au VimEnter * setlocal cursorline
-    au WinEnter * setlocal cursorline
-    au BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure nerdcommenter
-let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
-let g:NERDCommentEmptyLines = 0
-let g:NERDDefaultAlign = 'left'
-let g:NERDSpaceDelims = 1
-let g:NERDTrimTrailingWhitespace = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure buffergator
-let g:buffergator_suppress_mru_switching_keymaps = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure Clang-format
-let g:clang_format#auto_formatexpr=0
-let g:clang_format#auto_format_on_insert_leave=0
-let g:clang_format#auto_format=0
-let g:clang_format#command=$CLANG_FORMAT
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure Taboo
-set sessionoptions+=tabpages,globals " save tab names in session files
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure figutive to use familiar key bindings
-nmap <Leader>gb :Gblame<CR>
-nmap <Leader>gD :Gdiff<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure autocompletion
-set completeopt-=preview
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" markdown
-let g:vim_markdown_math=1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure vim behavior
+" General configuration
 set hidden
 set wildmode=longest:full,list
 set tags=tags,./tags,../tags,../../tags,../../../tags,../../../../tags,../../../../../tags
 set autochdir
-if has("nvim") || v:version > 800
-set nofixeol
-endif
 
 set noautoread
 
@@ -188,10 +31,122 @@ set listchars+=precedes:<,extends:>
 set showmatch
 
 set foldmethod=syntax
-" set foldcolumn=4
 
 set mouse=nvi
 set clipboard=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Keybindings
+nnoremap <C-l> :set invhls<CR>
+nnoremap gW :bw<CR>
+nnoremap gb :bn<CR>
+nnoremap gp :bp<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Advanced configuration
+if has("nvim") || v:version >= 800
+
+call plug#begin()
+Plug 'tpope/vim-fugitive'
+Plug 'jeetsukumaran/vim-buffergator'
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
+Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
+Plug 'ervandew/supertab'
+Plug 'rsdubtso/onedark.vim'
+Plug 'bfrg/vim-cuda-syntax'
+Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
+
+if has("nvim-0.5.0")
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'nvim-lua/completion-nvim'
+    let s:lsp_enabled = 1
+endif
+
+if has("nvim-0.6.0")
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    let s:treesitter_enabled = 1
+endif
+
+silent! source ~/.vim/plugins.local
+call plug#end()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Appearance
+set cursorline
+set colorcolumn=120
+
+highlight default link myReference Cursor
+highlight default link myDiagnosticError SpellBad
+
+if $DARK_MODE == "0"
+    set termguicolors
+    colorscheme default
+    set background=light
+else
+    set termguicolors
+    let g:onedark_color_overrides = { "black" : {"gui": "#21252b", "cterm": "0", "cterm16" : "0" } }
+    colorscheme onedark
+    highlight! myReference guibg=#576275
+    highlight! myDiagnosticError guibg=#712e28
+endif
+
+au BufWinEnter * let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1)
+
+augroup CursorLine
+    au!
+    au VimEnter * setlocal cursorline
+    au WinEnter * setlocal cursorline
+    au BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Neovim-lsp
+if s:lsp_enabled == 1
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/lsp.lua'
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Treesitter
+if s:treesitter_enabled == 1
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/treesitter.lua'
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Nerdcommenter
+let g:NERDCustomDelimiters = { 'asm': { 'left': '//','right': '' } }
+let g:NERDCommentEmptyLines = 0
+let g:NERDDefaultAlign = 'left'
+let g:NERDSpaceDelims = 1
+let g:NERDTrimTrailingWhitespace = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Buffergator
+let g:buffergator_suppress_mru_switching_keymaps = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure figutive to use familiar key bindings
+nmap <Leader>gb :Git blame<CR>
+nmap <Leader>gD :Gdiff<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure autocompletion
+set completeopt-=preview
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" markdown
+let g:vim_markdown_math=1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" configure vim behavior
+set nofixeol
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ensure correct highlighting for Fortran free-form source code
@@ -276,13 +231,6 @@ autocmd FileType tagbar setlocal nocursorline nocursorcolumn
 let g:tagbar_show_linenumbers = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" sensible-like keybinding to toggle hls
-nnoremap <C-l> :set invhls<CR>
-nnoremap gW :bw<CR>
-nnoremap gb :bn<CR>
-nnoremap gp :bp<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Check for modified files (https://github.com/neovim/neovim/issues/2127)
 if has("nvim")
 augroup AutoSwap
@@ -335,5 +283,17 @@ endif
 
 silent! source ~/.vim/vimrc.local
 
+else
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fallback appearance settings for older Vim versions
+colorscheme default
+if $DARK_MODE == '0'
+    set background=light
+else
+    set background=dark
+endif
+
+endif
 endif
 
