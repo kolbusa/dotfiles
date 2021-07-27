@@ -121,8 +121,9 @@ if [[ -z "$(type -p tmux)" ]]; then
 fi
 
 # dirty hack to update the shell location
-def_shell=$(type -p $(basename $SHELL))
-sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $def_shell," $(realpath $HOME/.tmux.conf)
+def_shell=$(type -p $(basename $SHELL))  # XXX: this may pick up a different shell based on $PATH... (WNF)
+set_def_shell="set -g default-shell $def_shell"
+# sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $def_shell," $(realpath $HOME/.tmux.conf)
 
 ssh_kind=
 if [[ -n "$(type -p ssh)" ]]; then
@@ -142,6 +143,7 @@ fi
 log "TMUXSEL starting"
 log "ssh_auth_sock=$ssh_auth_sock"
 
+echo "def_shell=$def_shell"
 while true; do
     select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/[[:space:]]/_/g'); do
         case $s in
@@ -150,7 +152,7 @@ while true; do
                 log "Creating new tmux session"
                 ssid="__new__"  # this is mostly for debug purposes
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock "$ssh_auth_sock" "$ssid")
-                cmdline="$ssh_auth_sock=$stable_ssh_auth_sock tmux -2 -u"
+                cmdline="$ssh_auth_sock=$stable_ssh_auth_sock tmux -2 -u $set_def_shell \\; new-session"
                 log "Executing '$cmdline'"
                 eval $cmdline
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
@@ -161,7 +163,7 @@ while true; do
                 log "Attaching to tmux session '$ssid'"
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock $ssid)
                 log "Updated stable ssh auth socket $stable_ssh_auth_sock"
-                cmdline="tmux attach-session -t $ssid -E"
+                cmdline="tmux $set_def_shell \\; attach-session -t $ssid -E"
                 log "Executing '$cmdline'"
                 eval $cmdline
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
