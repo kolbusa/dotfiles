@@ -12,19 +12,41 @@ local on_attach = function(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', '<Leader>gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', '<Leader>gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     buf_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     -- buf_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     buf_set_keymap('n', '<Leader>gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '<Leader>ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<Leader>gf', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    buf_set_keymap('v', '<Leader>gf', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
-    buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', '<C-K>', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
 
     buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
     buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
     -- buf_set_keymap('n', '<Leader>gq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+
+    -- Highlighting
+    vim.api.nvim_exec([[
+        highlight default link LspDiagnosticsDefaultError Error
+    ]], false)
+    if client.resolved_capabilities.document_highlight then
+        vim.o.updatetime = 100
+        vim.api.nvim_exec([[
+            highlight default link LspReferenceText myReference
+            highlight default link LspReferenceRead myReference
+            highlight default link LspReferenceWrite myReference
+            augroup lsp_document_highlight
+                autocmd! * <buffer>
+                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+                autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
+                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+                autocmd CursorMovedI <buffer> lua vim.lsp.buf.clear_references()
+            augroup END
+        ]], false)
+    end
 end
 
 -- TODO: wrap this into a function
@@ -71,18 +93,4 @@ do
     vim.lsp.util.set_qflist(qflist)
   end
 end
-
--- Highlighting
-vim.o.updatetime = 100
-vim.api.nvim_exec([[
-    highlight default link LspDiagnosticsDefaultError Error
-    highlight default link LspReferenceText myReference
-    highlight default link LspReferenceRead myReference
-    highlight default link LspReferenceWrite myReference
-    augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-    augroup END
-]], false)
 
