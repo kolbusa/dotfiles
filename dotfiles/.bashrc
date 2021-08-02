@@ -21,6 +21,8 @@ find_program() {
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
+export PATH=$HOME/bin:$PATH
+
 ###### PS1 setup
 # XXX: additional check for __venv_ps1 is there to prevent duplicate entries
 # in the PROMPT_COMMAND. Update the check if a change in the PROMPT_COMMAND
@@ -140,6 +142,13 @@ if [[ -n "$ZSH_VERSION" ]]; then
     setopt EXTENDED_HISTORY
 fi
 
+export FZF_DEFAULT_OPTS='--layout=reverse --height=15 --tiebreak=begin,length,index'
+if [[ -n "$(find_program fzf)" ]]; then
+    [[ -n "$BASH_VERSION" && -f $HOME/.fzf-completion.bash ]] && source $HOME/.fzf-completion.bash
+    [[ -n "$BASH_VERSION" && -f $HOME/.fzf-key-bindings.bash ]] && source $HOME/.fzf-key-bindings.bash
+    [[ -n "$ZSH_VERSION" && -f $HOME/.fzf-completion.zsh ]] && source $HOME/.fzf-completion.zsh
+    [[ -n "$ZSH_VERSION" && -f $HOME/.fzf-key-bindings.zsh ]] && source $HOME/.fzf-key-bindings.zsh
+fi
 
 ###### Detect if neovim is available
 if [[ -z "$EDITOR" ]]; then
@@ -151,6 +160,7 @@ if [[ -z "$EDITOR" ]]; then
         export EDITOR=vim
     fi
 fi
+
 
 ###### Check if less version is sufficiently new
 if [[ -z "$PAGER" ]]; then
@@ -214,12 +224,15 @@ alias ls="ls $lsopts"
 
 ###### This seems to be generally useful
 if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
-    function tabcolor {
+    function tabcolor_ {
       echo -n -e "\033]6;1;bg;red;brightness;$1\a"
       echo -n -e "\033]6;1;bg;green;brightness;$2\a"
       echo -n -e "\033]6;1;bg;blue;brightness;$3\a"
     }
-    tabcolor $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+    function tabcolor {
+        tabcolor_ $(jot -r 1 0 255) $(jot -r 1 0 255) $(jot -r 1 0 255)
+    }
+    tabcolor
 fi
 
 ###### Conversion utils
@@ -253,7 +266,5 @@ if [[ -z "$PYLSP_PATH" ]]; then
         unset PYLSP_PATH
     fi
 fi
-
-export PATH=$HOME/bin:$PATH
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...

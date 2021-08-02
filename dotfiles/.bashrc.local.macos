@@ -1,0 +1,24 @@
+export DARK_MODE=1
+export PATH=/usr/local/bin:$PATH
+export P4CONFIG=.p4config
+export CLANGD_PATH=/usr/local/opt/llvm/bin/clangd
+export CLANG_FORMAT=/usr/local/opt/llvm/bin/clang-format
+export PYLS_PATH=$HOME/Library/Python/3.9/bin/pyls
+export PATH=/usr/local/Cellar/coreutils/8.32//libexec/gnubin:$PATH
+export PATH=/usr/local/Cellar/findutils/4.7.0/libexec/gnubin:$PATH
+export PATH=/usr/local/Cellar/gnu-tar/1.32/libexec/gnubin:$PATH
+export PATH=/usr/local/Cellar/gnu-sed/4.8/libexec/gnubin:$PATH
+
+export FZF_DEFAULT_OPTS='--layout=reverse --height=15'
+[[ -n "$BASH_VERSION" && -f ~/.fzf.bash ]] && source ~/.fzf.bash
+[[ -n "$ZSH_VERSION" && -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+
+function ssh {
+    if [[ $# > 1 ]]; then
+        command ssh "$@"
+    else
+        command ssh "$@" -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
+    fi
+}
+
+alias tun='command ssh -L 5900:localhost:5900 -L 5001:localhost:5001 -L 10222:localhost:10222 -L 10122:localhost:10122 -N -f -T dubtsov.net'
