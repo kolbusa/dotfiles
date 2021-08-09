@@ -83,9 +83,9 @@ else
   bind -m vi-insert -x '"\C-t": fzf-file-widget'
 
   # CTRL-R - Paste the selected command from history into the command line
-  bind -m emacs-standard -x '"\C-r": __fzf_history__'
-  bind -m vi-command -x '"\C-r": __fzf_history__'
-  bind -m vi-insert -x '"\C-r": __fzf_history__'
+  bind -m emacs-standard -x '"\C-x\C-r": __fzf_history__'
+  bind -m vi-command -x '"\C-x\C-r": __fzf_history__'
+  bind -m vi-insert -x '"\C-x\C-r": __fzf_history__'
 fi
 
 # ALT-C - cd into the selected directory

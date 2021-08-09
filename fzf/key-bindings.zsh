@@ -106,7 +106,7 @@ fzf-history-widget() {
   return $ret
 }
 zle     -N   fzf-history-widget
-bindkey '^R' fzf-history-widget
+bindkey '^x^R' fzf-history-widget
 
 } always {
   eval $__fzf_key_bindings_options
