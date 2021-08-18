@@ -1,6 +1,7 @@
 if !has("compatible")
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " General configuration
+syntax on
 set hidden
 set wildmode=longest:full,list
 set tags=tags,./tags,../tags,../../tags,../../../tags,../../../../tags,../../../../../tags
@@ -44,7 +45,7 @@ nnoremap gp :bp<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Advanced configuration
-if has("nvim") || v:version >= 800
+if has("nvim")
 
 call plug#begin()
 Plug 'tpope/vim-fugitive'
