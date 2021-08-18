@@ -157,6 +157,7 @@ while true; do
                 eval $cmdline
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
                 log "Session closed"
+                break
             ;;
             *)
                 ssid=$(echo $s | cut -f2 -d:)
@@ -168,9 +169,10 @@ while true; do
                 eval $cmdline
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
                 log "Session closed"
+                break
             ;;
         esac
-    done || break
+    done
 done
 
 cleanup
