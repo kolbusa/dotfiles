@@ -53,7 +53,7 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'ervandew/supertab'
-Plug 'EdenEast/nightfox.nvim'
+Plug 'Mofiqul/vscode.nvim'
 Plug 'bfrg/vim-cuda-syntax'
 Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
@@ -86,15 +86,12 @@ highlight default link myDiagnosticError SpellBad
 
 if $DARK_MODE == "0"
     set termguicolors
-    colorscheme default
-    set background=light
+    let g:vscode_style = "light"
+    colorscheme vscode
 else
     set termguicolors
-    " let g:onedark_color_overrides = { "black" : {"gui": "#21252b", "cterm": "0", "cterm16" : "0" } }
-    " colorscheme onedark
-    " highlight! myReference guibg=#576275
-    " highlight! myDiagnosticError guibg=#712e28
-    colorscheme nightfox
+    let g:vscode_style = "dark"
+    colorscheme vscode
 endif
 
 au BufWinEnter * let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1)
