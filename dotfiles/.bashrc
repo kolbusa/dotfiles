@@ -21,6 +21,18 @@ find_program() {
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
+###### Fixup locale in case it is not supported on this system
+locale_ok=0
+if test -n "$(find_program locale)"; then
+    if locale -a | grep -iqs $(echo $LANG | sed 's/-//g'); then
+        locale_ok=1
+    fi
+fi
+if test "$locale_ok" = "0"; then
+    export LANG=C
+fi
+
+##### Per-user tools
 export PATH=$HOME/bin:$PATH
 
 ###### PS1 setup
