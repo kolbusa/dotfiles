@@ -30,6 +30,7 @@ if test -n "$(find_program locale)"; then
 fi
 if test "$locale_ok" = "0"; then
     export LANG=C
+    export LC_ALL=C
 fi
 
 ##### Per-user tools
@@ -218,6 +219,8 @@ alias greo='grep'
 if [[ -z "$LSCOLORS" ]]; then
     if [[ -n "$(find_program dircolors)" ]]; then
         eval $(dircolors -b)
+        # I don't like bold
+        export LS_COLORS=$(echo $LS_COLORS | sed 's/01/00/g')
     else
         export LSCOLORS=ExfxcxdxCxegedabagacad
     fi
