@@ -50,7 +50,7 @@ if has("nvim")
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl'] }
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'ervandew/supertab'
 Plug 'Mofiqul/vscode.nvim'
@@ -118,6 +118,8 @@ endif
 " Treesitter
 if s:treesitter_enabled == 1
     execute "luafile " . expand('<sfile>:p:h') . '/lua/treesitter.lua'
+    set foldmethod=expr
+    set foldexpr=nvim_treesitter#foldexpr()
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
