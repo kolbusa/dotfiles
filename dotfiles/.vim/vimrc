@@ -50,7 +50,7 @@ if has("nvim")
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua'] }
+Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'ervandew/supertab'
 Plug 'Mofiqul/vscode.nvim'
