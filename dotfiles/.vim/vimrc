@@ -168,7 +168,7 @@ function! GitInfo()
     try
         let git = fugitive#head()
         if git != ''
-            return '↑'.git.'│'
+            return git.'│'
         else
             return ''
         endif
@@ -192,20 +192,6 @@ endfunction
 
 function! RegularStatusLine()
     set statusline=
-    " Advanced unicode version
-    " set statusline+=▏
-    " set statusline+=\ %n
-    " set statusline+=▕%*%<\ %F\ %=▏
-    " set statusline+=%{FuncInfo()}
-    " set statusline+=%{GitInfo()}
-    " set statusline+=%{&fileencoding}
-    " set statusline+=│
-    " set statusline+=%{&fileformat}
-    " set statusline+=│
-    " set statusline+=%M%R%Y
-    " set statusline+=│
-    " set statusline+=%l/%L(%P),%c
-    " Unicode version
     set statusline+=\ %n
     set statusline+=│
     set statusline+=%*%<\ %F\ %=
