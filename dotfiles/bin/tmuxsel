@@ -164,7 +164,7 @@ while true; do
                 log "Attaching to tmux session '$ssid'"
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock $ssid)
                 log "Updated stable ssh auth socket $stable_ssh_auth_sock"
-                cmdline="tmux $set_def_shell \\; attach-session -t $ssid -E"
+                cmdline="tmux -2 -u $set_def_shell \\; attach-session -t $ssid -E"
                 log "Executing '$cmdline'"
                 eval $cmdline
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid

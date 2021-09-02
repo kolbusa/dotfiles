@@ -31,6 +31,10 @@ fi
 if test "$locale_ok" = "0"; then
     export LANG=C
     export LC_ALL=C
+    export LC_CTYPE=C
+else
+    export LC_ALL=
+    export LC_CTYPE=
 fi
 
 ##### Per-user tools
