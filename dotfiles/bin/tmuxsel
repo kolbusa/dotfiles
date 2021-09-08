@@ -39,8 +39,10 @@ function log() {
     true
 }
 
+kill_agent_on_exit=0
 function cleanup() {
-    [[ -n "$SSH_AGENT_PID" ]] && kill $SSH_AGENT_PID >/dev/null 2>&1 || true
+    [[ "$kill_agent_on_exit" == 1 && -n "$SSH_AGENT_PID" ]] \
+        && kill $SSH_AGENT_PID >/dev/null 2>&1 || true
     log "Cleanup"
     del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
     exit
@@ -134,20 +136,39 @@ fi
 source ~/.profile
 
 if [[ "$ssh_kind" == "reflection" ]]; then
-    eval $(ssh-agent2)
-    ssh-add
+    if [[ -z "$SSH2_AUTH_SOCK" ]]; then
+        eval $(ssh-agent2)
+        ssh-add
+        kill_agent_on_exit=1
+    fi
     ssh_auth_sock=SSH2_AUTH_SOCK
 else
+    if [[ -z "$SSH_AUTH_SOCK" ]]; then
+        eval $(ssh-agent)
+        ssh-add
+        kill_agent_on_exit=1
+    fi
     ssh_auth_sock=SSH_AUTH_SOCK
 fi
 log "TMUXSEL starting"
 log "ssh_auth_sock=$ssh_auth_sock"
+log "def_shell=$def_shell"
 
-echo "def_shell=$def_shell"
+
 while true; do
-    select s in bash tmux $(tmux list-sessions | sed 's/^/tmux:/;s/[[:space:]]/_/g'); do
+    ssh_hosts=
+    tmuxsel_hosts=$HOME/.tmuxsel-ssh-hosts
+    if [[ -f $tmuxsel_hosts ]]; then
+        ssh_hosts=$(cat $tmuxsel_hosts | sed 's/^/ssh:/')
+    fi
+    tmux_sessions=$(tmux list-sessions 2>/dev/null | sed 's/^/tmux:/;s/[[:space:]]/_/g') 
+    select s in shell tmux $ssh_hosts $tmux_sessions; do
         case $s in
-            bash) bash - ;;
+            shell)
+                clear
+                $SHELL -
+                break
+                ;;
             tmux)
                 log "Creating new tmux session"
                 ssid="__new__"  # this is mostly for debug purposes
@@ -159,7 +180,14 @@ while true; do
                 log "Session closed"
                 break
             ;;
-            *)
+            ssh:*)
+                host=$(echo $s | cut -f2 -d:)
+                log "SSHing to $host"
+                command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
+                log "Connection closed"
+                break
+            ;;
+            tmux:*)
                 ssid=$(echo $s | cut -f2 -d:)
                 log "Attaching to tmux session '$ssid'"
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock $ssid)
