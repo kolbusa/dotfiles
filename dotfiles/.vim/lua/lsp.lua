@@ -29,21 +29,15 @@ local on_attach = function(client, bufnr)
     -- buf_set_keymap('n', '<Leader>gq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
     -- Highlighting
-    vim.api.nvim_exec([[
-        highlight default link LspDiagnosticsDefaultError Error
-    ]], false)
     if client.resolved_capabilities.document_highlight then
         vim.o.updatetime = 100
         vim.api.nvim_exec([[
-            highlight default link LspReferenceText myReference
-            highlight default link LspReferenceRead myReference
-            highlight default link LspReferenceWrite myReference
             augroup lsp_document_highlight
                 autocmd! * <buffer>
-                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-                autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
-                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-                autocmd CursorMovedI <buffer> lua vim.lsp.buf.clear_references()
+                autocmd CursorHold <buffer> silent! lua vim.lsp.buf.document_highlight()
+                autocmd CursorHoldI <buffer> silent! lua vim.lsp.buf.document_highlight()
+                autocmd CursorMoved <buffer> silent! lua vim.lsp.buf.clear_references()
+                autocmd CursorMovedI <buffer> silent! lua vim.lsp.buf.clear_references()
             augroup END
         ]], false)
     end
