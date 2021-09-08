@@ -167,6 +167,7 @@ while true; do
             shell)
                 clear
                 $SHELL -
+                clear
                 break
                 ;;
             tmux)
@@ -183,7 +184,9 @@ while true; do
             ssh:*)
                 host=$(echo $s | cut -f2 -d:)
                 log "SSHing to $host"
+                clear
                 command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
+                clear
                 log "Connection closed"
                 break
             ;;
@@ -195,6 +198,7 @@ while true; do
                 cmdline="tmux -2 -u $set_def_shell \\; attach-session -t $ssid -E"
                 log "Executing '$cmdline'"
                 eval $cmdline
+                clear
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
                 log "Session closed"
                 break
