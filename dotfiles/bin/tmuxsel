@@ -91,6 +91,19 @@ function del_stable_ssh_auth_sock() {
     log "SSAS: removed ssas=$ssas for ssid=$ssid"
 }
 
+find_program() {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        whence $1
+    else
+        type -P $1
+    fi
+}
+
+clear=$(find_program clear)
+function refresh_screen() {
+    [[ -n "$clear" ]] && clear -x
+}
+
 if [[ "$OSTYPE" == cygwin ]]; then
     # Set up paths here to avoid polluting global environment
     export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
@@ -165,11 +178,18 @@ while true; do
     select s in shell tmux $ssh_hosts $tmux_sessions; do
         case $s in
             shell)
-                clear
+                refresh_screen
                 $SHELL -
-                clear
                 break
                 ;;
+            ssh:*)
+                host=$(echo $s | cut -f2 -d:)
+                log "SSHing to $host"
+                refresh_screen
+                command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
+                log "Connection closed"
+                break
+            ;;
             tmux)
                 log "Creating new tmux session"
                 ssid="__new__"  # this is mostly for debug purposes
@@ -181,15 +201,6 @@ while true; do
                 log "Session closed"
                 break
             ;;
-            ssh:*)
-                host=$(echo $s | cut -f2 -d:)
-                log "SSHing to $host"
-                clear
-                command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
-                clear
-                log "Connection closed"
-                break
-            ;;
             tmux:*)
                 ssid=$(echo $s | cut -f2 -d:)
                 log "Attaching to tmux session '$ssid'"
@@ -198,13 +209,13 @@ while true; do
                 cmdline="tmux -2 -u $set_def_shell \\; attach-session -t $ssid -E"
                 log "Executing '$cmdline'"
                 eval $cmdline
-                clear
                 del_stable_ssh_auth_sock $stable_ssh_auth_sock $ssid
                 log "Session closed"
                 break
             ;;
         esac
     done
+    refresh_screen
 done
 
 cleanup
