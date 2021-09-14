@@ -109,7 +109,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
     # Add SCL information if available
     function __scl_ps1() {
         if [[ -z "$ZSH_VERSION" ]]; then
-            PS1="${X_SCLS:+\033[0;94m(${X_SCLS%% })\033[0m\n}$PS1"
+            PS1="${X_SCLS:+\033[0;91m(${X_SCLS%% })\033[0m\n}$PS1"
         else
             PS1=${X_SCLS:+%F{red}"(${X_SCLS%% })"%f$'\n'}$PS1
         fi
@@ -117,6 +117,18 @@ if [[ -n "$PS1$PROMPT" ]]; then
     # It is important to append since we are overwriting PS1 after the git bash
     # prompt
     PROMPT_COMMAND="$PROMPT_COMMAND; __scl_ps1"
+
+    # List loaded modules
+    function __modules_ps1() {
+        if [[ -z "$ZSH_VERSION" ]]; then
+            PS1="${LOADEDMODULES:+\033[0;94m(${LOADEDMODULES%% })\033[0m\n}$PS1"
+        else
+            PS1=${LOADEDMODULES:+%F{blue}"(${LOADEDMODULES//:/ })"%f$'\n'}$PS1
+        fi
+    }
+    # It is important to append since we are overwriting PS1 after the git bash
+    # prompt
+    PROMPT_COMMAND="$PROMPT_COMMAND; __modules_ps1"
 fi
 
 ###### Configure the shell optons
