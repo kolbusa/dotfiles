@@ -134,6 +134,8 @@ if [[ -n "$ZSH_VERSION" ]]; then
     autoload -U compinit && compinit -i
     zmodload -i zsh/complist
 
+    bindkey "\e[3~" delete-char
+
     setopt interactive_comments
 
     unset PROMPT
