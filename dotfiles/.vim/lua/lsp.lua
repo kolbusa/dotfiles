@@ -72,19 +72,20 @@ do
     default_handler(err, method, result, client_id, bufnr, config)
     vim.lsp.diagnostic.set_loclist({
         open_loclist = false,
+        open = false,
     })
-    local diagnostics = vim.lsp.diagnostic.get_all()
-    local qflist = {}
-    for bufnr, diagnostic in pairs(diagnostics) do
-      for _, d in ipairs(diagnostic) do
-        d.bufnr = bufnr
-        d.lnum = d.range.start.line + 1
-        d.col = d.range.start.character + 1
-        d.text = d.message
-        table.insert(qflist, d)
-      end
-    end
-    vim.lsp.util.set_qflist(qflist)
+    -- local diagnostics = vim.lsp.diagnostic.get_all()
+    -- local qflist = {}
+    -- for bufnr, diagnostic in pairs(diagnostics) do
+    --   for _, d in ipairs(diagnostic) do
+    --     d.bufnr = bufnr
+    --     d.lnum = d.range.start.line + 1
+    --     d.col = d.range.start.character + 1
+    --     d.text = d.message
+    --     table.insert(qflist, d)
+    --   end
+    -- end
+    -- vim.lsp.util.set_qflist(qflist)
   end
 end
 
