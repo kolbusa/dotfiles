@@ -24,7 +24,7 @@ find_program() {
 ###### Fixup locale in case it is not supported on this system
 locale_ok=0
 if test -n "$(find_program locale)"; then
-    if locale -a | grep -iqs $(echo $LANG | sed 's/-//g'); then
+    if locale -a | sed 's/-//g' | grep -iqs $(echo $LANG | sed 's/-//g'); then
         locale_ok=1
     fi
 fi
