@@ -18,6 +18,13 @@ find_program() {
     fi
 }
 
+prepend_to_path() {
+    local p
+    for p in "$@"; do
+        echo ":$PATH:" | grep -qse ":$p:" || export PATH="$p:$PATH"
+    done
+}
+
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
