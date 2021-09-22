@@ -2,7 +2,8 @@
 
 local on_attach = function(client, bufnr)
     -- Initialize compiletion-nvim
-    require'completion'.on_attach()
+    require('completion').on_attach()
+    require('lsp_signature').on_attach({hint_prefix=''})
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
@@ -19,7 +20,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<Leader>gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '<Leader>ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<Leader>gf', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-    buf_set_keymap('v', '<Leader>gf', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    buf_set_keymap('v', '<Leader>gf', '<cmd>lua vim.lsp.buf.range_formatting()<CR>', opts)
 
     buf_set_keymap('n', '<C-K>', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)

@@ -61,6 +61,7 @@ Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 if has("nvim-0.5.0")
     Plug 'neovim/nvim-lspconfig'
     Plug 'nvim-lua/completion-nvim'
+    Plug 'ray-x/lsp_signature.nvim'
     let s:lsp_enabled = 1
 else
     let s:lsp_enabled = 0
@@ -135,7 +136,7 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:buffergator_suppress_mru_switching_keymaps = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure figutive to use familiar key bindings
+" configure fugitive to use familiar key bindings
 nmap <Leader>gb :Git blame<CR>
 nmap <Leader>gD :Gdiff<CR>
 
