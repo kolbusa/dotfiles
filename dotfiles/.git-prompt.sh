@@ -517,8 +517,9 @@ __git_ps1 ()
 		b="\${__git_ps1_branch_name}"
 	fi
 
+    local h="$(git log -1 --format=%h)|"
 	local f="$w$i$s$u"
-	local gitstring="$c$b${f:+$z$f}$r$p"
+	local gitstring="$h$c$b${f:+$z$f}$r$p"
 
 	if [ $pcmode = yes ]; then
 		if [ "${__git_printf_supports_v-}" != yes ]; then
