@@ -253,14 +253,12 @@ alias gi='git'
 alias greo='grep'
 
 # Support non-GNU ls too
-if [[ -z "$LSCOLORS" ]]; then
-    if [[ -n "$(find_program dircolors)" ]]; then
-        eval $(dircolors -b)
-        # I don't like bold
-        export LS_COLORS=$(echo $LS_COLORS | sed 's/01/00/g')
-    else
-        export LSCOLORS=ExfxcxdxCxegedabagacad
-    fi
+if [[ -n "$(find_program dircolors)" ]]; then
+    eval $(dircolors -b)
+    # I don't like bold
+    export LS_COLORS=$(echo $LS_COLORS | sed 's/01;/00;/g' | sed 's/or=[^:]\+:/or=00;31:/')
+else
+    [[ -z "$LSCOLORS" ]] && export LSCOLORS=ExfxcxdxCxegedabagacad
 fi
 lsopts="-F"
 if ls --group-directories-first &>/dev/null; then
