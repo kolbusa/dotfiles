@@ -19,10 +19,22 @@ find_program() {
 }
 
 prepend_to_path() {
+    local varname=$1
+    shift
     local p
     for p in "$@"; do
-        echo ":$PATH:" | grep -qse ":$p:" || export PATH="$p:$PATH"
+        [[ -d $p ]] || continue
+        eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$p:\$$varname\""
     done
+}
+
+use_location() {
+    if [[ -d $1/bin ]]; then
+        prepend_to_path PATH $1/bin
+    else
+        prepend_to_path PATH $1
+    fi
+    prepend_to_path MANPATH $1/share/man
 }
 
 ###### Source the local configuration first
