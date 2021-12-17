@@ -3,7 +3,7 @@
 local on_attach = function(client, bufnr)
     -- Initialize compiletion-nvim
     require('completion').on_attach()
-    require('lsp_signature').on_attach({hint_prefix=''})
+    require('lsp_signature').on_attach({hint_prefix='>', hi_parameter='IncSearch'})
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
@@ -44,12 +44,14 @@ local on_attach = function(client, bufnr)
     end
 end
 
+lspconfig = require('lspconfig')
+
 -- TODO: wrap this into a function
 local clangd_path = os.getenv('CLANGD_PATH')
 if clangd_path == nil then
     clangd_path = 'clangd'
 end
-require('lspconfig').clangd.setup{
+lspconfig.clangd.setup{
     cmd = {clangd_path, '--background-index', '--pch-storage=disk', '--j=1'},
     filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
     on_attach = on_attach
@@ -59,7 +61,7 @@ local pylsp_path = os.getenv('PYLSP_PATH')
 if pylsp_path == nil then
     pylsp_path = 'pylsp'
 end
-require('lspconfig').pylsp.setup{
+lspconfig.pylsp.setup{
     cmd = {pylsp_path},
     filetypes = { 'python' },
     on_attach = on_attach
@@ -75,18 +77,6 @@ do
         open_loclist = false,
         open = false,
     })
-    -- local diagnostics = vim.lsp.diagnostic.get_all()
-    -- local qflist = {}
-    -- for bufnr, diagnostic in pairs(diagnostics) do
-    --   for _, d in ipairs(diagnostic) do
-    --     d.bufnr = bufnr
-    --     d.lnum = d.range.start.line + 1
-    --     d.col = d.range.start.character + 1
-    --     d.text = d.message
-    --     table.insert(qflist, d)
-    --   end
-    -- end
-    -- vim.lsp.util.set_qflist(qflist)
   end
 end
 

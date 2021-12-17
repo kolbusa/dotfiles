@@ -57,6 +57,7 @@ Plug 'Mofiqul/vscode.nvim'
 Plug 'bfrg/vim-cuda-syntax'
 Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 if has("nvim-0.5.0")
     Plug 'neovim/nvim-lspconfig'
