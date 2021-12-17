@@ -1,0 +1,7 @@
+#%Module1.0
+
+set arch [exec uname -m]
+set version [file tail $ModulesCurrentModulefile]
+set nsysDir [file join /home/scratch.svc_compute_arch/release/nsightSystems $arch rel $version]
+
+prepend-path PATH [file join $nsysDir bin]

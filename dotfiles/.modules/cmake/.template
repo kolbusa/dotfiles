@@ -1,0 +1,7 @@
+#%Module1.0
+
+set arch [exec uname -m]
+set version [file tail $ModulesCurrentModulefile]
+set cmakeDir [file join $::env(HOME) work/tools/linux $arch cmake $version]
+
+prepend-path PATH [file join $cmakeDir bin]
