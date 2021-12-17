@@ -1,20 +1,20 @@
 ###### Early exits
 
 # environment has already been set up
-[[ -n "$BASHRC_SOURCED" ]] && return
+[[ -n "${BASHRC_SOURCED+X}" ]] && return
 
 # This is kind of broken... we sometimes need to load most of the environment
 # (mostly local modules) in order to start-up the tmux sel... so we skip the
 # check for PS1 here but don't modify PS1/PROMPT_COMMAND...
 #
 # non-interactive shell
-[[ -z "$PS1$PROMPT" && -z "$PLEASE_SOURCE_BASHRC" ]] && return
+[[ -z "${PS1+X}${PROMPT+X}" && "${PLEASE_SOURCE_BASHRC+X}" == "X" ]] && return
 
 find_program() {
-    if [[ -n "$ZSH_VERSION" ]]; then
-        whence $1
+    if [[ -n "${ZSH_VERSION+X}" ]]; then
+        whence $1 || true
     else
-        type -P $1
+        type -P $1 || true
     fi
 }
 
@@ -43,7 +43,7 @@ use_location() {
 ###### Fixup locale in case it is not supported on this system
 locale_ok=0
 if test -n "$(find_program locale)"; then
-    if locale -a | sed 's/-//g' | grep -iqs $(echo $LANG | sed 's/-//g'); then
+    if locale -a | sed 's/-//g' | grep -iqs "$(echo $LANG | sed 's/-//g')"; then
         locale_ok=1
     fi
 fi
@@ -63,10 +63,9 @@ export PATH=$HOME/bin:$PATH
 # XXX: additional check for __venv_ps1 is there to prevent duplicate entries
 # in the PROMPT_COMMAND. Update the check if a change in the PROMPT_COMMAND
 # logic affects it.
-# TODO: zsh version
-if [[ -n "$PS1$PROMPT" ]]; then
+if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     # Save history continuously
-    if [[ -n "$BASH_VERSION" ]]; then
+    if [[ -n "${BASH_VERSION+X}" ]]; then
         PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} history -a"
     fi
 
@@ -76,9 +75,9 @@ if [[ -n "$PS1$PROMPT" ]]; then
         | tr ' ' '\n' \
         | awk '{total = total + $1} END{print 1 + (total % 6)}')
 
-    [[ -z $BASE_SHLVL ]] && export BASE_SHLVL=$SHLVL
+    [[ -z ${BASE_SHLVL+X} ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
-    if [[ -n "$ZSH_VERSION" ]]; then
+    if [[ -n "${ZSH_VERSION+X}" ]]; then
         PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%f@%F{${hostnamecolor}}%m%f${STY:+$($STY)} %* %1~"
         PS1_POST="]"$'\n'"\\$ "
     else
@@ -115,7 +114,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
 
     # Add virtualenv if available
     function __venv_ps1() {
-        if [[ -z "$ZSH_VERSION" ]]; then
+        if [[ -z "${ZSH_VERSION+X}" ]]; then
             PS1="${VIRTUAL_ENV:+\033[0;35m(${VIRTUAL_ENV##*/})\033[0m\n}$PS1"
         else
             PS1=${VIRTUAL_ENV:+%F{cyan}"(${VIRTUAL_ENV##*/})"%f$'\n'}$PS1
@@ -127,7 +126,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
 
     # Add SCL information if available
     function __scl_ps1() {
-        if [[ -z "$ZSH_VERSION" ]]; then
+        if [[ -z "${ZSH_VERSION+X}" ]]; then
             PS1="${X_SCLS:+\033[0;91m(${X_SCLS%% })\033[0m\n}$PS1"
         else
             PS1=${X_SCLS:+%F{red}"(${X_SCLS%% })"%f$'\n'}$PS1
@@ -139,7 +138,7 @@ if [[ -n "$PS1$PROMPT" ]]; then
 
     # List loaded modules
     function __modules_ps1() {
-        if [[ -z "$ZSH_VERSION" ]]; then
+        if [[ -z "${ZSH_VERSION+X}" ]]; then
             PS1="${LOADEDMODULES:+\033[0;94m(${LOADEDMODULES%% })\033[0m\n}$PS1"
         else
             PS1=${LOADEDMODULES:+%F{blue}"(${LOADEDMODULES//:/ })"%f$'\n'}$PS1
@@ -151,12 +150,12 @@ if [[ -n "$PS1$PROMPT" ]]; then
 fi
 
 ###### Configure the shell optons
-if [[ -n "$BASH_VERSION" ]]; then
+if [[ -n "${BASH_VERSION+X}" ]]; then
     shopt -s extglob progcomp histappend checkwinsize cdspell
     shopt -s checkhash no_empty_cmd_completion hostcomplete
     [[ $BASH_VERSINFO -gt 3 ]] && shopt -s autocd checkjobs dirspell
 fi
-if [[ -n "$ZSH_VERSION" ]]; then
+if [[ -n "${ZSH_VERSION+X}" ]]; then
     bindkey -e
     autoload -U select-word-style
     select-word-style bash
@@ -184,7 +183,7 @@ fi
 HISTFILE=$HOME/.my_bash_history
 HISTFILESIZE=100000
 HISTSIZE=100000
-if [[ -n "$ZSH_VERSION" ]]; then
+if [[ -n "${ZSH_VERSION+X}" ]]; then
     SAVEHIST=$HISTSIZE
     setopt SHAREHISTORY
     setopt INC_APPEND_HISTORY
@@ -194,14 +193,14 @@ fi
 
 export FZF_DEFAULT_OPTS='--layout=reverse --height=15 --tiebreak=begin,length,index'
 if [[ -n "$(find_program fzf)" ]]; then
-    [[ -n "$BASH_VERSION" && -f $HOME/.fzf-completion.bash ]] && source $HOME/.fzf-completion.bash
-    [[ -n "$BASH_VERSION" && -f $HOME/.fzf-key-bindings.bash ]] && source $HOME/.fzf-key-bindings.bash
-    [[ -n "$ZSH_VERSION" && -f $HOME/.fzf-completion.zsh ]] && source $HOME/.fzf-completion.zsh
-    [[ -n "$ZSH_VERSION" && -f $HOME/.fzf-key-bindings.zsh ]] && source $HOME/.fzf-key-bindings.zsh
+    [[ -n "${BASH_VERSION+X}" && -f $HOME/.fzf-completion.bash ]] && source $HOME/.fzf-completion.bash
+    [[ -n "${BASH_VERSION+X}" && -f $HOME/.fzf-key-bindings.bash ]] && source $HOME/.fzf-key-bindings.bash
+    [[ -n "${ZSH_VERSION+X}" && -f $HOME/.fzf-completion.zsh ]] && source $HOME/.fzf-completion.zsh
+    [[ -n "${ZSH_VERSION+X}" && -f $HOME/.fzf-key-bindings.zsh ]] && source $HOME/.fzf-key-bindings.zsh
 fi
 
 ###### Detect if neovim is available
-if [[ -z "$EDITOR" ]]; then
+if [[ -z "${EDITOR+X}" ]]; then
     if [[ -n "$(find_program nvim)" ]]; then
         export VISUAL=nvim
         export EDITOR=nvim
@@ -213,7 +212,7 @@ fi
 
 
 ###### Check if less version is sufficiently new
-if [[ -z "$PAGER" ]]; then
+if [[ -z "${PAGER+X}" ]]; then
     export PAGER=less
     if [[ $(less -V | sed -E '1!d;s/^less ([0-9]+).*$/\1/') -ge 530 ]]; then
         export LESS="-RF"
@@ -226,7 +225,7 @@ fi
 [[ -f $HOME/.pythonrc ]] && export PYTHONSTARTUP=$HOME/.pythonrc
 
 ###### Aliases
-[[ "$VISUAL" == "nvim" ]] && alias vim=nvim
+[[ "${VISUAL-X}" == "nvim" ]] && alias vim=nvim
 #unset -f which
 alias sc='tmux new-window'
 alias tm='tmux new-window'
@@ -258,7 +257,7 @@ if [[ -n "$(find_program dircolors)" ]]; then
     # I don't like bold
     export LS_COLORS=$(echo $LS_COLORS | sed 's/01;/00;/g' | sed 's/or=[^:]\+:/or=00;31:/')
 else
-    [[ -z "$LSCOLORS" ]] && export LSCOLORS=ExfxcxdxCxegedabagacad
+    [[ -z "${LSCOLORS+X}" ]] && export LSCOLORS=ExfxcxdxCxegedabagacad
 fi
 lsopts="-F"
 if ls --group-directories-first &>/dev/null; then
@@ -273,7 +272,7 @@ fi
 alias ls="ls $lsopts"
 
 ###### This seems to be generally useful
-if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+if [[ "${TERM_PROGRAM+X}" == "iTerm.app" ]]; then
     function tabcolor_ {
       echo -n -e "\033]6;1;bg;red;brightness;$1\a"
       echo -n -e "\033]6;1;bg;green;brightness;$2\a"
@@ -302,13 +301,13 @@ double2h () { perl -e '$f = unpack "Q", pack "d", shift; printf "0x%x\n", $f;' $
 for ver in -12 -11 '' -10 -9 -8 -7; do
     clangd__=$(find_program clangd$ver)
     clang_format__=$(find_program clang-format$ver)
-    [[ -z "$CLANGD_PATH" && -n "$clangd__" ]] \
+    [[ -z "${CLANGD_PATH+X}" && -n "$clangd__" ]] \
         && export CLANGD_PATH="$clangd__"
-    [[ -z "$CLANG_FORMAT" && -n "$clang_format__" ]] \
+    [[ -z "${CLANG_FORMAT+X}" && -n "$clang_format__" ]] \
         && export CLANG_FORMAT="$clang_format__"
 done
 
-if [[ -z "$PYLSP_PATH" ]]; then
+if [[ -z "${PYLSP_PATH+X}" ]]; then
     PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
     if [[ -x "$PYLSP_PATH" ]]; then
         export PYLSP_PATH

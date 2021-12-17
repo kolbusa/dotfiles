@@ -46,3 +46,5 @@
 	textconv = cat
 [push]
 	default = simple
+[advice]
+	detachedHead = false
