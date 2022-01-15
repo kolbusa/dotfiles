@@ -198,7 +198,7 @@ while true; do
     if [[ -f $tmuxsel_hosts ]]; then
         ssh_hosts=$(cat $tmuxsel_hosts | sed 's/^/ssh:/')
     fi
-    tmux_sessions=$(tmux list-sessions 2>/dev/null | sed 's/^/tmux:/;s/[[:space:]]/_/g') 
+    tmux_sessions=$(tmux list-sessions 2>/dev/null | sed 's/^/tmux:/;s/[[:space:]]/_/g' || true)
     select s in shell tmux $ssh_hosts $tmux_sessions; do
         case $s in
             shell)
