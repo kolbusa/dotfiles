@@ -8,7 +8,7 @@ local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
     -- Mappings.
-    local opts = { noremap=true, silent=true }
+    local opts = {noremap=true, silent=true}
 
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', '<Leader>gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -47,13 +47,14 @@ end
 lspconfig = require('lspconfig')
 
 -- TODO: wrap this into a function
+local lspconfig = require('lspconfig')
 local clangd_path = os.getenv('CLANGD_PATH')
 if clangd_path == nil then
     clangd_path = 'clangd'
 end
 lspconfig.clangd.setup{
     cmd = {clangd_path, '--background-index', '--pch-storage=disk', '--j=1'},
-    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
+    filetypes = {'c', 'cpp', 'objc', 'objcpp', 'cuda'},
     on_attach = on_attach
 }
 
@@ -61,9 +62,13 @@ local pylsp_path = os.getenv('PYLSP_PATH')
 if pylsp_path == nil then
     pylsp_path = 'pylsp'
 end
+local cmd = {pylsp_path}
+if os.getenv('PYLSP_DEBUG') == '1' then
+    cmd = {pylsp_path, '--log-file', '/Users/rdubtsov/work/playground/lsp/pylsp.log', '-v', '-v', '-v', '-v' }
+end
 lspconfig.pylsp.setup{
-    cmd = {pylsp_path},
-    filetypes = { 'python' },
+    cmd = cmd,
+    filetypes = {'python'},
     on_attach = on_attach
 }
 
@@ -73,7 +78,7 @@ do
   local default_handler = vim.lsp.handlers[method]
   vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
     default_handler(err, method, result, client_id, bufnr, config)
-    vim.lsp.diagnostic.set_loclist({
+    vim.diagnostic.set_loclist({
         open_loclist = false,
         open = false,
     })
