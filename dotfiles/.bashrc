@@ -91,10 +91,10 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     if [[ -f $HOME/.git-prompt.sh ]]; then
         # Must be sourced first?
         bash_git_completion=$HOME/.git-completion.bash
-        if [[ -n "$BASH_VERSION" ]]; then
+        if [[ -n "${BASH_VERSION-}" ]]; then
             [[ -f $bash_git_completion ]] && source $bash_git_completion
         fi
-        if [[ -n "$ZSH_VERSION" ]]; then
+        if [[ -n "${ZSH_VERSION-}" ]]; then
             fpath=($HOME/.zsh $fpath)
         fi
 
@@ -102,7 +102,7 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
         GIT_PS1_SHOWCOLORHINTS=1
         # It is important to prepend to work better with the modules ps1
         PROMPT_COMMAND="__git_ps1 \"$PS1_PRE\" \"$PS1_POST\"; \
-            $PROMPT_COMMAND"
+            ${PROMPT_COMMAND-}"
     else
         function __plain_ps1() {
             PS1="$1$2"
