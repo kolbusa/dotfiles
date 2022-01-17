@@ -151,14 +151,8 @@ if [[ "${1+X}" == "--lite" ]]; then
     shift
 fi
 
-
-if [[ -z "$(type -p tmux)" ]]; then
-    bash "$@"
-    exit
-fi
-
 # dirty hack to update the shell location
-def_shell=$(type -p $(basename $SHELL))  # XXX: this may pick up a different shell based on $PATH... (WNF)
+def_shell=$(type -p $(basename ${SHELL:-bash}))  # XXX: this may pick up a different shell based on $PATH... (WNF)
 set_def_shell="set -g default-shell $def_shell"
 # sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $def_shell," $(realpath $HOME/.tmux.conf)
 
@@ -169,6 +163,11 @@ if [[ -n "$(type -p ssh)" ]]; then
 fi
 
 source ~/.profile
+
+if [[ -z "$(find_program tmux)" ]]; then
+    ${SHELL:-bash} "$@"
+    exit
+fi
 
 STABLE_SOCKETS_DIR=${STABLE_SOCKETS_DIR:-$HOME/.ssh_auth_socks}
 if [[ "$ssh_kind" == "reflection" ]]; then
