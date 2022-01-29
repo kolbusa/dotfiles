@@ -272,7 +272,7 @@ fi
 alias ls="ls $lsopts"
 
 ###### This seems to be generally useful
-if [[ "${TERM_PROGRAM+X}" == "iTerm.app" ]]; then
+if [[ "${TERM_PROGRAM-X}" == "iTerm.app" ]]; then
     function tabcolor_ {
       echo -n -e "\033]6;1;bg;red;brightness;$1\a"
       echo -n -e "\033]6;1;bg;green;brightness;$2\a"
