@@ -198,7 +198,7 @@ while true; do
         ssh_hosts=$(cat $tmuxsel_hosts | sed 's/^/ssh:/')
     fi
     tmux_sessions=$(tmux list-sessions 2>/dev/null | sed 's/^/tmux:/;s/[[:space:]]/_/g' || true)
-    select s in shell tmux $ssh_hosts $tmux_sessions; do
+    select s in shell tmux python3 $ssh_hosts $tmux_sessions; do
         case $s in
             shell)
                 refresh_screen
@@ -212,7 +212,12 @@ while true; do
                 ( command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi' ) || true
                 log "Connection closed"
                 break
-            ;;
+                ;;
+            python3)
+                refresh_screen
+                python3
+                break
+                ;;
             tmux)
                 log "Creating new tmux session"
                 ssid="__new__"  # this is mostly for debug purposes
