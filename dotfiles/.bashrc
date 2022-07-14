@@ -70,10 +70,13 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     fi
 
     # Base PS1 setup
-    hostnamecolor=$(hostname \
+    hostnamecolor=${HOSTNAMECOLOR:-$(hostname \
         | od \
         | tr ' ' '\n' \
-        | awk '{total = total + $1} END{print 1 + (total % 6)}')
+        | awk '{total = total + $1} END{print 1 + (total % 6)}')}
+    if [[ -f /docker.marker ]]; then
+        hostnamecolor=11
+    fi
 
     [[ -z ${BASE_SHLVL+X} ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
@@ -296,6 +299,14 @@ h2float () { perl -e '$f = unpack "f", pack "L", hex shift; printf "%f\n", $f;' 
 float2h () { perl -e '$f = unpack "L", pack "f", shift; printf "0x%x\n", $f;' $*; }
 h2double () { perl -e '$f = unpack "d", pack "Q", hex shift; printf "%f\n", $f;' $*; }
 double2h () { perl -e '$f = unpack "Q", pack "d", shift; printf "0x%x\n", $f;' $*; }
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+safelink_decode() {
+    if [[ "$1" =~ safelinks.protection.outlook.com ]]; then
+        urldecode "$(echo "$1" | sed 's/[&?]/\n/g' | sed '/^url=/!d;s/url=//')"
+    else
+        echo "$1"
+    fi
+}
 
 ###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
 for ver in -12 -11 '' -10 -9 -8 -7; do
