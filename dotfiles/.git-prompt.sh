@@ -517,7 +517,7 @@ __git_ps1 ()
 		b="\${__git_ps1_branch_name}"
 	fi
 
-    local h="$(git log -1 --format=%h)|"
+    local h="$(git log -1 --format=%h 2>/dev/null || echo "EMPTY")|"
 	local f="$w$i$s$u"
 	local gitstring="$h$c$b${f:+$z$f}$r$p"
 
