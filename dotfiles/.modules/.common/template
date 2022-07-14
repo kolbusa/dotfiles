@@ -1,0 +1,8 @@
+#%Module1.0
+
+set arch [exec uname -m]
+set toolName [file tail [file dirname $ModulesCurrentModulefile]]
+set toolVersion [file tail $ModulesCurrentModulefile]
+set toolDir [file join $::env(HOME) work/tools/linux $arch $toolName $toolVersion]
+
+prepend-path PATH [file join $toolDir bin]

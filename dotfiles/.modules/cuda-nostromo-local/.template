@@ -1,0 +1,13 @@
+#%Module1.0
+
+set arch [exec uname -m]
+set version [file tail $ModulesCurrentModulefile]
+set cudaDir [file join /local/rdubtsov/tools/cuda $version]
+
+setenv CUDA_PATH $cudaDir
+prepend-path CPATH [file join $cudaDir include]
+prepend-path PATH [file join $cudaDir bin]
+prepend-path PATH [file join $cudaDir compute-sanitizer]
+prepend-path LIBRARY_PATH [file join $cudaDir lib64]
+prepend-path LD_LIBRARY_PATH [file join $cudaDir lib64]
+prepend-path LD_LIBRARY_PATH [file join $cudaDir extras CUPTI lib64]
