@@ -27,7 +27,7 @@ local on_attach = function(client, bufnr)
 
     buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
     buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-    -- buf_set_keymap('n', '<Leader>gq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+    -- buf_set_keymap('n', '<Leader>gq', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
     -- Highlighting
     if client.resolved_capabilities.document_highlight then
@@ -79,7 +79,6 @@ do
   vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
     default_handler(err, method, result, client_id, bufnr, config)
     vim.diagnostic.setloclist({
-        open_loclist = false,
         open = false,
     })
   end
