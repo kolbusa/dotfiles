@@ -202,7 +202,7 @@ while true; do
         case $s in
             shell)
                 refresh_screen
-                $SHELL -
+                $SHELL - || true
                 break
                 ;;
             ssh:*)
@@ -215,7 +215,7 @@ while true; do
                 ;;
             python3)
                 refresh_screen
-                python3
+                python3 || true
                 break
                 ;;
             tmux)
@@ -224,7 +224,7 @@ while true; do
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock "$ssh_auth_sock" "$ssid")
                 cmdline="$ssh_auth_sock=$stable_ssh_auth_sock tmux -2 -u $set_def_shell \\; new-session"
                 log "Executing '$cmdline'"
-                eval $cmdline
+                eval $cmdline || true
                 # del_stable_ssh_auth_sock  # cannot reliably tell whether we can delete the socket; let it be
                 log "Session closed"
                 break
@@ -236,8 +236,8 @@ while true; do
                 log "Updated stable ssh auth socket $stable_ssh_auth_sock"
                 cmdline="tmux -2 -u $set_def_shell \\; attach-session -t $ssid -E"
                 log "Executing '$cmdline'"
-                eval $cmdline
-                attached_clients=$(tmux list-clients -t $ssid 2>/dev/null)
+                eval $cmdline || true
+                attached_clients=$(tmux list-clients -t $ssid 2>/dev/null || true)
                 del_stable_ssh_auth_sock
                 log "Session closed"
                 break
