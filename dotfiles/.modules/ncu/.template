@@ -1,0 +1,7 @@
+#%Module1.0
+
+set arch [exec uname -m]
+set version [file tail $ModulesCurrentModulefile]
+set ncuDir [file join /home/scratch.svc_compute_arch/release/nsightCompute $version $arch latest]
+
+prepend-path PATH $ncuDir

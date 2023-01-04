@@ -1,10 +1,16 @@
 #%Module1.0
 
-conflict cuda
-
 set arch [exec uname -m]
 set version [file tail $ModulesCurrentModulefile]
-set cudaDir [file join $::env(HOME) work/tools/linux $arch cuda $version]
+set cudaDirBase [file join /home/scratch.svc_compute_arch/release/cuda_toolkit/r$version $arch]
+
+set cudaDirLatest [file join $cudaDirBase latest]
+if {[file exists $cudaDirLatest]} {
+    set cudaDir $cudaDirLatest
+} else {
+    set versions [lsort -decreasing [glob -directory $cudaDirBase -type d $version*]]
+    set cudaDir [lindex $versions 0]
+}
 
 setenv CUDA_PATH $cudaDir
 prepend-path CPATH [file join $cudaDir include]
