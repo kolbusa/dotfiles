@@ -18,23 +18,35 @@ find_program() {
     fi
 }
 
-prepend_to_path() {
-    local varname=$1
-    shift
+add_to_path() {
+    local mode=$1
+    local varname="$2"
+    shift 2
     local p
     for p in "$@"; do
         [[ -d $p ]] || continue
-        eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$p:\$$varname\""
+        if [[ "$mode" == "append" ]]; then
+            ppre=""
+            ppost=":$p"
+        else
+            ppre="$p:"
+            ppost=""
+        fi
+        eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$ppre\$$varname$ppost\""
     done
 }
 
 use_location() {
-    if [[ -d $1/bin ]]; then
-        prepend_to_path PATH $1/bin
+    local method=$1
+    local location=$2
+    if [[ -d $location/bin ]]; then
+        add_to_path $method PATH $location/bin
     else
-        prepend_to_path PATH $1
+        add_to_path $method PATH $location
     fi
-    prepend_to_path MANPATH $1/share/man
+    if [[ -d $location/share/man ]]; then
+        add_to_path $method MANPATH $location/share/man
+    fi
 }
 
 ###### Source the local configuration first
@@ -70,12 +82,13 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     fi
 
     # Base PS1 setup
-    hostnamecolor=${HOSTNAMECOLOR:-$(hostname \
-        | od \
-        | tr ' ' '\n' \
-        | awk '{total = total + $1} END{print 1 + (total % 6)}')}
     if [[ -f /docker.marker ]]; then
-        hostnamecolor=11
+        hostnamecolor=12
+    else
+        hostnamecolor=${HOSTNAMECOLOR:-$(hostname \
+            | od \
+            | tr ' ' '\n' \
+            | awk '{total = total + $1} END{print 1 + (total % 6)}')}
     fi
 
     [[ -z ${BASE_SHLVL+X} ]] && export BASE_SHLVL=$SHLVL
@@ -117,10 +130,16 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
 
     # Add virtualenv if available
     function __venv_ps1() {
+        local env=""
+        if [[ "$CONDA_DEFAULT_ENV" != "base" ]]; then
+            env="$CONDA_DEFAULT_ENV"
+        elif [[ -n "$VIRTUAL_ENV" ]]; then
+            env="$VIRTUAL_ENV"
+        fi
         if [[ -z "${ZSH_VERSION+X}" ]]; then
-            PS1="${VIRTUAL_ENV:+\033[0;35m(${VIRTUAL_ENV##*/})\033[0m\n}$PS1"
+            PS1="${env:+\033[0;35m(${env##*/})\033[0m\n}$PS1"
         else
-            PS1=${VIRTUAL_ENV:+%F{cyan}"(${VIRTUAL_ENV##*/})"%f$'\n'}$PS1
+            PS1=${env:+%F{cyan}"(${env##*/})"%f$'\n'}$PS1
         fi
     }
     # It is important to append since we are overwriting PS1 after the git bash
@@ -328,3 +347,5 @@ if [[ -z "${PYLSP_PATH+X}" ]]; then
 fi
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
+
+
