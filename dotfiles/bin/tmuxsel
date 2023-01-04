@@ -209,7 +209,9 @@ while true; do
                 host=$(echo $s | cut -f2 -d:)
                 log "SSHing to $host"
                 refresh_screen
+                trap '' INT
                 ( command ssh $host -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi' ) || true
+                trap cleanup INT
                 log "Connection closed"
                 break
                 ;;

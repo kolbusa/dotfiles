@@ -102,6 +102,8 @@ if has("gui_running")
     set t_ZR=
 endif
 
+set diffopt+=internal,algorithm:patience
+
 if $DARK_MODE == "0"
     set termguicolors
     " let g:vscode_style = "light"
