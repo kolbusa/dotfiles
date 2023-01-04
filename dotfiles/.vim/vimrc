@@ -42,6 +42,8 @@ nnoremap <C-l> :set invhls<CR>
 nnoremap gW :bw<CR>
 nnoremap gb :bn<CR>
 nnoremap gp :bp<CR>
+nnoremap gN :tabnext<CR>
+nnoremap gP :tabprev<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Advanced configuration
@@ -52,16 +54,26 @@ Plug 'tpope/vim-fugitive'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
-Plug 'ervandew/supertab'
-Plug 'Mofiqul/vscode.nvim'
-Plug 'bfrg/vim-cuda-syntax'
+Plug 'rsdubtso/nvim-solarized-lua'
 Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
 
 if has("nvim-0.5.0")
     Plug 'neovim/nvim-lspconfig'
-    Plug 'nvim-lua/completion-nvim'
+    if has("nvim-0.8.0")
+        Plug 'hrsh7th/cmp-nvim-lsp'
+        Plug 'hrsh7th/cmp-buffer'
+        Plug 'hrsh7th/cmp-path'
+        Plug 'hrsh7th/cmp-cmdline'
+        Plug 'hrsh7th/nvim-cmp'
+        Plug 'hrsh7th/cmp-vsnip'
+        Plug 'hrsh7th/vim-vsnip'
+        let g:cmp_enabled = 1
+    else
+        Plug 'nvim-lua/completion-nvim'
+        let g:cmp_enabled = 0
+    endif
     Plug 'ray-x/lsp_signature.nvim'
     let s:lsp_enabled = 1
 else
@@ -83,18 +95,36 @@ call plug#end()
 set cursorline
 set colorcolumn=120
 
-highlight default link myReference Cursor
-highlight default link myDiagnosticError SpellBad
+if has("gui_running")
+    " set t_ZH=^[[3m
+    " set t_ZR=^[[23m
+    set t_ZH=
+    set t_ZR=
+endif
 
 if $DARK_MODE == "0"
     set termguicolors
-    let g:vscode_style = "light"
-    colorscheme vscode
+    " let g:vscode_style = "light"
+    " colorscheme vscode
+    set background=light
+    let g:solarized_statusline = 'flat'
+    let g:solarized_italics = 0
+    colorscheme solarized
 else
     set termguicolors
-    let g:vscode_style = "dark"
-    colorscheme vscode
+    " let g:vscode_style = "dark"
+    " colorscheme vscode
+    set background=dark
+    let g:solarized_statusline = 'flat'
+    let g:solarized_italics = 0
+    colorscheme solarized
 endif
+
+nnoremap <Leader>cD :set background=dark<CR>
+nnoremap <Leader>cL :set background=light<CR>
+
+" highlight default link myReference Cursor
+highlight default link myDiagnosticError SpellBad
 
 au BufWinEnter * let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1)
 
@@ -114,6 +144,12 @@ let g:deoplete#enable_at_startup = 1
 " Neovim-lsp
 if s:lsp_enabled == 1
     execute "luafile " . expand('<sfile>:p:h') . '/lua/lsp.lua'
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Completion
+if g:cmp_enabled == 1
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/complete.lua'
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
