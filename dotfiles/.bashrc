@@ -273,6 +273,10 @@ alias it='git'
 alias gi='git'
 alias greo='grep'
 
+which() {
+    find_program "$@"
+}
+
 # Support non-GNU ls too
 if [[ -n "$(find_program dircolors)" ]]; then
     eval $(dircolors -b)
