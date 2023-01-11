@@ -41,9 +41,7 @@ set clipboard=
 nnoremap <C-l> :set invhls<CR>
 nnoremap gW :bw<CR>
 nnoremap gb :bn<CR>
-nnoremap gp :bp<CR>
-nnoremap gN :tabnext<CR>
-nnoremap gP :tabprev<CR>
+nnoremap gB :bp<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Advanced configuration
@@ -55,7 +53,7 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'rsdubtso/nvim-solarized-lua'
-Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
+" Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
 
@@ -82,6 +80,7 @@ endif
 
 if has("nvim-0.6.0")
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    Plug 'mrjones2014/nvim-ts-rainbow'
     let s:treesitter_enabled = 1
 else
     let s:treesitter_enabled = 0
@@ -109,7 +108,7 @@ if $DARK_MODE == "0"
     " let g:vscode_style = "light"
     " colorscheme vscode
     set background=light
-    let g:solarized_statusline = 'flat'
+    let g:solarized_statusline = 'normal'
     let g:solarized_italics = 0
     colorscheme solarized
 else
@@ -117,7 +116,7 @@ else
     " let g:vscode_style = "dark"
     " colorscheme vscode
     set background=dark
-    let g:solarized_statusline = 'flat'
+    let g:solarized_statusline = 'normal'
     let g:solarized_italics = 0
     colorscheme solarized
 endif
