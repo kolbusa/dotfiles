@@ -1,6 +1,15 @@
 require'nvim-treesitter.configs'.setup {
   highlight = {
-    enable = true,
+    enable = false,
+    disable = function(lang, bufnr)
+      if vim.api.nvim_buf_line_count(bufnr) >= 10000 then
+        return false
+      else
+        vim.bo.foldmethod = "expr"
+        vim.bo.foldexpr = "nvim_treesitter#foldexpr()"
+        return true
+      end
+    end
   },
   rainbow = {
     enable = true,

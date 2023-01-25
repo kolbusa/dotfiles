@@ -10,8 +10,8 @@ set autochdir
 set noautoread
 
 set tw=120
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 set formatoptions=tcqo2nr
 set autoindent
@@ -57,7 +57,7 @@ Plug 'rsdubtso/nvim-solarized-lua'
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
 
-if has("nvim-0.5.0")
+if has("nvim-0.6.0")
     Plug 'neovim/nvim-lspconfig'
     if has("nvim-0.8.0")
         Plug 'hrsh7th/cmp-nvim-lsp'
@@ -72,17 +72,20 @@ if has("nvim-0.5.0")
         Plug 'nvim-lua/completion-nvim'
         let g:cmp_enabled = 0
     endif
+    if has("nvim-0.7.0")
+      Plug 'lewis6991/gitsigns.nvim'
+      let s:gitsigns_enabled = 1
+    else
+      let s:gitsigns_enabled = 0
+    endif
     Plug 'ray-x/lsp_signature.nvim'
     let s:lsp_enabled = 1
-else
-    let s:lsp_enabled = 0
-endif
 
-if has("nvim-0.6.0")
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'mrjones2014/nvim-ts-rainbow'
     let s:treesitter_enabled = 1
 else
+    let s:lsp_enabled = 0
     let s:treesitter_enabled = 0
 endif
 
@@ -157,8 +160,14 @@ endif
 " Treesitter
 if s:treesitter_enabled == 1
     execute "luafile " . expand('<sfile>:p:h') . '/lua/treesitter.lua'
-    set foldmethod=expr
-    set foldexpr=nvim_treesitter#foldexpr()
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Gitsigns
+if s:gitsigns_enabled == 1
+  lua require('gitsigns').setup()
+  nmap <Leader>ggs :Gitsigns stage_hunk<CR>
+  nmap <Leader>ggu :Gitsigns undo_stage_hunk<CR>
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
