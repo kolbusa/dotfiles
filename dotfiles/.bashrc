@@ -131,7 +131,7 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     # Add virtualenv if available
     function __venv_ps1() {
         local env=""
-        if [[ "$CONDA_DEFAULT_ENV" != "base" ]]; then
+        if [[ -n "$CONDA_DEFAULT_ENV" && "$CONDA_DEFAULT_ENV" != "base" ]]; then
             env="$CONDA_DEFAULT_ENV"
         elif [[ -n "$VIRTUAL_ENV" ]]; then
             env="$VIRTUAL_ENV"
