@@ -9,9 +9,9 @@ set autochdir
 
 set noautoread
 
-set tw=120
-set tabstop=2
-set shiftwidth=2
+set tw=80
+set tabstop=4
+set shiftwidth=4
 set expandtab
 set formatoptions=tcqo2nr
 set autoindent
@@ -49,15 +49,19 @@ if has("nvim")
 
 call plug#begin()
 Plug 'tpope/vim-fugitive'
+Plug 'ngemily/vim-vp4'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'rsdubtso/nvim-solarized-lua'
+" Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 " Plug 'Shougo/deoplete.nvim', { 'for' : ['asm', 'bash', 'sh', 'conf', 'cmake'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
 
 if has("nvim-0.6.0")
+    Plug 'lukas-reineke/indent-blankline.nvim'
+    let s:blankline_enabled = 1
     Plug 'neovim/nvim-lspconfig'
     if has("nvim-0.8.0")
         Plug 'hrsh7th/cmp-nvim-lsp'
@@ -73,20 +77,30 @@ if has("nvim-0.6.0")
         let g:cmp_enabled = 0
     endif
     if has("nvim-0.7.0")
-      Plug 'lewis6991/gitsigns.nvim'
-      let s:gitsigns_enabled = 1
+        Plug 'lewis6991/gitsigns.nvim'
+        let s:gitsigns_enabled = 1
     else
-      let s:gitsigns_enabled = 0
+        let s:gitsigns_enabled = 0
+    endif
+    if has("nvim-0.7.0")
+        Plug 'kevinhwang91/promise-async'
+        Plug 'kevinhwang91/nvim-ufo'
+        let g:ufo_enabled = 1
+    else
+        let g:ufo_enabled = 0
     endif
     Plug 'ray-x/lsp_signature.nvim'
-    let s:lsp_enabled = 1
+    let g:lsp_enabled = 1
 
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'mrjones2014/nvim-ts-rainbow'
-    let s:treesitter_enabled = 1
+    let g:treesitter_enabled = 1
 else
-    let s:lsp_enabled = 0
-    let s:treesitter_enabled = 0
+    let s:blankline_enabled = 0
+    let g:lsp_enabled = 0
+    let g:cmp_enabled = 0
+    let g:treesitter_enabled = 0
+    let g:ufo_enabled = 0
 endif
 
 silent! source ~/.vim/plugins.local
@@ -95,7 +109,7 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Appearance
 set cursorline
-set colorcolumn=120
+set colorcolumn=80
 
 if has("gui_running")
     " set t_ZH=^[[3m
@@ -113,16 +127,20 @@ if $DARK_MODE == "0"
     " colorscheme vscode
     set background=light
     let g:solarized_statusline = 'normal'
+    let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
     colorscheme solarized
+    " colorscheme catppuccin-latte
 else
     set termguicolors
     " let g:vscode_style = "dark"
     " colorscheme vscode
     set background=dark
     let g:solarized_statusline = 'normal'
+    let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
     colorscheme solarized
+    " colorscheme catppuccin-frappe
 endif
 
 nnoremap <Leader>cD :set background=dark<CR>
@@ -147,7 +165,7 @@ let g:deoplete#enable_at_startup = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Neovim-lsp
-if s:lsp_enabled == 1
+if g:lsp_enabled == 1
     execute "luafile " . expand('<sfile>:p:h') . '/lua/lsp.lua'
 endif
 
@@ -159,16 +177,34 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treesitter
-if s:treesitter_enabled == 1
+if g:treesitter_enabled == 1
     execute "luafile " . expand('<sfile>:p:h') . '/lua/treesitter.lua'
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Gitsigns
 if s:gitsigns_enabled == 1
-  lua require('gitsigns').setup()
-  nmap <Leader>ggs :Gitsigns stage_hunk<CR>
-  nmap <Leader>ggu :Gitsigns undo_stage_hunk<CR>
+    lua require('gitsigns').setup({sign_priority=0})
+    nmap <Leader>ggs :Gitsigns stage_hunk<CR>
+    nmap <Leader>ggu :Gitsigns undo_stage_hunk<CR>
+    set signcolumn=yes:1
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" UFO
+if g:ufo_enabled == 1
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/ultrafold.lua'
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Blankline
+if s:blankline_enabled == 1
+    lua require('indent_blankline').setup({
+                \ char = '▏',
+                \ buftype_exclude = {'terminal'},
+                \ show_trailing_blankline_indent = false,
+                \ show_current_context = true,
+                \ filetype_exclude = {'', 'help', 'terminal'}})
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -274,16 +310,16 @@ let g:tagbar_show_linenumbers = 0
 " Check for modified files (https://github.com/neovim/neovim/issues/2127)
 if has("nvim")
 augroup AutoSwap
-        autocmd!
-        autocmd SwapExists *  call AS_HandleSwapfile(expand('<afile>:p'), v:swapname)
+    autocmd!
+    autocmd SwapExists *  call AS_HandleSwapfile(expand('<afile>:p'), v:swapname)
 augroup END
 
 function! AS_HandleSwapfile (filename, swapname)
-        " if swapfile is older than file itself, just get rid of it
-        if getftime(v:swapname) < getftime(a:filename)
-                call delete(v:swapname)
-                let v:swapchoice = 'e'
-        endif
+    " if swapfile is older than file itself, just get rid of it
+    if getftime(v:swapname) < getftime(a:filename)
+        call delete(v:swapname)
+        let v:swapchoice = 'e'
+    endif
 endfunction
 autocmd CursorHold,BufWritePost,BufReadPost,BufLeave * if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
 
@@ -302,21 +338,21 @@ autocmd Filetype c,cpp set comments^=:///
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " neovim terminal mode
 if has("nvim")
-  " Make escape work in the Neovim terminal.
-  tnoremap <Esc> <C-\><C-n>
+    " Make escape work in the Neovim terminal.
+    tnoremap <Esc> <C-\><C-n>
 
-  " Make navigation into and out of Neovim terminal splits nicer.
-  tnoremap <C-h> <C-\><C-N><C-w>h
-  tnoremap <C-j> <C-\><C-N><C-w>j
-  tnoremap <C-k> <C-\><C-N><C-w>k
-  tnoremap <C-l> <C-\><C-N><C-w>l
+    " Make navigation into and out of Neovim terminal splits nicer.
+    tnoremap <C-h> <C-\><C-N><C-w>h
+    tnoremap <C-j> <C-\><C-N><C-w>j
+    tnoremap <C-k> <C-\><C-N><C-w>k
+    tnoremap <C-l> <C-\><C-N><C-w>l
 
-  " I like relative numbering when in normal mode.
-  autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 nonumber norelativenumber
-  " autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
+    " I like relative numbering when in normal mode.
+    autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 nonumber norelativenumber
+    " autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
 
-  " Prefer Neovim terminal insert mode to normal mode.
-  autocmd BufEnter term://* startinsert
+    " Prefer Neovim terminal insert mode to normal mode.
+    autocmd BufEnter term://* startinsert
 endif
 
 silent! source ~/.vim/vimrc.local
@@ -335,3 +371,4 @@ endif
 endif
 endif
 
+" vim: ts=4 sw=4 et
