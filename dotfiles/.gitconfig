@@ -3,7 +3,7 @@
     diff=auto
     status=auto
 [user]
-    email = rdubtsov@nvidia.com
+    email = dubtsov@nvidia.com
     name = Roman Dubtsov
 [alias]
     am = am -k
@@ -48,3 +48,5 @@
 	default = simple
 [advice]
 	detachedHead = false
+[include]
+  path = ~/.gitconfig.local
