@@ -90,6 +90,8 @@ if has("nvim")
         Plug 'mrjones2014/nvim-ts-rainbow'
         let g:treesitter_enabled = 1
     endif
+else
+    Plug 'altercation/vim-colors-solarized'
 endif
 
 silent! source ~/.vim/plugins.local
@@ -121,11 +123,9 @@ if has("nvim")
     let g:solarized_statusline = 'normal'
     let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
-    colorscheme solarized
     hi IndentBlankLineChar guifg=#004152
-else
-    colorscheme default
 endif
+colorscheme solarized
 
 nnoremap <Leader>cD :set background=dark<CR>
 nnoremap <Leader>cL :set background=light<CR>
