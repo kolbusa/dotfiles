@@ -86,7 +86,7 @@ if has("nvim")
         Plug 'ray-x/lsp_signature.nvim'
         let g:lsp_enabled = 1
 
-        Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+        Plug 'nvim-treesitter/nvim-treesitter'
         Plug 'mrjones2014/nvim-ts-rainbow'
         let g:treesitter_enabled = 1
     endif
@@ -110,12 +110,8 @@ else
     set t_ZR=
 endif
 
-set diffopt+=internal,algorithm:patience
-
-if $DARK_MODE == "0"
-    set background=light
-else
-    set background=dark
+if v:version > 801
+    set diffopt+=internal,algorithm:patience
 endif
 
 if has("nvim")
@@ -123,15 +119,29 @@ if has("nvim")
     let g:solarized_statusline = 'normal'
     let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
-    hi IndentBlankLineChar guifg=#004152
 endif
 colorscheme solarized
 
-nnoremap <Leader>cD :set background=dark<CR>
-nnoremap <Leader>cL :set background=light<CR>
+function! BeDark()
+    hi IndentBlankLineChar guifg=#003342
+    set background=dark
+endfunction
+
+function! BeLight()
+    hi IndentBlankLineChar guifg=#fbecc1
+    set background=light
+endfunction
+
+if $DARK_MODE == "0"
+    :call BeLight()
+else
+    :call BeDark()
+endif
+
+nnoremap <Leader>cD :call BeDark()<CR>
+nnoremap <Leader>cL :call BeLight()<CR>
 
 highlight default link myDiagnosticError SpellBad
-
 au BufWinEnter * let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1)
 
 augroup CursorLine
@@ -210,7 +220,10 @@ nmap <Leader>gD :Gdiff<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure autocompletion
 set completeopt-=preview
-set completeopt=menuone,noinsert,noselect
+set completeopt=menuone
+if v:version > 800
+    set completeopt+=noinsert,noselect
+endif
 set shortmess+=c
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -219,7 +232,9 @@ let g:vim_markdown_math=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure vim behavior
-set nofixeol
+if v:version >= 800
+    set nofixeol
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ensure correct highlighting for Fortran free-form source code
