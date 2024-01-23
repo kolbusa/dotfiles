@@ -5,7 +5,20 @@ local on_attach = function(client, bufnr)
     if vim.g.cmp_enabled == 0 then
         require('completion').on_attach()
     end
-    require('lsp_signature').on_attach({hint_prefix='>', hi_parameter='IncSearch'})
+
+    require('lsp_signature').on_attach({
+      hint_enable = false,
+      hint_prefix = '>',
+      -- floating_window = false,
+      -- always_trigger = true,
+      max_height = 20,
+      max_width = 160,
+      doc_lines = 40,
+      floating_window_above_cur_line = true,
+      hi_parameter = 'LspReferenceRead',
+      select_signature_key = '<C-n>',
+      -- hi_parameter = 'LspSignatureActiveParameter',
+    })
 
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
@@ -24,8 +37,8 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<Leader>gf', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
     buf_set_keymap('v', '<Leader>gf', '<cmd>lua vim.lsp.buf.formatexpr()<CR>', opts)
 
-    buf_set_keymap('n', '<C-K>', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    buf_set_keymap('n', '<C-J>', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
 
     buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
     buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)

@@ -3,7 +3,7 @@ if vim.g.ufo_enabled then
   vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
   vim.o.foldlevelstart = 99
   vim.o.foldenable = true
-  vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+  -- vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
   if vim.g.treesitter_enabled then
     require('ufo').setup({
         provider_selector = function(bufnr, filetype, buftype)

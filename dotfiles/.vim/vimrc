@@ -58,8 +58,8 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 if has("nvim")
     Plug 'rsdubtso/nvim-solarized-lua'
     if has("nvim-0.6.0")
-        Plug 'lukas-reineke/indent-blankline.nvim'
-        let s:blankline_enabled = 1
+        " Plug 'lukas-reineke/indent-blankline.nvim'
+        " let s:blankline_enabled = 1
         Plug 'neovim/nvim-lspconfig'
         if has("nvim-0.8.0")
             Plug 'hrsh7th/cmp-nvim-lsp'
@@ -68,6 +68,7 @@ if has("nvim")
             Plug 'hrsh7th/cmp-cmdline'
             Plug 'hrsh7th/nvim-cmp'
             Plug 'hrsh7th/cmp-vsnip'
+            Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
             Plug 'hrsh7th/vim-vsnip'
             let g:cmp_enabled = 1
         else
@@ -91,7 +92,7 @@ if has("nvim")
         let g:treesitter_enabled = 1
     endif
 else
-    Plug 'altercation/vim-colors-solarized'
+     Plug 'altercation/vim-colors-solarized'
 endif
 
 silent! source ~/.vim/plugins.local
@@ -178,10 +179,10 @@ endif
 " Gitsigns
 if exists("s:gitsigns_enabled")
     lua require('gitsigns').setup({sign_priority=0})
-    nmap <Leader>ggn :Gitsigns next_hunk<CR>
-    nmap <Leader>ggp :Gitsigns prev_hunk<CR>
-    nmap <Leader>ggs :Gitsigns stage_hunk<CR>
-    nmap <Leader>ggu :Gitsigns undo_stage_hunk<CR>
+    nmap <Leader>gsn :Gitsigns next_hunk<CR>
+    nmap <Leader>gsp :Gitsigns prev_hunk<CR>
+    nmap <Leader>gss :Gitsigns stage_hunk<CR>
+    nmap <Leader>gsu :Gitsigns undo_stage_hunk<CR>
     set signcolumn=yes:1
 endif
 
