@@ -178,6 +178,8 @@ endif
 " Gitsigns
 if exists("s:gitsigns_enabled")
     lua require('gitsigns').setup({sign_priority=0})
+    nmap <Leader>ggn :Gitsigns next_hunk<CR>
+    nmap <Leader>ggp :Gitsigns prev_hunk<CR>
     nmap <Leader>ggs :Gitsigns stage_hunk<CR>
     nmap <Leader>ggu :Gitsigns undo_stage_hunk<CR>
     set signcolumn=yes:1
