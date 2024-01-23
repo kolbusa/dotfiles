@@ -178,7 +178,7 @@ if [[ "$ssh_kind" == "reflection" ]]; then
     fi
     ssh_auth_sock=SSH2_AUTH_SOCK
 else
-    if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    if [[ -z "${SSH_AUTH_SOCK-}" ]]; then
         eval $(ssh-agent)
         ssh-add
         kill_agent_on_exit=1
