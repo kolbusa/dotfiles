@@ -21,8 +21,10 @@ def lndir(src: str, dst: str) -> None:
             dst_full_path = os.path.join(dst_dirpath, f)
             if not os.path.exists(dst_full_path):
                 #  print(f'{src_full_path} -> {dst_full_path}')
-                os.symlink(os.path.join(src_full_path, f),
-                           os.path.join(dst_full_path, f))
+                os.symlink(src_full_path, dst_full_path)
+            elif os.path.islink(dst_full_path) \
+                    and os.readlink(dst_full_path) == src_full_path:
+                pass
             else:
                 assert False, f'{dst_full_path} already exists'
 
