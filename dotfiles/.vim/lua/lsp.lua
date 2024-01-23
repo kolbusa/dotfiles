@@ -131,6 +131,13 @@ lspconfig.pylsp.setup{
     capabilities = capabilities,
 }
 
+lspconfig.sourcekit.setup{
+    cmd = {'sourcekit-lsp'},
+    filetypes = {'swift'},
+    on_attach = on_attach,
+    capabilities = capabilities,
+}
+
 -- Keep a list of all errors (both location list and quickfix list)
 do
   local method = 'textDocument/publishDiagnostics'
