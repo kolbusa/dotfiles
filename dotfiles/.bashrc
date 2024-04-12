@@ -323,11 +323,11 @@ d2b () { echo "obase=2; $*" | bc | zp; }
 b2d () { echo "ibase=2; $*" | bc; }
 h2b () { echo "ibase=16;obase=2; $(sanitize_hex $*)" | bc | zp; }
 b2h () { echo "obase=16;ibase=2; $*" | bc | zp; }
-h2half () { perl -e '$h = hex shift; $s = $h & 0x8000; $e = (($h & 0x7c00) >> 10) + 112; $m = $h & 0x3ff; $f = ($s << 16) | ($e << 23) | ($m << 13); printf "%f\n", unpack("f", pack("I", $f))' $*; }
+h2half () { perl -e '$h = hex shift; $s = $h & 0x8000; $e = (($h & 0x7c00) >> 10) + 112; $m = $h & 0x3ff; $f = ($s << 16) | ($e << 23) | ($m << 13); $f = unpack("f", pack("I", $f)); printf "%f %e %a", $f, $f, $f' $*; }
 half2h () { perl -e '$f = unpack "I", pack "f", shift; $s = ($f & 0x80000000) >> 16; $e = (($f & 0x7f800000) >> 23) - 112; $m = ($f & 0x007fffff) >> 13; $h = ($s << 16) | ($e << 10) | $m; printf "0x%x\n", $h' $*; }
-h2float () { perl -e '$f = unpack "f", pack "I", hex shift; printf "%f\n", $f;' $*; }
+h2float () { perl -e '$f = unpack "f", pack "I", hex shift; printf "%f %e %a\n", $f, $f, $f;' $*; }
 float2h () { perl -e '$f = unpack "I", pack "f", shift; printf "%x\n", $f;' $* | zp; }
-h2double () { perl -e '$f = unpack "d", pack "Q", hex shift; printf "%f\n", $f;' $*; }
+h2double () { perl -e '$f = unpack "d", pack "Q", hex shift; printf "%f %e %a\n", $f, $f, $f;' $*; }
 double2h () { perl -e '$f = unpack "Q", pack "d", shift; printf "%x\n", $f;' $* | zp; }
 urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 safelink_decode() {
