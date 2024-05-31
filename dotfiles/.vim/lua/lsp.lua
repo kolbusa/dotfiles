@@ -98,6 +98,11 @@ local on_attach = function(client, bufnr)
     end
 end
 
+-- do nothing in diff mode
+-- XXX: not sure how this works when diff mode enabled later
+if vim.api.nvim_get_option_value("diff", {}) then
+    return
+end
 
 local lspconfig = require('lspconfig')
 local capabilities = nil
@@ -112,7 +117,8 @@ if clangd_path == nil then
     clangd_path = 'clangd'
 end
 lspconfig.clangd.setup{
-    cmd = {clangd_path, '--background-index', '--pch-storage=disk', '--j=1'},
+    -- cmd = {clangd_path, '--background-index', '--pch-storage=memory', '--j=8', '--enable-config'},
+    cmd = {clangd_path, '--background-index', '--j=2', '--clang-tidy', '--header-insertion=iwyu', '--completion-style=detailed', '--function-arg-placeholders', '--fallback-style=llvm', '--pch-storage=memory', '--enable-config'},
     filetypes = {'c', 'cpp', 'objc', 'objcpp', 'cuda'},
     on_attach = on_attach,
     capabilities = capabilities,

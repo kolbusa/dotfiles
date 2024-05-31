@@ -4,6 +4,8 @@ require'nvim-treesitter.configs'.setup {
     disable = function(lang, bufnr)
       if vim.api.nvim_buf_line_count(bufnr) >= 5000 then
         return true
+      elseif vim.api.nvim_get_option_value("diff", {}) then
+        return true
       else
         if vim.g.ufo_enabled == 0 then
           vim.bo.foldmethod = "expr"
@@ -16,10 +18,5 @@ require'nvim-treesitter.configs'.setup {
   indent = {
     enable = true,
   },
-  -- rainbow = {
-  --   enable = true,
-  --   extended_mode = false, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-  --   max_file_lines = 10000, -- Do not enable for files with more than n lines, int
-  -- },
 }
 
