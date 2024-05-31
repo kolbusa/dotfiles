@@ -7,7 +7,7 @@
     name = Roman Dubtsov
 [alias]
     am = am -k
-    tree = log --graph --all --oneline --decorate --abbrev-commit
+    tree = log --graph --oneline --decorate --abbrev-commit --topo-order
     tree1 = log --all --decorate --color --graph --pretty=format:'%Cred%h%Creset -%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     wtree = log --graph --all --decorate --color=auto --format=\"%C(yellow)%h%C(green bold)%d%C(reset) %cn %cd %s\"
     slog = log --stat
