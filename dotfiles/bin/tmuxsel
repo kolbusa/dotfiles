@@ -83,9 +83,9 @@ function mk_stable_ssh_auth_sock() {
             ssas=$(get_session_env $ssid $sas)
             ssas_dir=$(dirname $ssas)
             if [[ "$ssas_dir" != "$STABLE_SOCKETS_DIR" ]]; then
-                log "SSAS: detected broken ssas=$ssas. replacing!"
+                log "SSAS: detected broken ssas='$ssas'. Replacing!"
                 ssas=$(TMPDIR=$STABLE_SOCKETS_DIR mktemp -t $HOSTNAME.XXXXX)
-                log "SSAS: created a new ssas=$ssas"
+                log "SSAS: created a new ssas='$ssas'"
                 set_session_env $ssid $sas $ssas
             else
                 log "SSAS: fetched existing ssas=$ssas"
@@ -197,7 +197,7 @@ while true; do
     if [[ -f $tmuxsel_hosts ]]; then
         ssh_hosts=$(cat $tmuxsel_hosts | sed 's/^/ssh:/')
     fi
-    tmux_sessions=$(tmux list-sessions 2>/dev/null | sed 's/^/tmux:/;s/[[:space:]]/_/g' || true)
+    tmux_sessions=$(tmux list-sessions -F 'tmux:#{s/\$//:session_id}:#{session_name}#{?session_attached,_(attached),}' | sort -n -k2 -t: || true)
     select s in shell tmux python3 $ssh_hosts $tmux_sessions; do
         case $s in
             shell)
@@ -232,7 +232,7 @@ while true; do
                 break
             ;;
             tmux:*)
-                ssid=$(echo $s | cut -f2 -d:)
+                ssid="\\\$$(echo $s | cut -f2 -d:)"
                 log "Attaching to tmux session '$ssid'"
                 stable_ssh_auth_sock=$(mk_stable_ssh_auth_sock $ssh_auth_sock $ssid)
                 log "Updated stable ssh auth socket $stable_ssh_auth_sock"
