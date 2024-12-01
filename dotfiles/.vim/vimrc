@@ -270,7 +270,8 @@ endfunction
 
 function! FuncInfo()
     try
-        let ct = tagbar#currenttag('%s', '')
+        "let ct = tagbar#currenttag('%s', '')
+        let ct = nvim_treesitter#statusline()
         if ct != ''
             return ct.'│'
         else
@@ -340,6 +341,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " XXX: find a better place for this
 autocmd Filetype c,cpp set comments^=:///
+nmap K :Man<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " neovim terminal mode

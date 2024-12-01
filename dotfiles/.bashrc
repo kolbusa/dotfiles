@@ -55,7 +55,7 @@ use_location() {
 ###### Fixup locale in case it is not supported on this system
 locale_ok=0
 if test -n "$(find_program locale)"; then
-    if locale -a | sed 's/-//g' | grep -iqs "$(echo $LANG | sed 's/-//g')"; then
+    if locale -a 2>/dev/null | sed 's/-//g' | grep -iqs "$(echo $LANG | sed 's/-//g')"; then
         locale_ok=1
     fi
 fi
@@ -82,25 +82,48 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     fi
 
     # Base PS1 setup
-    if [[ -f /docker.marker ]]; then
-        hostnamecolor=12
+    if [[ -n "${ZSH_VERSION+X}" ]]; then
+        hn=${HOSTNAMEOVERRIDE:-%m}
     else
-        hostnamecolor=${HOSTNAMECOLOR:-$(hostname \
-            | od \
-            | tr ' ' '\n' \
-            | awk '{total = total + $1} END{print 1 + (total % 6)}')}
+        hn=${HOSTNAMEOVERRIDE:-\\h}
     fi
+    hnfull=${HOSTNAMEOVERRIDE:-$(cat /proc/sys/kernel/hostname)}
+
+    good_fg=(1 2 3 4 5 6 8 12)
+    fgc=${HOSTNAMECOLOR-}
+    if [[ -z ${fgc-} ]]; then
+        fgc=$(echo $hnfull \
+            | od -tu1 -An \
+            | tr ' ' '\n' \
+            | awk '{total = total + $1} END{print total % 8}')
+        if [[ -n "${ZSH_VERSION+X}" ]]; then
+            fgc=$((fgc+1))
+        fi
+        fgc=${good_fg[$fgc]}
+    fi
+    bgc=${HOSTNAMEBGCOLOR:-15}
 
     [[ -z ${BASE_SHLVL+X} ]] && export BASE_SHLVL=$SHLVL
     REL_SHLVL=$(($SHLVL - $BASE_SHLVL))
     if [[ -n "${ZSH_VERSION+X}" ]]; then
-        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%f@%F{${hostnamecolor}}%m%f${STY:+$($STY)} %* %1~"
+        # TODO: background
+        PS1_PRE="[(lvl: $REL_SHLVL) (bg: %j) %F{green}%n%f@%F{${fgc}}${hn}%f${STY:+$($STY)} %* %1~"
         PS1_POST="]"$'\n'"\\$ "
     else
-        PS1_PRE="\033[0;32m\u\033[0m@\033[0;$((30 + ${hostnamecolor}))m\h${STY:+($STY)}\033[0m \t \W"
+        if [[ $fgc -gt 7 ]]; then
+            fgc_idx=$((90 + $fgc - 7))
+        else
+            fgc_idx=$((30 + $fgc))
+        fi
+        if [[ $bgc -gt 7 ]]; then
+            bgc_idx=$((100 + $bgc - 7))
+        else
+            bgc_idx=$((40 + $bgc))
+        fi
+        PS1_PRE="\033[0;32m\u\033[0m@\033[0;${fgc_idx}m\033[${bgc_idx}m${hn}${STY:+($STY)}\033[0m \t \W"
+        # Add job and shell level information
         PS1_PRE="\033[0m[(lvl: $REL_SHLVL) (bg: \j) $PS1_PRE"
         PS1_POST="]\033[0m\r\n\\$ "
-        # Add job and shell level information
     fi
 
     # Load git bash prompt if available
@@ -249,14 +272,14 @@ fi
 ###### Aliases
 if [[ "${VISUAL-X}" == "nvim" ]]; then
     alias vim=nvim
-    alias vi='vim -u NONE -c "syntax off" -c "filetype off" -c "let &inccommand = \"\""'
+    alias vi='vim -u NONE -c "set ts=4 sw=4 et nosmartcase noignorecase mouse=nvi autochdir|syntax off|filetype off|let &inccommand = \"\""'
 fi
 #unset -f which
 alias sc='tmux new-window -a'
 alias tm='tmux new-window -a'
-alias vimdiff='nvim -d'
+alias vimdiff='$EDITOR -d'
 alias h='history'
-alias view='vim -R'
+alias view='$EDITOR -R'
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,cmd"
 else
@@ -323,7 +346,10 @@ d2b () { echo "obase=2; $*" | bc | zp; }
 b2d () { echo "ibase=2; $*" | bc; }
 h2b () { echo "ibase=16;obase=2; $(sanitize_hex $*)" | bc | zp; }
 b2h () { echo "obase=16;ibase=2; $*" | bc | zp; }
+h2e2m1 () { perl -e '$h = hex shift; $s = $h & 0x8; $e = ($h & 0x6) >> 1; $m = $h & 0x1; if ($e == 0) { $k = 0.5 * $m; printf "%s%s\n", $s ? "-" : "+", $k; } else { printf "%s%s\n", $s ? "-" : "+", 2**($e-1)*(2+$m)/2; }' $*; }
+h2e4m3 () { perl -e '$h = hex shift; $s = ($h & 0x80) >> 7; $e = ($h & 0x78) >> 3; $m = $h & 0x7; if ($h & 0x7f == 0x7f) { printf "nan"; } else { $f = ($s << 31) | ((($e - 7) + 127) << 23) | ($m << 20); $f = unpack("f", pack("I", $f)); printf "%f %e %a\n", $f, $f, $f}' $*; }
 h2half () { perl -e '$h = hex shift; $s = $h & 0x8000; $e = ($h & 0x7c00) >> 10; $m = $h & 0x3ff; if ($e == 0x1f) { if ($m == 0) { $k = "inf" } else { $k = "nan"}; printf "%s%s\n", $s ? "-" : "+", $k; } else { $e += 112; $f = ($s << 16) | ($e << 23) | ($m << 13); $f = unpack("f", pack("I", $f)); printf "%f %e %a\n", $f, $f, $f}' $*; }
+h2bf16 () { perl -e '$h = hex shift; $h = $h << 16; $f = unpack("f", pack("I", $h)); printf "%f %e %a\n", $f, $f, $f;' $*; }
 half2h () { perl -e '$f = unpack "I", pack "f", shift; $s = ($f & 0x80000000) >> 16; $e = (($f & 0x7f800000) >> 23) - 112; $m = ($f & 0x007fffff) >> 13; $h = ($s << 16) | ($e << 10) | $m; printf "0x%x\n", $h' $*; }
 h2float () { perl -e '$f = unpack "f", pack "I", hex shift; printf "%f %e %a\n", $f, $f, $f;' $*; }
 float2h () { perl -e '$f = unpack "I", pack "f", shift; printf "%x\n", $f;' $* | zp; }
@@ -358,5 +384,3 @@ if [[ -z "${PYLSP_PATH+X}" ]]; then
 fi
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
-
-

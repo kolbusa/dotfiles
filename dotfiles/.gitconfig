@@ -32,11 +32,6 @@
     wsErrorHighlight = all
 [help]
     autocorrect = 10
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
 [color "branch"]
 [color "diff"]
 	whitespace = red reverse
@@ -50,3 +45,11 @@
 	detachedHead = false
 [include]
     path = ~/.gitconfig.local
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[safe]
+	directory = /home/scratch.nshustrov_sw/projects/cublas/cuBLAS
+	directory = /home/scratch.nshustrov_sw/projects/cublas/cuBLAS/external/nvjet
