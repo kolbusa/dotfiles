@@ -56,6 +56,7 @@ Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc', { 'on' : 'AnsiEsc' }
 Plug 'keith/swift.vim', { 'for' : 'swift' }
+Plug 'https://github.com/RRethy/vim-illuminate', { 'for': ['asm'] }
 
 if has("nvim")
     Plug 'rsdubtso/nvim-solarized-lua'
@@ -189,6 +190,10 @@ if exists("s:gitsigns_enabled")
     nmap <Leader>gsp :Gitsigns prev_hunk<CR>
     nmap <Leader>gss :Gitsigns stage_hunk<CR>
     nmap <Leader>gsu :Gitsigns undo_stage_hunk<CR>
+    nmap <Leader>gsr :Gitsigns reset_hunk<CR>
+    vmap <Leader>gss :'<,'>Gitsigns stage_hunk<CR>
+    vmap <Leader>gsu :'<,'>Gitsigns undo_stage_hunk<CR>
+    vmap <Leader>gsr :'<,'>Gitsigns reset_hunk<CR>
     set signcolumn=yes:1
 endif
 
@@ -315,6 +320,11 @@ endfunction
 call RegularStatusLine()
 nnoremap <Leader>SF :call FileNameStatusLine()<CR>
 nnoremap <Leader>SN :call RegularStatusLine()<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TagBar
+hi clear IlluminatedWordText
+hi link IlluminatedWordText LspReferenceText
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TagBar
