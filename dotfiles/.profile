@@ -3,6 +3,7 @@
 # the current shell is bash.
 
 [ "${PROFILE_SOURCED+X}" = "1" ] && return
+[ -n "${CRUDE_NORC+X}" ] && return
 
 if [ "${OSTYPE+X}" = "Linux" ]; then
     export LANG=en_US.UTF8

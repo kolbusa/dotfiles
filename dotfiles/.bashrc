@@ -2,6 +2,7 @@
 
 # environment has already been set up
 [[ -n "${BASHRC_SOURCED+X}" ]] && return
+[[ -n "${CRUDE_NORC+X}" ]] && return
 
 # This is kind of broken... we sometimes need to load most of the environment
 # (mostly local modules) in order to start-up the tmux sel... so we skip the
@@ -358,9 +359,9 @@ alias vimdiff='$EDITOR -d'
 alias h='history'
 alias view='$EDITOR -R'
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,cmd"
+    alias psmy="ps -U ${USER:-$SLURM_JOB_USER} -u ${USER:-$SLURM_JOB_USER} -o pid,%cpu,%mem,state,vsize,cmd"
 else
-    alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,command"
+    alias psmy="ps -U ${USER:-$SLURM_JOB_USER} -u ${USER:-$SLURM_JOB_USER} -o pid,%cpu,%mem,state,vsize,command"
 fi
 
 # Typos
