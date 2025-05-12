@@ -30,6 +30,6 @@ mkdir -p "$LOGS"
 rm -rf "$BACKUP"
 mkdir -p "$BACKUP"
 
-for f in 01-overlay.sh 03-dotfiles.sh 04-vim.sh 05-fzf.sh; do
+for f in 01-overlay.sh 03-dotfiles.sh 04-vim.sh 05-fzf.sh 06-ghostty.sh; do
     source $DOTFILES/install-parts/$f 2>&1 | tee $LOGS/$(basename ${f/.sh/.log})
 done

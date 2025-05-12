@@ -1,7 +1,7 @@
 term = xterm-256color
-#font-family = SF Mono
+font-family = SF Mono
 #font-family = DejaVu Sans Mono
-font-family = Source Code Pro
+#font-family = Source Code Pro
 font-size = 11
 command = ~/bin/tmuxsel -
 window-theme = system
