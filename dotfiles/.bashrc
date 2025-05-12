@@ -87,7 +87,11 @@ if [[ -n "${PS1+X}${PROMPT+X}" ]]; then
     else
         hn=${HOSTNAMEOVERRIDE:-\\h}
     fi
-    hnfull=${HOSTNAMEOVERRIDE:-$(cat /proc/sys/kernel/hostname)}
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        hnfull=${HOSTNAMEOVERRIDE:-$(cat /proc/sys/kernel/hostname)}
+    else
+        hnfull=${HOSTNAMEOVERRIDE:-$(hostname)}
+    fi
 
     good_fg=(1 2 3 4 5 6 8 12)
     fgc=${HOSTNAMECOLOR-}
@@ -285,8 +289,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 else
     alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,command"
 fi
-alias dark='export DARK_MODE=1'
-alias light='export DARK_MODE=0'
+aliad dark >& /dev/null || declare -F dark >& /dev/null || alias dark='export DARK_MODE=1'
+aliad light >& /dev/null || declare -F light >& /dev/null || alias light='export DARK_MODE=1'
 
 # Typos
 alias mkdor='mkdir'
@@ -340,8 +344,8 @@ fi
 grp() { local s=${1:-8}; sed 's/ //g' | sed -E "s/.{$s}/& /g"; }
 zp() { perl -ne 'use POSIX; chomp; $s = $_; $l = length($s); $po2 = 2**POSIX::ceil(log($l)/log(2)); $padd = $po2 - $l; print "0" x $padd, $s, "\n";'; }
 sanitize_hex() { echo $* | sed 's/0x//' | tr '[:lower:]' '[:upper:]'; }
-d2h () { echo "obase=16; $*" | bc | zp; }
-h2d () { echo "ibase=16; $(sanitize_hex $*)" | bc; }
+d2h () { perl -e 'printf "%x\n", shift' $* | bc | zp; }
+h2d () { perl -e 'printf "%d\n", hex(shift)' $* | bc | zp; }
 d2b () { echo "obase=2; $*" | bc | zp; }
 b2d () { echo "ibase=2; $*" | bc; }
 h2b () { echo "ibase=16;obase=2; $(sanitize_hex $*)" | bc | zp; }
