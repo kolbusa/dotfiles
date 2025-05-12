@@ -7,6 +7,9 @@
     mkdir -p "$CFGDIR"
     test -f "$CFGDIR/config" && mv "$CFGDIR/config" "$CFGDIR/config.sv"
     ln -sf "$ROOT/config" "$CFGDIR"
+    ln -sf "$ROOT/theme.dark" "$CFGDIR"
+    ln -sf "$ROOT/theme.light" "$CFGDIR"
+    cat "$ROOT/theme.dark" > "$CFGDIR/theme"
 
     THMDIR="$HOME/.config/ghostty"
     mkdir -p "$THMDIR"
