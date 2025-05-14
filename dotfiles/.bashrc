@@ -32,7 +32,8 @@ add_to_path() {
             ppre="$p:"
             ppost=""
         fi
-        eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$ppre\$$varname$ppost\""
+        # eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$ppre\$$varname$ppost\""
+        eval "export $varname=\"$ppre$(echo \$$varname | sed 's/:$p://g')$ppost\""
     done
 }
 

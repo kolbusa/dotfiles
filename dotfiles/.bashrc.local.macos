@@ -1,16 +1,22 @@
 # vim: ft=zsh
 
-export DARK_MODE=0
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+
+__latest_ver() {
+    echo $1/$(cd $1 ; ls | sort -n | sed '1!d')
+}
+
+export DARK_MODE=1
 export P4CONFIG=.p4config
-export CLANGD_PATH=/usr/local/opt/llvm/bin/clangd
-export CLANG_FORMAT=/usr/local/opt/llvm/bin/clang-format
+export CLANGD_PATH=/opt/homebrew/opt/llvm/bin/clangd
+export CLANG_FORMAT=/opt/homebrew/opt/llvm/bin/clang-format
 export PYLSP_PATH=$HOME/Library/Python/3.9/bin/pylsp
-export PATH=/usr/local/Cellar/coreutils/8.32//libexec/gnubin:$PATH
-export PATH=/usr/local/Cellar/findutils/4.7.0/libexec/gnubin:$PATH
-export PATH=/usr/local/Cellar/gnu-tar/1.32/libexec/gnubin:$PATH
-export PATH=/usr/local/Cellar/gnu-sed/4.8/libexec/gnubin:$PATH
-export PATH=/Library/TeX/texbin:$PATH
+
+add_to_path prepend PATH /opt/homebrew/bin
+add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/coreutils)/libexec/gnubin
+add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/findutils)/libexec/gnubin
+add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-tar)/libexec/gnubin
+add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-sed)/libexec/gnubin
+add_to_path prepend /Library/TeX/texbin
 
 function ssh {
     if [[ $# > 1 ]]; then
@@ -31,3 +37,15 @@ if [[ -n "$(find_program fortune)" ]]; then
         ;;
     esac
 fi
+alias dark >& /dev/null && unalias dark
+alias light >& /dev/null && unalias light
+function dark() {
+    export DARK_MODE=1
+    local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+    cp $ghostty_config_dir/theme.dark $ghostty_config_dir/theme
+}
+function light() {
+    export DARK_MODE=1
+    local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+    cp $ghostty_config_dir/theme.light $ghostty_config_dir/theme
+}
