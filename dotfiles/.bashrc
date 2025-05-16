@@ -53,6 +53,78 @@ use_location() {
 ###### Source the local configuration first
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
+##### Common local
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    __latest_ver() {
+        echo $1/$(cd $1 ; ls | sort -n | sed '1!d')
+    }
+
+    export DARK_MODE=1
+    export P4CONFIG=.p4config
+    export CLANGD_PATH=/opt/homebrew/opt/llvm/bin/clangd
+    export CLANG_FORMAT=/opt/homebrew/opt/llvm/bin/clang-format
+    export PYLSP_PATH=$HOME/Library/Python/3.9/bin/pylsp
+
+    add_to_path prepend PATH /opt/homebrew/bin
+    add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/coreutils)/libexec/gnubin
+    add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/findutils)/libexec/gnubin
+    add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-tar)/libexec/gnubin
+    add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-sed)/libexec/gnubin
+    add_to_path prepend /Library/TeX/texbin
+
+    function ssh {
+        if [[ $# > 1 ]]; then
+            command ssh "${(z)@}"
+        else
+            command ssh "${(z)@}" -t 'if test -e $HOME/bin/tmuxsel; then $HOME/bin/tmuxsel - ; else $SHELL -l ; fi'
+        fi
+    }
+
+    alias tun='command ssh -L 5900:localhost:5900 -L 5001:localhost:5001 -L 10222:localhost:10222 -L 10122:localhost:10122 -N -f -T dubtsov.net'
+
+    if [[ -n "$(find_program fortune)" ]]; then
+        case $- in
+            *i*)
+            echo
+            fortune -e -s
+            echo
+            ;;
+        esac
+    fi
+    function dark() {
+        export DARK_MODE=1
+        local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+        cp $ghostty_config_dir/theme.dark $ghostty_config_dir/theme
+    }
+    function light() {
+        export DARK_MODE=1
+        local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+        cp $ghostty_config_dir/theme.light $ghostty_config_dir/theme
+    }
+else
+    alias dark='export DARK_MODE=1'
+    alias light='export DARK_MODE=1'
+
+    ###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
+    for ver in -12 -11 '' -10 -9 -8 -7; do
+        clangd__=$(find_program clangd$ver)
+        clang_format__=$(find_program clang-format$ver)
+        [[ -z "${CLANGD_PATH+X}" && -n "$clangd__" ]] \
+            && export CLANGD_PATH="$clangd__"
+        [[ -z "${CLANG_FORMAT+X}" && -n "$clang_format__" ]] \
+            && export CLANG_FORMAT="$clang_format__"
+    done
+
+    if [[ -z "${PYLSP_PATH+X}" ]]; then
+        PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
+        if [[ -x "$PYLSP_PATH" ]]; then
+            export PYLSP_PATH
+        else
+            unset PYLSP_PATH
+        fi
+    fi
+fi
+
 ###### Fixup locale in case it is not supported on this system
 locale_ok=0
 if test -n "$(find_program locale)"; then
@@ -290,8 +362,6 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 else
     alias psmy="ps -U $USER -u $USER -o pid,%cpu,%mem,state,vsize,command"
 fi
-aliad dark >& /dev/null || declare -F dark >& /dev/null || alias dark='export DARK_MODE=1'
-aliad light >& /dev/null || declare -F light >& /dev/null || alias light='export DARK_MODE=1'
 
 # Typos
 alias mkdor='mkdir'
@@ -369,23 +439,7 @@ safelink_decode() {
     fi
 }
 
-###### Find clangd and clang-format -- PATH or Debian/Ubuntu version
-for ver in -12 -11 '' -10 -9 -8 -7; do
-    clangd__=$(find_program clangd$ver)
-    clang_format__=$(find_program clang-format$ver)
-    [[ -z "${CLANGD_PATH+X}" && -n "$clangd__" ]] \
-        && export CLANGD_PATH="$clangd__"
-    [[ -z "${CLANG_FORMAT+X}" && -n "$clang_format__" ]] \
-        && export CLANG_FORMAT="$clang_format__"
-done
-
-if [[ -z "${PYLSP_PATH+X}" ]]; then
-    PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
-    if [[ -x "$PYLSP_PATH" ]]; then
-        export PYLSP_PATH
-    else
-        unset PYLSP_PATH
-    fi
-fi
+export DARK_MODE=1
+export P4CONFIG=.p4config
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
