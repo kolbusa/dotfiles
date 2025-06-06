@@ -93,12 +93,12 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     fi
     function dark() {
         export DARK_MODE=1
-        local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+        local ghostty_config_dir="$HOME/Library/Application Support/com.mitchellh.ghostty"
         cp $ghostty_config_dir/theme.dark $ghostty_config_dir/theme
     }
     function light() {
         export DARK_MODE=1
-        local ghostty_config_dir="/Users/rdubtsov/Library/Application Support/com.mitchellh.ghostty"
+        local ghostty_config_dir="$HOME/Library/Application Support/com.mitchellh.ghostty"
         cp $ghostty_config_dir/theme.light $ghostty_config_dir/theme
     }
 else
