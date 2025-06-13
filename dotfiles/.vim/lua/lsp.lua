@@ -112,40 +112,59 @@ if vim.g.cmp_enabled then
     capabilities = require('cmp_nvim_lsp').default_capabilities()
 end
 
+function getenv_with_default(envname, default)
+    local result = os.getenv(envname)
+    if result == nil then
+        result = default
+    end
+    return result
+end
+
 -- TODO: wrap this into a function
-local clangd_path = os.getenv('CLANGD_PATH')
-if clangd_path == nil then
-    clangd_path = 'clangd'
+local clangd_path = getenv_with_default('CLANGD_PATH', 'clangd')
+if vim.fn.executable(clangd_path) == 1 then
+    vim.lsp.enable('clangd')
+    vim.lsp.config('clangd', {
+        -- cmd = {clangd_path, '--background-index', '--pch-storage=memory', '--j=8', '--enable-config'},
+        cmd = {clangd_path, '--background-index', '--j=2', '--clang-tidy', '--header-insertion=iwyu', '--completion-style=detailed', '--function-arg-placeholders', '--fallback-style=llvm', '--pch-storage=memory', '--enable-config'},
+        filetypes = {'c', 'cpp', 'objc', 'objcpp', 'cuda'},
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
 end
-lspconfig.clangd.setup{
-    -- cmd = {clangd_path, '--background-index', '--pch-storage=memory', '--j=8', '--enable-config'},
-    cmd = {clangd_path, '--background-index', '--j=2', '--clang-tidy', '--header-insertion=iwyu', '--completion-style=detailed', '--function-arg-placeholders', '--fallback-style=llvm', '--pch-storage=memory', '--enable-config'},
-    filetypes = {'c', 'cpp', 'objc', 'objcpp', 'cuda'},
-    on_attach = on_attach,
-    capabilities = capabilities,
-}
 
-local pylsp_path = os.getenv('PYLSP_PATH')
-if pylsp_path == nil then
-    pylsp_path = 'pylsp'
-end
-local cmd = {pylsp_path}
-if os.getenv('PYLSP_DEBUG') == '1' then
-    cmd = {pylsp_path, '--log-file', '/Users/rdubtsov/work/playground/lsp/pylsp.log', '-v', '-v', '-v', '-v' }
-end
-lspconfig.pylsp.setup{
-    cmd = cmd,
-    filetypes = {'python'},
-    on_attach = on_attach,
-    capabilities = capabilities,
-}
+-- local pylsp_path = getenv_with_default('PYLSP_PATH', 'pylsp')
+-- local cmd = {pylsp_path}
+-- if os.getenv('PYLSP_DEBUG') == '1' then
+--     cmd = {pylsp_path, '--log-file', '/Users/rdubtsov/work/playground/lsp/pylsp.log', '-v', '-v', '-v', '-v' }
+-- end
+-- lspconfig.pylsp.setup{
+--     cmd = cmd,
+--     filetypes = {'python'},
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+-- }
 
-lspconfig.sourcekit.setup{
-    cmd = {'sourcekit-lsp'},
-    filetypes = {'swift'},
-    on_attach = on_attach,
-    capabilities = capabilities,
-}
+local basedpyright_path = getenv_with_default('BASEDPYRIGHT_PATH', 'basedpyright-langserver')
+if vim.fn.executable(basedpyright_path) == 1 then
+    vim.lsp.enable('basedpyright')
+    vim.lsp.config('basedbyright', {
+        cmd = {basedpyright_path, '--stdio'},
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
+end
+
+local sourcekit_path = getenv_with_default('SOURCEKIT_PATH', 'sourcekit-lsp')
+if vim.fn.executable(sourcekit_path) == 1 then
+    vim.lsp.enable('sourcekit')
+    vim.lsp.config('sourcekit', {
+        cmd = {sourcekit_path},
+        filetypes = {'swift'},
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
+end
 
 -- Keep a list of all errors (both location list and quickfix list)
 do

@@ -43,18 +43,19 @@ nnoremap gW :bw<CR>
 nnoremap gb :bn<CR>
 nnoremap gB :bp<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Advanced configuration
 
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'ngemily/vim-vp4'
-Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'swift', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
+Plug 'jeetsukumaran/vim-buffergator', { 'on' : 'BuffregatorOpen' }
+" Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'swift', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
+Plug 'scrooloose/nerdcommenter', { 'on' : ['<Plug>NERDCommenterUncomment', '<Plug>NERDCommenterComment'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
-Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'keith/swift.vim'
+Plug 'powerman/vim-plugin-AnsiEsc', { 'on' : 'AnsiEsc' }
+Plug 'keith/swift.vim', { 'for' : 'swift' }
 
 if has("nvim")
     Plug 'rsdubtso/nvim-solarized-lua'
@@ -216,9 +217,17 @@ let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 
+" Repeat (some of) the default mappings to enable lazy loading
+nmap <Leader>cc <Plug>NERDCommenterComment
+vmap <Leader>cc <Plug>NERDCommenterComment
+nmap <Leader>cu <Plug>NERDCommenterUncomment
+vmap <Leader>cu <Plug>NERDCommenterUncomment
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Buffergator
-let g:buffergator_suppress_mru_switching_keymaps = 1
+" Buffregator
+let g:buffregator_suppress_mru_switching_keymaps = 1
+" for lazy loading
+nmap <Leader>b :BuffregatorOpen<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure fugitive to use familiar key bindings
