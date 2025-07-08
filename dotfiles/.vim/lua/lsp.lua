@@ -47,15 +47,22 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
     -- buf_set_keymap('n', '<Leader>gq', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
-    local signs = { Error = "▶︎", Warn = "▷", Hint = "●", Info = "○" }
-    for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-    end
+    -- local signs = { Error = "▶︎", Warn = "▷", Hint = "●", Info = "○" }
+    -- for type, icon in pairs(signs) do
+    --     local hl = "DiagnosticSign" .. type
+    --     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+    -- end
 
     vim.diagnostic.config({
         virtual_text = false,
-        signs = true,
+        signs = {
+            text = {
+                [vim.diagnostic.severity.ERROR] = "▶︎",
+                [vim.diagnostic.severity.WARN]  = "▷",
+                [vim.diagnostic.severity.HINT]  = "●",
+                [vim.diagnostic.severity.INFO]  = "○" ,
+            },
+        },
         underline = true,
         update_in_insert = false,
         severity_sort = false,
@@ -105,12 +112,12 @@ if vim.api.nvim_get_option_value("diff", {}) then
     return
 end
 
-local lspconfig = require('lspconfig')
-local capabilities = nil
+-- local lspconfig = require('lspconfig')
+-- local capabilities = nil
 
-if vim.g.cmp_enabled then
-    capabilities = require('cmp_nvim_lsp').default_capabilities()
-end
+-- if vim.g.cmp_enabled then
+--     capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- end
 
 function getenv_with_default(envname, default)
     local result = os.getenv(envname)
@@ -153,6 +160,9 @@ if vim.fn.executable(basedpyright_path) == 1 then
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    -- WAR some logic error in the table update
+    vim.lsp.config["basedpyright"].on_attach = on_attach
+
 end
 
 local sourcekit_path = getenv_with_default('SOURCEKIT_PATH', 'sourcekit-lsp')
