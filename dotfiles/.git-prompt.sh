@@ -363,7 +363,7 @@ __git_ps1 ()
 	local repo_info rev_parse_exit_code
 	repo_info="$(git rev-parse --git-dir --is-inside-git-dir \
 		--is-bare-repository --is-inside-work-tree \
-		--short HEAD 2>/dev/null)"
+		--short=10 HEAD 2>/dev/null)"
 	rev_parse_exit_code="$?"
 
 	if [ -z "$repo_info" ]; then
@@ -517,7 +517,8 @@ __git_ps1 ()
 		b="\${__git_ps1_branch_name}"
 	fi
 
-    local h="$(git log -1 --format=%h 2>/dev/null || echo "EMPTY")|"
+    # local h="$(git log -1 --format=%h 2>/dev/null || echo "EMPTY")|"
+    local h="$(git rev-parse --short=10 HEAD 2>/dev/null || echo "EMPTY")|"
 	local f="$w$i$s$u"
 	local gitstring="$h$c$b${f:+$z$f}$r$p"
 
