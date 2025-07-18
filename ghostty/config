@@ -1,5 +1,6 @@
 term = xterm-256color
-font-family = Cascadia Code
+font-family = Cascadia Mono
+#font-family = Cascadia Code
 #font-family = SF Mono
 #font-family = DejaVu Sans Mono
 #font-family = Source Code Pro

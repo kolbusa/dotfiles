@@ -49,9 +49,9 @@ nnoremap gB :bp<CR>
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'ngemily/vim-vp4'
-Plug 'jeetsukumaran/vim-buffergator', { 'on' : 'BuffregatorOpen' }
+Plug 'jeetsukumaran/vim-buffergator' ", { 'on' : 'BuffregatorOpen' }
 " Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'swift', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
-Plug 'scrooloose/nerdcommenter', { 'on' : ['<Plug>NERDCommenterUncomment', '<Plug>NERDCommenterComment'] }
+Plug 'scrooloose/nerdcommenter' ", { 'on' : ['<Plug>NERDCommenterUncomment', '<Plug>NERDCommenterComment'] }
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc', { 'on' : 'AnsiEsc' }
@@ -123,6 +123,7 @@ if has("nvim")
     let g:solarized_statusline = 'normal'
     let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
+    let g:solarized_transparent = 0
 endif
 colorscheme solarized
 
