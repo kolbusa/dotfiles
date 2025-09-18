@@ -36,6 +36,8 @@ set foldmethod=syntax
 set mouse=nvi
 set clipboard=
 
+set splitright
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keybindings
 nnoremap <C-l> :set invhls<CR>
@@ -49,14 +51,12 @@ nnoremap gB :bp<CR>
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'ngemily/vim-vp4'
-Plug 'jeetsukumaran/vim-buffergator' ", { 'on' : 'BuffregatorOpen' }
-" Plug 'scrooloose/nerdcommenter', { 'for' : ['python', 'make', 'c', 'cpp', 'cuda', 'bash', 'sh', 'conf', 'vim', 'perl', 'swift', 'tex', 'cmake', 'asm', 'bzl', 'lua', 'tmux'] }
-Plug 'scrooloose/nerdcommenter' ", { 'on' : ['<Plug>NERDCommenterUncomment', '<Plug>NERDCommenterComment'] }
+Plug 'jeetsukumaran/vim-buffergator'
+Plug 'scrooloose/nerdcommenter'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
-Plug 'powerman/vim-plugin-AnsiEsc', { 'on' : 'AnsiEsc' }
+Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'keith/swift.vim', { 'for' : 'swift' }
-Plug 'https://github.com/RRethy/vim-illuminate', { 'for': ['asm'] }
 
 if has("nvim")
     Plug 'rsdubtso/nvim-solarized-lua'
@@ -93,6 +93,8 @@ if has("nvim")
         Plug 'nvim-treesitter/nvim-treesitter'
         Plug 'HiPhish/rainbow-delimiters.nvim'
         let g:treesitter_enabled = 1
+
+        Plug 'https://github.com/RRethy/vim-illuminate'
     endif
 else
      Plug 'altercation/vim-colors-solarized'
@@ -196,6 +198,14 @@ if exists("s:gitsigns_enabled")
     vmap <Leader>gsu :'<,'>Gitsigns undo_stage_hunk<CR>
     vmap <Leader>gsr :'<,'>Gitsigns reset_hunk<CR>
     set signcolumn=yes:1
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Illuminate
+if has("nvim")
+    lua require('illuminate').configure({large_file_cutoff = 1000000})
+    lua require('illuminate').pause()
+    nmap <C-i> :IlluminateToggle<CR>
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

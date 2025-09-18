@@ -68,6 +68,9 @@ local on_attach = function(client, bufnr)
         severity_sort = false,
     })
 
+    vim.o.foldmethod = "expr"
+    vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
+
     if client.server_capabilities.documentHighlightProvider then
         vim.o.updatetime = 500
         vim.api.nvim_create_autocmd("CursorHold", {
@@ -105,6 +108,8 @@ local on_attach = function(client, bufnr)
         })
     end
 end
+
+vim.lsp.log.set_level(vim.log.levels.OFF)
 
 -- do nothing in diff mode
 -- XXX: not sure how this works when diff mode enabled later
