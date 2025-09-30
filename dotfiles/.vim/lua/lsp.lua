@@ -117,6 +117,14 @@ if vim.api.nvim_get_option_value("diff", {}) then
     return
 end
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = vim.tbl_deep_extend('force', capabilities, {
+    offsetEncoding = { 'utf-16' },
+    general = {
+      positionEncodings = { 'utf-16' },
+    },
+})
+
 -- local lspconfig = require('lspconfig')
 -- local capabilities = nil
 
@@ -168,6 +176,17 @@ if vim.fn.executable(basedpyright_path) == 1 then
     -- WAR some logic error in the table update
     vim.lsp.config["basedpyright"].on_attach = on_attach
 
+end
+
+local ruff_path = getenv_with_default('RUFF_PATH', 'ruff')
+if vim.fn.executable(ruff_path) == 1 then
+    vim.lsp.enable('ruff')
+    vim.lsp.config('ruff', {
+        cmd = {ruff_path, 'server'},
+        filetypes = {'python'},
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
 end
 
 local sourcekit_path = getenv_with_default('SOURCEKIT_PATH', 'sourcekit-lsp')

@@ -1,5 +1,5 @@
 neovim-bin = "/opt/homebrew/bin/nvim"
 
 [font]
-normal = "Cascadia Code"
+normal = "Cascadia Mono"
 size = 12

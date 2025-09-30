@@ -49,10 +49,12 @@ nnoremap gB :bp<CR>
 " Advanced configuration
 
 call plug#begin()
+Plug 'scrooloose/nerdcommenter'
+
+if !exists('g:vscode')
 Plug 'tpope/vim-fugitive'
 Plug 'ngemily/vim-vp4'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'scrooloose/nerdcommenter'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
@@ -99,6 +101,7 @@ if has("nvim")
 else
      Plug 'altercation/vim-colors-solarized'
 endif
+endif
 
 silent! source ~/.vim/plugins.local
 call plug#end()
@@ -120,14 +123,16 @@ if v:version > 801
     set diffopt+=internal,algorithm:patience
 endif
 
-if has("nvim")
+if has("nvim") && !exists('g:vscode')
     set termguicolors
     let g:solarized_statusline = 'normal'
     let g:solarized_diffmode = 'low'
     let g:solarized_italics = 0
     let g:solarized_transparent = 0
 endif
-colorscheme solarized
+if !exists('g:vscode')
+    colorscheme solarized
+endif
 
 function! BeDark()
     hi IndentBlankLineChar guifg=#003342
@@ -405,6 +410,13 @@ if exists("g:neovide")
     let g:neovide_cursor_animate_command_line = 0
     let g:neovide_scroll_animation_far_lines = 0
     let g:neovide_scroll_animation_length = 0.00
+    let g:neovide_input_use_logo = v:true
+    nmap <D-c> "+y
+    vmap <D-c> "+y
+    nmap <D-v> "+p
+    vmap <D-v> "+p
+    cmap <D-v> <C-R>+
+    imap <D-v> <C-R>+
 endif
 
 endif  " nocompatible

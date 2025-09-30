@@ -153,7 +153,7 @@ fi
 
 # dirty hack to update the shell location
 def_shell=$(type -p $(basename ${SHELL:-bash}))  # XXX: this may pick up a different shell based on $PATH... (WNF)
-set_def_shell="set -g default-shell $def_shell"
+set_def_shell="set -g default-command $def_shell"
 # sed_dash_i_dash_E "s,^(set -g default-shell) .*$,\1 $def_shell," $(realpath $HOME/.tmux.conf)
 
 ssh_kind=

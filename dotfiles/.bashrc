@@ -33,8 +33,12 @@ add_to_path() {
             ppre="$p:"
             ppost=""
         fi
-        # eval "echo ":\$$varname:" | grep -qse ":$p:" || export $varname=\"$ppre\$$varname$ppost\""
-        eval "export $varname=\"$ppre$(echo \$$varname | sed 's/:$p://g')$ppost\""
+        eval "echo ":\$$varname:" | grep -qsE \"(:|^)$p(:|$)\" || export $varname=\"$ppre\$$varname$ppost\""
+        # set -x
+        # local v=$(eval echo \$$varname | sed -E "s,(^|:)$p(:|\$),,g")
+        # eval "export $varname=\"$ppre$v$ppost\""
+        # set +x
+        # eval "export $varname=\"$ppre$(echo \$$varname | sed 's/:$p://g')$ppost\""
     done
 }
 
@@ -64,7 +68,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     export P4CONFIG=.p4config
     export CLANGD_PATH=/opt/homebrew/opt/llvm/bin/clangd
     export CLANG_FORMAT=/opt/homebrew/opt/llvm/bin/clang-format
-    export PYLSP_PATH=$HOME/Library/Python/3.9/bin/pylsp
+    # export PYLSP_PATH=$HOME/Library/Python/3.9/bin/pylsp
 
     add_to_path prepend PATH /opt/homebrew/bin
     add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/coreutils)/libexec/gnubin
@@ -116,13 +120,19 @@ else
             && export CLANG_FORMAT="$clang_format__"
     done
 
-    if [[ -z "${PYLSP_PATH+X}" ]]; then
-        PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
-        if [[ -x "$PYLSP_PATH" ]]; then
-            export PYLSP_PATH
-        else
-            unset PYLSP_PATH
-        fi
+    # if [[ -z "${PYLSP_PATH+X}" ]]; then
+    #     PYLSP_PATH=$HOME/.local/python-Linux/bin/pylsp
+    #     if [[ -x "$PYLSP_PATH" ]]; then
+    #         export PYLSP_PATH
+    #     else
+    #         unset PYLSP_PATH
+    #     fi
+    # fi
+fi
+
+if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+    if [[ -f ~/work/python/bin/activate ]]; then
+        source ~/work/python/bin/activate
     fi
 fi
 
