@@ -119,7 +119,7 @@ else
     set t_ZR=
 endif
 
-if v:version > 801
+if (!has("macunix") && v:version > 801) || has("nvim")
     set diffopt+=internal,algorithm:patience
 endif
 
@@ -134,22 +134,75 @@ if !exists('g:vscode')
     colorscheme solarized
 endif
 
+let g:forced_theme = 0
+
 function! BeDark()
     hi IndentBlankLineChar guifg=#003342
+    let g:forced_theme=1
     set background=dark
 endfunction
 
 function! BeLight()
     hi IndentBlankLineChar guifg=#fbecc1
+    let g:forced_theme=1
     set background=light
 endfunction
 
-if $DARK_MODE == "0"
-    :call BeLight()
+if has("nvim")
+lua << EOF
+    local osc11 = require("osc11_bg")
+    osc11.setup{
+      timeout_ms = 20,
+      luma_threshold = 0.48,
+      tmux_passthrough = false,
+      on_change = function(bg, rgb)
+        if vim.g.forced_theme ~= 1 then
+            vim.o.background = bg
+        end
+      end,
+    }
+    osc11.start()
+    local grp = vim.api.nvim_create_augroup("Osc11BgSync", { clear = true })
+    vim.api.nvim_create_autocmd("FocusLost", { group = grp, callback = osc11.stop })
+    vim.api.nvim_create_autocmd("FocusGained", { group = grp, callback = osc11.start })
+    vim.api.nvim_create_autocmd("VimSuspend",   { group = grp, callback = osc11.stop })
+    vim.api.nvim_create_autocmd("VimResume",   { group = grp, callback = osc11.start })
+EOF
 else
-    :call BeDark()
+    function! IsDarkModeOn()
+        if $DARK_MODE == "0"
+            return 0
+        endif
+        let l:modeFilePath = expand('~/.dark_mode')
+        if filereadable(l:modeFilePath)
+            let l:modeFileContents = readfile(l:modeFilePath)
+            if len(l:modeFileContents) > 0 && l:modeFileContents[0] == "0"
+                return 0
+            endif
+        endif
+        return 1
+    endfunction
+
+    function! UpdateTheme()
+        if IsDarkModeOn()
+            :call BeDark()
+        else
+            :call BeLight()
+        endif
+    endfunction
+
+    call UpdateTheme()
+
+    augroup ThemeUpdate
+        au!
+        au FocusGained * :call UpdateTheme()
+        au VimResume * :call UpdateTheme()
+        au CursorHold * :call UpdateTheme()
+        au CursorHoldI * :call UpdateTheme()
+    augroup END
 endif
 
+nnoremap <Leader>cU :call UpdateTheme()<CR>
 nnoremap <Leader>cD :call BeDark()<CR>
 nnoremap <Leader>cL :call BeLight()<CR>
 
@@ -207,7 +260,7 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Illuminate
-if has("nvim")
+if has("nvim") && !exists('g:vscode')
     lua require('illuminate').configure({large_file_cutoff = 1000000})
     lua require('illuminate').pause()
     nmap <C-i> :IlluminateToggle<CR>
