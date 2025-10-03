@@ -38,6 +38,8 @@ set clipboard=
 
 set splitright
 
+let g:netrw_banner = 0
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keybindings
 nnoremap <C-l> :set invhls<CR>
@@ -54,11 +56,13 @@ Plug 'scrooloose/nerdcommenter'
 if !exists('g:vscode')
 Plug 'tpope/vim-fugitive'
 Plug 'ngemily/vim-vp4'
-Plug 'jeetsukumaran/vim-buffergator'
+" Plug 'jeetsukumaran/vim-buffergator'
+Plug 'jlanzarotta/bufexplorer'
 Plug 'majutsushi/tagbar', { 'for' : ['c', 'cpp', 'python', 'perl'] }
 Plug 'dhruvasagar/vim-table-mode', { 'for' : ['text', 'markdown', 'rst'] }
 Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'keith/swift.vim', { 'for' : 'swift' }
+Plug 'inkarkat/diff-fold.vim'
 
 if has("nvim")
     Plug 'rsdubtso/nvim-solarized-lua'
@@ -76,6 +80,10 @@ if has("nvim")
             Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
             Plug 'hrsh7th/vim-vsnip'
             let g:cmp_enabled = 1
+
+            Plug 'folke/snacks.nvim'
+            Plug 'coder/claudecode.nvim'
+            let g:claudecode_enabled = 1
         else
             Plug 'nvim-lua/completion-nvim'
         endif
@@ -92,9 +100,15 @@ if has("nvim")
         Plug 'ray-x/lsp_signature.nvim'
         let g:lsp_enabled = 1
 
-        Plug 'nvim-treesitter/nvim-treesitter'
+        if v:lua.vim.version().minor < 12
+            Plug 'nvim-treesitter/nvim-treesitter'
+            let g:treesitter_enabled = 1
+        else
+            Plug 'reybits/ts-forge.nvim'
+            let g:ts_forge_enabled = 1
+        endif
+
         Plug 'HiPhish/rainbow-delimiters.nvim'
-        let g:treesitter_enabled = 1
 
         Plug 'https://github.com/RRethy/vim-illuminate'
     endif
@@ -134,31 +148,28 @@ if !exists('g:vscode')
     colorscheme solarized
 endif
 
-let g:forced_theme = 0
-
-function! BeDark()
-    hi IndentBlankLineChar guifg=#003342
-    let g:forced_theme=1
-    set background=dark
+function! ToggleLightDark()
+    " as a side effect, this seems to disable background color detection
+    if &background == "dark"
+        set background=light
+    else
+        set background=dark
+    endif
 endfunction
 
-function! BeLight()
-    hi IndentBlankLineChar guifg=#fbecc1
-    let g:forced_theme=1
-    set background=light
-endfunction
-
-if has("nvim")
+if 0
+if has("nvim") && !exists('g:vscode')
 lua << EOF
     local osc11 = require("osc11_bg")
     osc11.setup{
       timeout_ms = 20,
       luma_threshold = 0.48,
-      tmux_passthrough = false,
+      tmux_passthrough = true,
       on_change = function(bg, rgb)
-        if vim.g.forced_theme ~= 1 then
-            vim.o.background = bg
-        end
+        -- print(vim.g.forced_theme)
+        -- if vim.g.forced_theme == 0 then
+        --     vim.o.background = bg
+        -- end
       end,
     }
     osc11.start()
@@ -170,6 +181,12 @@ lua << EOF
 EOF
 else
     function! IsDarkModeOn()
+        if g:forced_theme == 1
+            return 1
+        endif
+        if g:forced_theme == 2
+            return 0
+        endif
         if $DARK_MODE == "0"
             return 0
         endif
@@ -193,21 +210,26 @@ else
 
     call UpdateTheme()
 
-    augroup ThemeUpdate
-        au!
-        au FocusGained * :call UpdateTheme()
-        au VimResume * :call UpdateTheme()
-        au CursorHold * :call UpdateTheme()
-        au CursorHoldI * :call UpdateTheme()
-    augroup END
+    nnoremap <Leader>cU :call UpdateTheme()<CR>
+
+    " augroup ThemeUpdate
+    "     au!
+    "     au FocusGained * :call UpdateTheme()
+    "     au VimResume * :call UpdateTheme()
+    "     au CursorHold * :call UpdateTheme()
+    "     au CursorHoldI * :call UpdateTheme()
+    " augroup END
+endif
 endif
 
-nnoremap <Leader>cU :call UpdateTheme()<CR>
-nnoremap <Leader>cD :call BeDark()<CR>
-nnoremap <Leader>cL :call BeLight()<CR>
+nnoremap <Leader>cT :call ToggleLightDark()<CR>
 
 highlight default link myDiagnosticError SpellBad
-au BufWinEnter * let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1)
+
+augroup TrailingWhitespace
+    au!
+    au BufWinEnter * if &buftype == '' | let w:m3 = matchadd('myDiagnosticError', '\s\+$', -1) | endif
+augroup END
 
 augroup CursorLine
     au!
@@ -237,6 +259,9 @@ endif
 " Treesitter
 if exists("g:treesitter_enabled")
     execute "luafile " . expand('<sfile>:p:h') . '/lua/treesitter.lua'
+endif
+if exists("g:ts_forge_enabled")
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/ts_forge.lua'
 endif
 
 if &diff
@@ -299,9 +324,16 @@ vmap <Leader>cu <Plug>NERDCommenterUncomment
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Buffregator
-let g:buffregator_suppress_mru_switching_keymaps = 1
+" let g:buffregator_suppress_mru_switching_keymaps = 1
 " for lazy loading
-nmap <Leader>b :BuffregatorOpen<CR>
+" nmap <Leader>b :BuffregatorOpen<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Bufexplorer
+let g:bufExplorerDisableDefaultKeyMapping=1
+let g:bufExplorerFindActive=0
+let g:bufExplorerSplitRight=0
+nmap <Leader>b :ToggleBufExplorer<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure fugitive to use familiar key bindings
@@ -452,6 +484,31 @@ if has("nvim")
 endif
 
 silent! source ~/.vim/vimrc.local
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" open cwindow or lwindow after eg grep
+augroup qf
+    " clear all autocommands in this group
+    autocmd!
+
+    " do :cwindow if the quickfix command doesn't start
+    " with a 'l' (:grep, :make, etc.)
+    autocmd QuickFixCmdPost [^l]* cwindow
+
+    " do :lwindow if the quickfix command starts with
+    " a 'l' (:lgrep, :lmake, etc.)
+    autocmd QuickFixCmdPost l*    lwindow
+
+    " do :cwindow when Vim was started with the '-q' flag
+    autocmd VimEnter        *     cwindow
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" claude code
+
+if exists("g:claudecode_enabled")
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/claude.lua'
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " neovide

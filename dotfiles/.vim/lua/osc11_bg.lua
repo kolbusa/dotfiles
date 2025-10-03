@@ -73,7 +73,8 @@ end
 
 local function query_background(timeout_ms)
   tty_write("\x1b]11;?\x07")
-  local reply = read_osc_reply(timeout_ms or 250)
+  -- local reply = read_osc_reply(timeout_ms or 250)
+  reply = nil
   local rgb = parse_rgb(reply or "")
   return decide_bg(rgb), rgb, reply
 end
@@ -88,11 +89,11 @@ function M.start()
     vim.schedule(function()
       local bg, rgb = query_background(config.timeout_ms)
       if not bg then return end
-      if bg ~= last_bg or vim.o.background ~= bg then
-        last_bg = bg
-        vim.o.background = bg
-        if type(config.on_change) == "function" then pcall(config.on_change, bg, rgb) end
-      end
+      -- if bg ~= last_bg or vim.o.background ~= bg then
+      --   last_bg = bg
+      --   -- vim.o.background = bg
+      --   if type(config.on_change) == "function" then pcall(config.on_change, bg, rgb) end
+      -- end
     end)
   end)
 end

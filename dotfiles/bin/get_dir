@@ -1,0 +1,88 @@
+#!/bin/bash
+
+set -ueo pipefail
+# set -x
+
+usage() {
+    echo "$0 [options..] URL"
+    echo
+    echo "Options include:"
+    echo "  --[no-]batch        Enable (default) or disable batched downloads"
+    echo
+    echo "  --update            Do not download files with names that match"
+    echo "                      existing files (default)"
+    echo "  --always            Always download all files"
+    echo
+    echo "  --list              Just list directory contents"
+    echo
+    echo "  --silent            Be silent"
+    echo "  --verbose, -v, -vv  Be verbose. Can be specifed multiple times"
+    echo "                      to increase the level"
+    echo
+    echo " --help               Show this message"
+    exit 1
+}
+
+list_only=0
+update=0
+verbose=0
+batch=200
+while [[ $# > 0 ]]; do
+    case "$1" in
+        --no-batch) batch=1 ;;
+        --batch) batch=200 ;;
+        --silent) verbose=0 ;;
+        --verbose) verbose=$((verbose+1)) ;;
+        --update) update=1 ;;
+        --always) update=0 ;;
+        --list) list_only=1 ;;
+        --help) usage ;;
+        -v) verbose=$((verbose+1));;
+        -vv) verbose=$((verbose+2));;
+        *) break
+    esac
+    shift
+done
+
+if [[ $# == 0 ]]; then
+    usage
+fi
+
+url="$1"
+[[ $url =~ /$ ]] && url="$url/*"
+
+pat="${1##*/}"
+url="${1%/*}/"
+
+curl_flags="-n -L ${2:-}"
+[[ $verbose > 1 ]] || curl_flags="-s $curl_flags"
+[[ $batch > 1 ]] && curl_flags="-Z $curl_flags"
+
+filecount=0
+filelist=""
+for f in $(curl $curl_flags "$url" | sed -n '/a href=/{s/^.*href="//;s/".*$//;p}'); do
+    case $f in
+        *\?*) continue ;;
+        ../) continue ;;
+        /*) continue ;;
+        $pat) ;;
+        *) continue ;;
+    esac
+    if [[ $list_only == 1 ]]; then
+        echo $url$f
+    else
+        [[ $verbose > 0 ]] && echo $f
+        [[ $update == 1 && -f $f ]] && continue
+        filelist="$filelist -O $url/$f"
+        filecount=$((filecount + 1))
+        if [[ $filecount == $batch ]]; then
+            curl $curl_flags $filelist
+            filelist=""
+            filecount=0
+        fi
+    fi
+done
+
+if [[ $list_only == 0 && $filecount > 0 ]]; then
+    curl $curl_flags $filelist
+fi

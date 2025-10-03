@@ -50,6 +50,5 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[safe]
-	directory = /home/scratch.nshustrov_sw/projects/cublas/cuBLAS
-	directory = /home/scratch.nshustrov_sw/projects/cublas/cuBLAS/external/nvjet
+[reset]
+	quiet = false

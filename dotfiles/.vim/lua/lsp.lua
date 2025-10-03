@@ -109,7 +109,7 @@ local on_attach = function(client, bufnr)
     end
 end
 
-vim.lsp.log.set_level(vim.log.levels.OFF)
+-- vim.lsp.log.set_level(vim.log.levels.OFF)
 
 -- do nothing in diff mode
 -- XXX: not sure how this works when diff mode enabled later
@@ -174,7 +174,7 @@ if vim.fn.executable(basedpyright_path) == 1 then
         capabilities = capabilities,
     })
     -- WAR some logic error in the table update
-    vim.lsp.config["basedpyright"].on_attach = on_attach
+    vim.lsp.config['basedpyright'].on_attach = on_attach
 
 end
 
@@ -187,6 +187,7 @@ if vim.fn.executable(ruff_path) == 1 then
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.config['ruff'].on_attach = on_attach
 end
 
 local sourcekit_path = getenv_with_default('SOURCEKIT_PATH', 'sourcekit-lsp')
@@ -200,15 +201,21 @@ if vim.fn.executable(sourcekit_path) == 1 then
     })
 end
 
--- Keep a list of all errors (both location list and quickfix list)
-do
-  local method = 'textDocument/publishDiagnostics'
-  local default_handler = vim.lsp.handlers[method]
-  vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
-    default_handler(err, method, result, client_id, bufnr, config)
-    vim.diagnostic.setloclist({
-        open = false,
-    })
-  end
-end
+-- -- Keep a list of all errors (both location list and quickfix list)
+-- do
+--   local method = 'textDocument/publishDiagnostics'
+--   local default_handler = vim.lsp.handlers[method]
+--   vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
+--     default_handler(err, method, result, client_id, bufnr, config)
+--     vim.diagnostic.setloclist({
+--         open = false,
+--     })
+--   end
+-- end
+
+vim.api.nvim_create_autocmd('DiagnosticChanged', {
+  callback = function()
+    vim.diagnostic.setloclist({ open = false })
+  end,
+})
 

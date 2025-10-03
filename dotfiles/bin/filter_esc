@@ -1,0 +1,2 @@
+#!/bin/bash
+exec sed $'s,[\x01-\x1F\x7F][[0-9;]*[a-zA-Z],,g'

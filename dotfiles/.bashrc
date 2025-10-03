@@ -19,6 +19,10 @@ find_program() {
     fi
 }
 
+toolpath() {
+    dirname $(readlink -f $(find_program $1));
+}
+
 add_to_path() {
     local mode=$1
     local varname="$2"
@@ -89,15 +93,6 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 
     alias tun='command ssh -L 5900:localhost:5900 -L 5001:localhost:5001 -L 10222:localhost:10222 -L 10122:localhost:10122 -N -f -T dubtsov.net'
 
-    if [[ -n "$(find_program fortune)" ]]; then
-        case $- in
-            *i*)
-            echo
-            fortune -e -s
-            echo
-            ;;
-        esac
-    fi
     function dark() {
         export DARK_MODE=1
         local ghostty_config_dir="$HOME/Library/Application Support/com.mitchellh.ghostty"
@@ -132,11 +127,21 @@ else
     # fi
 fi
 
-if [[ -z "${VIRTUAL_ENV:-}" ]]; then
-    if [[ -f ~/work/python/bin/activate ]]; then
-        source ~/work/python/bin/activate
-    fi
+if [[ -n "$(find_program fortune)" ]]; then
+    case $- in
+        *i*)
+        echo
+        fortune -e -s
+        echo
+        ;;
+    esac
 fi
+
+# if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+#     if [[ -f ~/work/python/bin/activate ]]; then
+#         source ~/work/python/bin/activate
+#     fi
+# fi
 
 ###### Fixup locale in case it is not supported on this system
 locale_ok=0
@@ -155,7 +160,10 @@ else
 fi
 
 ##### Per-user tools
-export PATH=$HOME/bin:$PATH
+arch=$(uname -m)
+export UV_TOOL_DIR="$HOME/.local/share/uv/tools/$arch"
+export UV_TOOL_BIN_DIR="$HOME/.local/bin/$arch"
+export PATH=$HOME/bin:$HOME/bin/$arch:$HOME/.local/bin/$arch:$PATH
 
 ###### PS1 setup
 # XXX: additional check for __venv_ps1 is there to prevent duplicate entries
@@ -362,7 +370,7 @@ fi
 ###### Aliases
 if [[ "${VISUAL-X}" == "nvim" ]]; then
     alias vim=nvim
-    alias vi='vim -u NONE -c "set ts=4 sw=4 et nosmartcase noignorecase mouse=nvi autochdir|syntax off|filetype off|let &inccommand = \"\""'
+    alias vi='vim -u NONE -c "set nu ts=4 sw=4 et nosmartcase noignorecase mouse=nvi autochdir|syntax off|filetype off|let &inccommand = \"\""'
 fi
 #unset -f which
 alias sc='tmux new-window -a'
@@ -399,7 +407,7 @@ if [[ -n "$(find_program dircolors)" ]]; then
 else
     [[ -z "${LSCOLORS+X}" ]] && export LSCOLORS=ExfxcxdxCxegedabagacad
 fi
-lsopts="-F"
+lsopts=""
 if ls --group-directories-first &>/dev/null; then
     lsopts="$lsopts --group-directories-first"
 fi
@@ -456,3 +464,32 @@ export DARK_MODE=1
 export P4CONFIG=.p4config
 
 BASHRC_SOURCED=1 # do not export -- subsequent shells may need this...
+
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/home/rdubtsov/work/bugs/pytorch-cpu-feedstock-gh-521/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/home/rdubtsov/work/bugs/pytorch-cpu-feedstock-gh-521/miniforge3/etc/profile.d/conda.sh" ]; then
+#         . "/home/rdubtsov/work/bugs/pytorch-cpu-feedstock-gh-521/miniforge3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/home/rdubtsov/work/bugs/pytorch-cpu-feedstock-gh-521/miniforge3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
+
+
+# # >>> mamba initialize >>>
+# # !! Contents within this block are managed by 'mamba shell init' !!
+# export MAMBA_EXE='/home/scratch.rdubtsov_ent_1/bugs/pytorch-cpu-feedstock-gh-521/miniforge3/bin/mamba';
+# export MAMBA_ROOT_PREFIX='/home/scratch.rdubtsov_ent_1/bugs/pytorch-cpu-feedstock-gh-521/miniforge3';
+# __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__mamba_setup"
+# else
+#     alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+# fi
+# unset __mamba_setup
+# # <<< mamba initialize <<<

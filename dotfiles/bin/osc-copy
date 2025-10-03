@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+use MIME::Base64;
+undef $/;
+while (<>) {
+    $_ = encode_base64($_, "");
+    s/^/\033]52;c;/;
+    s/$/\a/;
+    print;
+}

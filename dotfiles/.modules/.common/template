@@ -5,4 +5,7 @@ set toolName [file tail [file dirname $ModulesCurrentModulefile]]
 set toolVersion [file tail $ModulesCurrentModulefile]
 set toolDir [file join $::env(HOME) work/tools/linux $arch $toolName $toolVersion]
 
+# TODO: man, lib
+
 prepend-path PATH [file join $toolDir bin]
+prepend-path LD_LIBRARY_PATH [file join $toolDir lib64]

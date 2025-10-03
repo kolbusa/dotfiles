@@ -1,0 +1,10 @@
+#%Module1.0
+
+conflict mold
+
+set arch [exec uname -m]
+set version [file tail $ModulesCurrentModulefile]
+set moldDir [file join $::env(HOME) work/tools/linux $arch mold $version]
+
+setenv MOLD_PATH $moldDir
+prepend-path PATH [file join $moldDir bin]

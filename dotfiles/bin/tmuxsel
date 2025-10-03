@@ -67,6 +67,7 @@ function set_session_env() {
     log "Executing '$cmdline'"
     ret=$(eval $cmdline)
     log "Result: '$ret'"
+    echo "$ret"
 }
 
 function mk_stable_ssh_auth_sock() {
@@ -83,7 +84,7 @@ function mk_stable_ssh_auth_sock() {
             ssas=$(get_session_env $ssid $sas)
             ssas_dir=$(dirname $ssas)
             if [[ "$ssas_dir" != "$STABLE_SOCKETS_DIR" ]]; then
-                log "SSAS: detected broken ssas='$ssas'. Replacing!"
+                log "SSAS: detected a broken ssas='$ssas'. Replacing!"
                 ssas=$(TMPDIR=$STABLE_SOCKETS_DIR mktemp -t $HOSTNAME.XXXXX)
                 log "SSAS: created a new ssas='$ssas'"
                 set_session_env $ssid $sas $ssas
@@ -131,14 +132,6 @@ if [[ "$OSTYPE" == cygwin ]]; then
     export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 fi
 
-if [[ "${1+X}" == "-" ]]; then
-    shift
-    PLEASE_SOURCE_BASHRC=1
-    BASHRC_MINIMAL_MODE=1
-    source $HOME/.profile
-    source $HOME/.bashrc
-fi
-
 export DARK_MODE=1
 if [[ "${1+X}" == "--dark" ]]; then
     echo "Running in DARK MODE"
@@ -149,6 +142,14 @@ if [[ "${1+X}" == "--lite" ]]; then
     echo "Running in LITE MODE"
     export DARK_MODE=0
     shift
+fi
+
+if [[ "${1+X}" == "-" ]]; then
+    shift
+    PLEASE_SOURCE_BASHRC=1
+    BASHRC_MINIMAL_MODE=1
+    source $HOME/.profile
+    source $HOME/.bashrc
 fi
 
 # dirty hack to update the shell location
@@ -244,7 +245,7 @@ while true; do
                 log "Executing '$cmdline'"
                 eval $cmdline || true
                 attached_clients=$(tmux list-clients -t $ssid 2>/dev/null || true)
-                del_stable_ssh_auth_sock
+                # del_stable_ssh_auth_sock
                 log "Session closed"
                 break
             ;;
