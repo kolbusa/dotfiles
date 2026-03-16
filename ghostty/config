@@ -1,9 +1,10 @@
 term = xterm-256color
-#font-family = Cascadia Mono
+font-family = Cascadia Mono
 #font-family = Cascadia Code
 #font-family = SF Mono
-font-family = DejaVu Sans Mono
+#font-family = DejaVu Sans Mono
 #font-family = Source Code Pro
+font-feature = -dlig,-liga,-calt
 font-size = 12
 command = ~/bin/tmuxsel -
 #window-theme = system
