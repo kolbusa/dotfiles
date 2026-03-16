@@ -198,7 +198,11 @@ while true; do
         ssh_hosts=$(cat $tmuxsel_hosts | sed 's/^/ssh:/')
     fi
     tmux_sessions=$(tmux list-sessions -F 'tmux:#{s/\$//:session_id}:#{session_name}#{?session_attached,_(attached),}' | sort -n -k2 -t: || true)
-    select s in shell tmux python3 $ssh_hosts $tmux_sessions; do
+    extra=""
+    if [[ -e $HOME/bin/ghostty-toggle-theme ]]; then
+        extra="${extra} toggle_theme"
+    fi
+    select s in shell tmux python3 $ssh_hosts $tmux_sessions $extra; do
         case $s in
             shell)
                 refresh_screen
@@ -242,6 +246,10 @@ while true; do
                 attached_clients=$(tmux list-clients -t $ssid 2>/dev/null || true)
                 del_stable_ssh_auth_sock
                 log "Session closed"
+                break
+            ;;
+            toggle_theme)
+                $HOME/bin/ghostty-toggle-theme
                 break
             ;;
         esac

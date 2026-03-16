@@ -75,6 +75,8 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/findutils)/libexec/gnubin
     add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-tar)/libexec/gnubin
     add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/gnu-sed)/libexec/gnubin
+    add_to_path prepend PATH $(__latest_ver /opt/homebrew/Cellar/grep)/libexec/gnubin
+    add_to_path prepend MANPATH $(__latest_ver /opt/homebrew/Cellar/grep)/libexec/gnuman
     add_to_path prepend /Library/TeX/texbin
 
     function ssh {

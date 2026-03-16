@@ -470,6 +470,8 @@ if exists("g:neovide")
     vmap <D-v> "+p
     cmap <D-v> <C-R>+
     imap <D-v> <C-R>+
+    " Clickable URLs
+    execute "luafile " . expand('<sfile>:p:h') . '/lua/urls.lua'
 endif
 
 endif  " nocompatible
